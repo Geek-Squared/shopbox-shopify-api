@@ -41,15 +41,11 @@ export class ShopifyService {
     url.searchParams.append('redirect_uri', redirectUri);
     url.searchParams.append('state', nonce);
 
-    const finalUrl = url.toString();
-    console.log('[DEBUG] Generated Shopify Auth URL:', finalUrl);
-    return finalUrl;
+    return url.toString();
   }
 
   verifyHmac(params: Record<string, string>, hmac: string): boolean {
     const secret = this.config.get<string>('SHOPIFY_API_SECRET');
-    console.log('[DEBUG] HMAC verify - secret starts with:', secret?.substring(0, 8));
-    console.log('[DEBUG] HMAC verify - secret length:', secret?.length);
     const sortedParams = Object.keys(params)
       .filter((k) => k !== 'hmac' && k !== 'signature')
       .sort()

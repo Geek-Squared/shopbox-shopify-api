@@ -63,49 +63,37 @@ export class MetaOauthService {
   }
 
   async getPages(userToken: string) {
-    // 1. Audit permissions first
-    const permUrl = `https://graph.facebook.com/v20.0/me/permissions?access_token=${userToken}`;
-    const permRes = await fetch(permUrl);
-    const permData = await permRes.json();
-    console.log('[DEBUG] Current Token Permissions:', JSON.stringify(permData, null, 2));
-
-    // 2. Fetch User's Businesses (Fallback for Business Suite)
     const bizUrl = `https://graph.facebook.com/v20.0/me/businesses?access_token=${userToken}`;
     const bizRes = await fetch(bizUrl);
     const bizData = await bizRes.json();
-    console.log('[DEBUG] User Businesses:', JSON.stringify(bizData, null, 2));
 
     // 3. Try standard me/accounts (Personal pages)
     const url = `https://graph.facebook.com/v20.0/me/accounts?fields=id,name,access_token,category,instagram_business_account{id,username}&access_token=${userToken}`;
     const response = await fetch(url);
     const data = await response.json();
-    console.log('[DEBUG] Standard me/accounts (v20):', JSON.stringify(data, null, 2));
 
     if (!response.ok) {
-      console.error('[DEBUG] Error fetching standard pages:', JSON.stringify(data, null, 2));
+      this.logger.error(`Error fetching standard pages: ${JSON.stringify(data, null, 2)}`);
     }
 
     const allPages = data.data || [];
 
     // 4. Try Business Manager owned pages if standard list is empty
     if (bizData.data?.length > 0) {
-      console.log(`[DEBUG] Found ${bizData.data.length} businesses. Checking for owned pages...`);
       for (const biz of bizData.data) {
         const pagesUrl = `https://graph.facebook.com/v20.0/${biz.id}/owned_pages?fields=id,name,access_token,category,instagram_business_account{id,username}&access_token=${userToken}`;
         const pagesRes = await fetch(pagesUrl);
         const pagesData = await pagesRes.json();
-        console.log(`[DEBUG] Pages for business ${biz.name}:`, JSON.stringify(pagesData, null, 2));
         if (pagesData.data?.length > 0) {
           allPages.push(...pagesData.data);
         }
       }
     }
 
-    // Deduplicate pages by ID (same page can appear from me/accounts and business owned pages)
+    // Deduplicate pages by ID
     const uniquePages = Array.from(
       new Map(allPages.map((p) => [p.id, p])).values(),
     );
-    console.log(`[DEBUG] Total unique pages after dedup: ${uniquePages.length}`);
 
     return uniquePages as { id: string; name: string; access_token: string; category: string; instagram_business_account?: { id: string, username: string } }[];
   }
@@ -168,39 +156,29 @@ export class MetaOauthService {
   }
 
   async connectInstagram(shop: string, code: string) {
-    console.log('[DEBUG] Token exchange successful for connectInstagram');
     const userToken = await this.exchangeCodeForToken(code, 'instagram');
     const pages = await this.getPages(userToken);
-    console.log(`[DEBUG] Found ${pages.length} potential Facebook pages.`);
 
     let instagramAccount = null;
     let selectedPage = null;
 
     if (pages.length === 0) {
       // Direct IG lookup fallback
-      console.log('[DEBUG] No pages found via me/accounts. Trying direct lookup...');
       const igUrl = `https://graph.facebook.com/v20.0/me/instagram_accounts?fields=id,username&access_token=${userToken}`;
-      const igRes = await fetch(igUrl);
-      const igData = await igRes.json();
-      console.log('[DEBUG] Direct User IG lookup response:', JSON.stringify(igData, null, 2));
+      await fetch(igUrl);
     }
 
     for (const page of pages) {
-      console.log(`[DEBUG] Checking Page: ${page.name} (${page.id})`);
       const igAccount = page.instagram_business_account;
       
       if (igAccount) {
-        console.log(`[DEBUG] SUCCESS! Found linked Instagram account: ${igAccount.username} (${igAccount.id})`);
         instagramAccount = igAccount;
         selectedPage = page;
         break;
-      } else {
-        console.log(`[DEBUG] Page "${page.name}" has no linked business Instagram account.`);
       }
     }
 
     if (!instagramAccount || !selectedPage) {
-      console.error('[DEBUG] Failed to find any linked Instagram Business accounts. Logic end.');
       throw new BadRequestException('No Instagram Business accounts found connected to your Facebook pages. Please ensure your Instagram is a BUSINESS account and linked to a FB Page.');
     }
 
