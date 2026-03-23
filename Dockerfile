@@ -21,6 +21,7 @@ COPY --from=builder /app/generated ./generated
 COPY --from=deps /app/node_modules ./node_modules
 COPY prisma ./prisma
 COPY prisma.config.ts ./prisma.config.ts
+COPY tsconfig.json ./tsconfig.json
 COPY package.json pnpm-lock.yaml ./
 EXPOSE 3000
 CMD ["sh", "-c", "pnpm prisma migrate deploy && node dist/main"]
