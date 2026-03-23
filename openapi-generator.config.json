@@ -1,0 +1,9 @@
+{
+  "additionalProperties": {
+    "typescriptThreePlus": true,
+    "apiPackage": "apis",
+    "modelPackage": "models",
+    "enumPropertyNaming": "UPPERCASE",
+    "npmName": "@shopbox/shopbox-sdk"
+  }
+}

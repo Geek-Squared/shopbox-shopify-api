@@ -1,0 +1,40 @@
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PluginsService = void 0;
+const common_1 = require("@nestjs/common");
+let PluginsService = class PluginsService {
+    list() {
+        return {
+            resource: 'plugins',
+            items: ['delivery'],
+        };
+    }
+    delivery(payload) {
+        return {
+            plugin: 'delivery',
+            action: 'execute',
+            orderId: payload.orderId,
+            etaMinutes: 45,
+            trackingId: `dlv-${Date.now()}`,
+        };
+    }
+    riders(payload) {
+        return {
+            plugin: 'delivery',
+            action: 'riders',
+            zone: payload.zone ?? 'all',
+            riders: [],
+        };
+    }
+};
+exports.PluginsService = PluginsService;
+exports.PluginsService = PluginsService = __decorate([
+    (0, common_1.Injectable)()
+], PluginsService);
+//# sourceMappingURL=plugins.service.js.map

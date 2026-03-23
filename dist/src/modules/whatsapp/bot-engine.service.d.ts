@@ -1,0 +1,31 @@
+import { PrismaService } from '../../prisma/prisma.service';
+import { WhatsappService } from './whatsapp.service';
+import { ConfigService } from '@nestjs/config';
+import { BotSessionService } from './bot-session.service';
+export declare class BotEngineService {
+    private readonly prisma;
+    private readonly wa;
+    private readonly session;
+    private readonly config;
+    private readonly logger;
+    constructor(prisma: PrismaService, wa: WhatsappService, session: BotSessionService, config: ConfigService);
+    handle(from: string, type: string, text?: string, interactiveId?: string): Promise<void>;
+    private handleStart;
+    private handleStoreSelection;
+    private showProducts;
+    private handleProductSelection;
+    private handleProductAction;
+    private handleViewCart;
+    private handleCartAction;
+    private handleCheckoutName;
+    private handleCheckoutAddress;
+    private handlePaymentSelection;
+    private handlePaymentConfirm;
+    private createOrder;
+    private handleRiderStart;
+    private handleRiderIdle;
+    private handleRiderJobResponse;
+    private handleRiderOnJob;
+    private generateOrderNumber;
+    private generateDeliveryCode;
+}
