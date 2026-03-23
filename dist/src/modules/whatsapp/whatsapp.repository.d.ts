@@ -13,15 +13,15 @@ export declare class WhatsappRepository {
         status?: string;
     }): import("../../../generated/prisma/models").Prisma__WhatsappMessageClient<{
         id: string;
-        createdAt: Date;
-        sellerId: string | null;
-        storeId: string | null;
-        status: string | null;
-        orderId: string | null;
         direction: import("../../../generated/prisma/enums").MessageDirection;
         toNumber: string | null;
         fromNumber: string | null;
         content: string;
+        status: string | null;
+        createdAt: Date;
+        sellerId: string | null;
+        storeId: string | null;
+        orderId: string | null;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;

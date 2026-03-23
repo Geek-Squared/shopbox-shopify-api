@@ -25,10 +25,11 @@ export declare class ShopifyRepository {
     constructor(prisma: PrismaService);
     findByShop(shop: string): Promise<{
         id: string;
+        storeSlug: string | null;
+        updatedAt: Date;
         shop: string;
         accessToken: string;
         scope: string;
-        storeSlug: string | null;
         storeName: string | null;
         whatsappConnected: boolean;
         whatsappNumber: string | null;
@@ -49,14 +50,14 @@ export declare class ShopifyRepository {
         planStatus: string | null;
         planChargeId: string | null;
         planTrialExpiresAt: Date | null;
-        updatedAt: Date;
     }>;
     findById(id: string): Promise<{
         id: string;
+        storeSlug: string | null;
+        updatedAt: Date;
         shop: string;
         accessToken: string;
         scope: string;
-        storeSlug: string | null;
         storeName: string | null;
         whatsappConnected: boolean;
         whatsappNumber: string | null;
@@ -77,14 +78,14 @@ export declare class ShopifyRepository {
         planStatus: string | null;
         planChargeId: string | null;
         planTrialExpiresAt: Date | null;
-        updatedAt: Date;
     }>;
     upsertMerchant(data: UpsertMerchantData): import("../../../generated/prisma/models").Prisma__ShopifyMerchantClient<{
         id: string;
+        storeSlug: string | null;
+        updatedAt: Date;
         shop: string;
         accessToken: string;
         scope: string;
-        storeSlug: string | null;
         storeName: string | null;
         whatsappConnected: boolean;
         whatsappNumber: string | null;
@@ -105,16 +106,16 @@ export declare class ShopifyRepository {
         planStatus: string | null;
         planChargeId: string | null;
         planTrialExpiresAt: Date | null;
-        updatedAt: Date;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;
     partialUpdate(shop: string, data: Partial<UpsertMerchantData>): import("../../../generated/prisma/models").Prisma__ShopifyMerchantClient<{
         id: string;
+        storeSlug: string | null;
+        updatedAt: Date;
         shop: string;
         accessToken: string;
         scope: string;
-        storeSlug: string | null;
         storeName: string | null;
         whatsappConnected: boolean;
         whatsappNumber: string | null;
@@ -135,16 +136,16 @@ export declare class ShopifyRepository {
         planStatus: string | null;
         planChargeId: string | null;
         planTrialExpiresAt: Date | null;
-        updatedAt: Date;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;
     updateChannels(shop: string, data: UpdateChannelsData): import("../../../generated/prisma/models").Prisma__ShopifyMerchantClient<{
         id: string;
+        storeSlug: string | null;
+        updatedAt: Date;
         shop: string;
         accessToken: string;
         scope: string;
-        storeSlug: string | null;
         storeName: string | null;
         whatsappConnected: boolean;
         whatsappNumber: string | null;
@@ -165,16 +166,16 @@ export declare class ShopifyRepository {
         planStatus: string | null;
         planChargeId: string | null;
         planTrialExpiresAt: Date | null;
-        updatedAt: Date;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;
     markUninstalled(shop: string): import("../../../generated/prisma/models").Prisma__ShopifyMerchantClient<{
         id: string;
+        storeSlug: string | null;
+        updatedAt: Date;
         shop: string;
         accessToken: string;
         scope: string;
-        storeSlug: string | null;
         storeName: string | null;
         whatsappConnected: boolean;
         whatsappNumber: string | null;
@@ -195,16 +196,16 @@ export declare class ShopifyRepository {
         planStatus: string | null;
         planChargeId: string | null;
         planTrialExpiresAt: Date | null;
-        updatedAt: Date;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;
     findActive(): import("../../../generated/prisma/internal/prismaNamespace").PrismaPromise<{
         id: string;
+        storeSlug: string | null;
+        updatedAt: Date;
         shop: string;
         accessToken: string;
         scope: string;
-        storeSlug: string | null;
         storeName: string | null;
         whatsappConnected: boolean;
         whatsappNumber: string | null;
@@ -225,6 +226,5 @@ export declare class ShopifyRepository {
         planStatus: string | null;
         planChargeId: string | null;
         planTrialExpiresAt: Date | null;
-        updatedAt: Date;
     }[]>;
 }

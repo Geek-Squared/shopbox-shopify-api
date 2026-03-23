@@ -11,27 +11,27 @@ export declare class PaymentsRepository {
         status: 'PENDING' | 'SUCCESS' | 'FAILED';
     }): import("../../../generated/prisma/models").Prisma__PaymentClient<{
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        currency: string;
         status: import("../../../generated/prisma/enums").PaymentStatus;
+        createdAt: Date;
         orderId: string;
+        currency: string;
         provider: string;
-        amount: number;
         gatewayReference: string | null;
+        updatedAt: Date;
+        amount: number;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;
     findById(id: string): import("../../../generated/prisma/models").Prisma__PaymentClient<{
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        currency: string;
         status: import("../../../generated/prisma/enums").PaymentStatus;
+        createdAt: Date;
         orderId: string;
+        currency: string;
         provider: string;
-        amount: number;
         gatewayReference: string | null;
+        updatedAt: Date;
+        amount: number;
     }, null, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;
@@ -40,14 +40,14 @@ export declare class PaymentsRepository {
         gatewayReference?: string;
     }): import("../../../generated/prisma/models").Prisma__PaymentClient<{
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
-        currency: string;
         status: import("../../../generated/prisma/enums").PaymentStatus;
+        createdAt: Date;
         orderId: string;
+        currency: string;
         provider: string;
-        amount: number;
         gatewayReference: string | null;
+        updatedAt: Date;
+        amount: number;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;

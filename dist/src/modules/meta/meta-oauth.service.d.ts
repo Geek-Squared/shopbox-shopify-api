@@ -33,10 +33,11 @@ export declare class MetaOauthService {
     }>;
     disconnectMessenger(shop: string): Promise<{
         id: string;
+        storeSlug: string | null;
+        updatedAt: Date;
         shop: string;
         accessToken: string;
         scope: string;
-        storeSlug: string | null;
         storeName: string | null;
         whatsappConnected: boolean;
         whatsappNumber: string | null;
@@ -57,14 +58,14 @@ export declare class MetaOauthService {
         planStatus: string | null;
         planChargeId: string | null;
         planTrialExpiresAt: Date | null;
-        updatedAt: Date;
     }>;
     disconnectInstagram(shop: string): Promise<{
         id: string;
+        storeSlug: string | null;
+        updatedAt: Date;
         shop: string;
         accessToken: string;
         scope: string;
-        storeSlug: string | null;
         storeName: string | null;
         whatsappConnected: boolean;
         whatsappNumber: string | null;
@@ -85,6 +86,5 @@ export declare class MetaOauthService {
         planStatus: string | null;
         planChargeId: string | null;
         planTrialExpiresAt: Date | null;
-        updatedAt: Date;
     }>;
 }

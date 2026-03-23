@@ -4,36 +4,36 @@ export declare class SellersRepository {
     constructor(prisma: PrismaService);
     findByEmail(email: string): import("../../../generated/prisma/models").Prisma__SellerClient<{
         id: string;
-        email: string | null;
-        passwordHash: string;
-        name: string;
-        phone: string;
-        isVerified: boolean;
         createdAt: Date;
+        name: string;
+        email: string | null;
+        phone: string;
+        passwordHash: string;
+        isVerified: boolean;
         updatedAt: Date;
     }, null, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;
     findByPhone(phone: string): import("../../../generated/prisma/models").Prisma__SellerClient<{
         id: string;
-        email: string | null;
-        passwordHash: string;
-        name: string;
-        phone: string;
-        isVerified: boolean;
         createdAt: Date;
+        name: string;
+        email: string | null;
+        phone: string;
+        passwordHash: string;
+        isVerified: boolean;
         updatedAt: Date;
     }, null, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;
     findById(id: string): import("../../../generated/prisma/models").Prisma__SellerClient<{
         id: string;
-        email: string | null;
-        passwordHash: string;
-        name: string;
-        phone: string;
-        isVerified: boolean;
         createdAt: Date;
+        name: string;
+        email: string | null;
+        phone: string;
+        passwordHash: string;
+        isVerified: boolean;
         updatedAt: Date;
     }, null, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
@@ -45,12 +45,12 @@ export declare class SellersRepository {
         passwordHash: string;
     }): import("../../../generated/prisma/models").Prisma__SellerClient<{
         id: string;
-        email: string | null;
-        passwordHash: string;
-        name: string;
-        phone: string;
-        isVerified: boolean;
         createdAt: Date;
+        name: string;
+        email: string | null;
+        phone: string;
+        passwordHash: string;
+        isVerified: boolean;
         updatedAt: Date;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
@@ -63,12 +63,12 @@ export declare class SellersRepository {
         otpExpiresAt?: Date | null;
     }): import("../../../generated/prisma/models").Prisma__SellerClient<{
         id: string;
-        email: string | null;
-        passwordHash: string;
-        name: string;
-        phone: string;
-        isVerified: boolean;
         createdAt: Date;
+        name: string;
+        email: string | null;
+        phone: string;
+        passwordHash: string;
+        isVerified: boolean;
         updatedAt: Date;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;

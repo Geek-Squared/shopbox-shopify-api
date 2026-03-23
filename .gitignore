@@ -4,3 +4,8 @@ node_modules
 
 /generated/prisma
 .npmrc
+
+# Terraform Secrets & State
+terraform/.terraform/
+terraform/*.tfvars
+terraform/terraform.tfstate*
