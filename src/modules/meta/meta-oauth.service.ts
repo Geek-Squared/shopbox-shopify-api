@@ -42,7 +42,7 @@ export class MetaOauthService {
       'business_management',
     ].join(',');
 
-    return `https://www.facebook.com/v20.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${shop}`;
+    return `https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${shop}`;
   }
 
   async exchangeCodeForToken(code: string, redirectUriSuffix: string): Promise<string> {

@@ -43,10 +43,10 @@ export declare class CommentTriggerService {
         templateMessage?: string;
     }): Promise<{
         id: string;
-        createdAt: Date;
+        isActive: boolean;
         updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
+        createdAt: Date;
         keyword: string;
         replyComment: boolean;
         triggerCount: number;
@@ -54,10 +54,10 @@ export declare class CommentTriggerService {
     }>;
     listTriggers(merchantId: string): Promise<{
         id: string;
-        createdAt: Date;
+        isActive: boolean;
         updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
+        createdAt: Date;
         keyword: string;
         replyComment: boolean;
         triggerCount: number;
@@ -65,10 +65,10 @@ export declare class CommentTriggerService {
     }[]>;
     updateTrigger(merchantId: string, triggerId: string, data: any): Promise<{
         id: string;
-        createdAt: Date;
+        isActive: boolean;
         updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
+        createdAt: Date;
         keyword: string;
         replyComment: boolean;
         triggerCount: number;
@@ -76,10 +76,10 @@ export declare class CommentTriggerService {
     }>;
     deleteTrigger(merchantId: string, triggerId: string): Promise<{
         id: string;
-        createdAt: Date;
+        isActive: boolean;
         updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
+        createdAt: Date;
         keyword: string;
         replyComment: boolean;
         triggerCount: number;

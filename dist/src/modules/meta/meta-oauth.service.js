@@ -48,7 +48,7 @@ let MetaOauthService = MetaOauthService_1 = class MetaOauthService {
             'pages_show_list',
             'business_management',
         ].join(',');
-        return `https://www.facebook.com/v20.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${shop}`;
+        return `https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${shop}`;
     }
     async exchangeCodeForToken(code, redirectUriSuffix) {
         const clientId = this.config.get('META_APP_ID');

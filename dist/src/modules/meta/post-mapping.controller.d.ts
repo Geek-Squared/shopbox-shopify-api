@@ -8,50 +8,50 @@ export declare class PostMappingController {
         shopifyProductId: string;
     }): Promise<{
         id: string;
-        createdAt: Date;
+        isActive: boolean;
         updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
-        mediaId: string;
         platform: string;
         postUrl: string | null;
+        mediaId: string;
         shopifyProductId: string;
         productTitle: string | null;
+        createdAt: Date;
     }>;
     list(req: any): Promise<{
         id: string;
-        createdAt: Date;
+        isActive: boolean;
         updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
-        mediaId: string;
         platform: string;
         postUrl: string | null;
+        mediaId: string;
         shopifyProductId: string;
         productTitle: string | null;
+        createdAt: Date;
     }[]>;
     update(req: any, id: string, body: any): Promise<{
         id: string;
-        createdAt: Date;
+        isActive: boolean;
         updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
-        mediaId: string;
         platform: string;
         postUrl: string | null;
+        mediaId: string;
         shopifyProductId: string;
         productTitle: string | null;
+        createdAt: Date;
     }>;
     remove(req: any, id: string): Promise<{
         id: string;
-        createdAt: Date;
+        isActive: boolean;
         updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
-        mediaId: string;
         platform: string;
         postUrl: string | null;
+        mediaId: string;
         shopifyProductId: string;
         productTitle: string | null;
+        createdAt: Date;
     }>;
 }

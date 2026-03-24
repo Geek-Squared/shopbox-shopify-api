@@ -15,27 +15,27 @@ export declare class PostMappingService {
         shopifyProductId: string;
     }): Promise<{
         id: string;
-        createdAt: Date;
+        isActive: boolean;
         updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
-        mediaId: string;
         platform: string;
         postUrl: string | null;
+        mediaId: string;
         shopifyProductId: string;
         productTitle: string | null;
+        createdAt: Date;
     }>;
     listMappings(merchantId: string): Promise<{
         id: string;
-        createdAt: Date;
+        isActive: boolean;
         updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
-        mediaId: string;
         platform: string;
         postUrl: string | null;
+        mediaId: string;
         shopifyProductId: string;
         productTitle: string | null;
+        createdAt: Date;
     }[]>;
     updateMapping(merchantId: string, mappingId: string, data: Partial<{
         shopifyProductId: string;
@@ -43,38 +43,38 @@ export declare class PostMappingService {
         isActive: boolean;
     }>): Promise<{
         id: string;
-        createdAt: Date;
+        isActive: boolean;
         updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
-        mediaId: string;
         platform: string;
         postUrl: string | null;
+        mediaId: string;
         shopifyProductId: string;
         productTitle: string | null;
+        createdAt: Date;
     }>;
     deleteMapping(merchantId: string, mappingId: string): Promise<{
         id: string;
-        createdAt: Date;
+        isActive: boolean;
         updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
-        mediaId: string;
         platform: string;
         postUrl: string | null;
+        mediaId: string;
         shopifyProductId: string;
         productTitle: string | null;
+        createdAt: Date;
     }>;
     findByMediaId(merchantId: string, mediaId: string): Promise<{
         id: string;
-        createdAt: Date;
+        isActive: boolean;
         updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
-        mediaId: string;
         platform: string;
         postUrl: string | null;
+        mediaId: string;
         shopifyProductId: string;
         productTitle: string | null;
+        createdAt: Date;
     }>;
 }
