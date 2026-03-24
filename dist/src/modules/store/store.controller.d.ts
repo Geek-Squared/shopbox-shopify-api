@@ -11,28 +11,28 @@ export declare class StoreController {
         description: string;
         products: {
             id: string;
-            name: string;
             createdAt: Date;
-            updatedAt: Date;
             sellerId: string;
-            description: string | null;
             storeId: string;
+            name: string;
             price: number;
+            description: string | null;
             currency: string;
             active: boolean;
+            updatedAt: Date;
             stockQty: number;
         }[];
     }>;
     updateStore(user: JwtPayload, payload: UpdateStoreDto): Promise<{
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        slug: string;
+        name: string;
         description: string | null;
-        category: string | null;
-        city: string | null;
+        slug: string;
         logoUrl: string | null;
+        city: string | null;
+        category: string | null;
+        updatedAt: Date;
     }>;
 }

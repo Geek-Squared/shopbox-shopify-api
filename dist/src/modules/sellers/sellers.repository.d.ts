@@ -4,11 +4,11 @@ export declare class SellersRepository {
     constructor(prisma: PrismaService);
     findByEmail(email: string): import("../../../generated/prisma/models").Prisma__SellerClient<{
         id: string;
-        email: string | null;
-        passwordHash: string;
-        name: string;
-        phone: string;
         createdAt: Date;
+        name: string;
+        email: string | null;
+        phone: string;
+        passwordHash: string;
         updatedAt: Date;
         isVerified: boolean;
     }, null, import("@prisma/client/runtime/client").DefaultArgs, {
@@ -16,11 +16,11 @@ export declare class SellersRepository {
     }>;
     findByPhone(phone: string): import("../../../generated/prisma/models").Prisma__SellerClient<{
         id: string;
-        email: string | null;
-        passwordHash: string;
-        name: string;
-        phone: string;
         createdAt: Date;
+        name: string;
+        email: string | null;
+        phone: string;
+        passwordHash: string;
         updatedAt: Date;
         isVerified: boolean;
     }, null, import("@prisma/client/runtime/client").DefaultArgs, {
@@ -28,11 +28,11 @@ export declare class SellersRepository {
     }>;
     findById(id: string): import("../../../generated/prisma/models").Prisma__SellerClient<{
         id: string;
-        email: string | null;
-        passwordHash: string;
-        name: string;
-        phone: string;
         createdAt: Date;
+        name: string;
+        email: string | null;
+        phone: string;
+        passwordHash: string;
         updatedAt: Date;
         isVerified: boolean;
     }, null, import("@prisma/client/runtime/client").DefaultArgs, {
@@ -45,11 +45,11 @@ export declare class SellersRepository {
         passwordHash: string;
     }): import("../../../generated/prisma/models").Prisma__SellerClient<{
         id: string;
-        email: string | null;
-        passwordHash: string;
-        name: string;
-        phone: string;
         createdAt: Date;
+        name: string;
+        email: string | null;
+        phone: string;
+        passwordHash: string;
         updatedAt: Date;
         isVerified: boolean;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {
@@ -63,11 +63,11 @@ export declare class SellersRepository {
         otpExpiresAt?: Date | null;
     }): import("../../../generated/prisma/models").Prisma__SellerClient<{
         id: string;
-        email: string | null;
-        passwordHash: string;
-        name: string;
-        phone: string;
         createdAt: Date;
+        name: string;
+        email: string | null;
+        phone: string;
+        passwordHash: string;
         updatedAt: Date;
         isVerified: boolean;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {

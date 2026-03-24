@@ -18,15 +18,15 @@ export declare class ProductsService {
         }[];
     } & {
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        description: string | null;
         storeId: string;
+        name: string;
         price: number;
+        description: string | null;
         currency: string;
         active: boolean;
+        updatedAt: Date;
         stockQty: number;
     })[]>;
     listPublicByStore(storeId: string): import("../../../generated/prisma/internal/prismaNamespace").PrismaPromise<({
@@ -39,15 +39,15 @@ export declare class ProductsService {
         }[];
     } & {
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        description: string | null;
         storeId: string;
+        name: string;
         price: number;
+        description: string | null;
         currency: string;
         active: boolean;
+        updatedAt: Date;
         stockQty: number;
     })[]>;
     listForBot(storeId: string): import("../../../generated/prisma/internal/prismaNamespace").PrismaPromise<({
@@ -60,15 +60,15 @@ export declare class ProductsService {
         }[];
     } & {
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        description: string | null;
         storeId: string;
+        name: string;
         price: number;
+        description: string | null;
         currency: string;
         active: boolean;
+        updatedAt: Date;
         stockQty: number;
     })[]>;
     findOne(id: string, sellerId: string): Promise<{
@@ -81,15 +81,15 @@ export declare class ProductsService {
         }[];
     } & {
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        description: string | null;
         storeId: string;
+        name: string;
         price: number;
+        description: string | null;
         currency: string;
         active: boolean;
+        updatedAt: Date;
         stockQty: number;
     }>;
     findPublicById(id: string): Promise<{
@@ -102,28 +102,28 @@ export declare class ProductsService {
         }[];
     } & {
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        description: string | null;
         storeId: string;
+        name: string;
         price: number;
+        description: string | null;
         currency: string;
         active: boolean;
+        updatedAt: Date;
         stockQty: number;
     }>;
     create(sellerId: string, payload: CreateProductDto): Promise<{
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        description: string | null;
         storeId: string;
+        name: string;
         price: number;
+        description: string | null;
         currency: string;
         active: boolean;
+        updatedAt: Date;
         stockQty: number;
     }>;
     update(id: string, sellerId: string, payload: UpdateProductDto): Promise<{
@@ -136,15 +136,15 @@ export declare class ProductsService {
         }[];
     } & {
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        description: string | null;
         storeId: string;
+        name: string;
         price: number;
+        description: string | null;
         currency: string;
         active: boolean;
+        updatedAt: Date;
         stockQty: number;
     }>;
     updateStock(id: string, sellerId: string, quantity: number): Promise<{
@@ -157,15 +157,15 @@ export declare class ProductsService {
         }[];
     } & {
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        description: string | null;
         storeId: string;
+        name: string;
         price: number;
+        description: string | null;
         currency: string;
         active: boolean;
+        updatedAt: Date;
         stockQty: number;
     }>;
     getLowStock(sellerId: string): Promise<({
@@ -178,15 +178,15 @@ export declare class ProductsService {
         }[];
     } & {
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        description: string | null;
         storeId: string;
+        name: string;
         price: number;
+        description: string | null;
         currency: string;
         active: boolean;
+        updatedAt: Date;
         stockQty: number;
     })[]>;
     getOutOfStock(sellerId: string): Promise<({
@@ -199,15 +199,15 @@ export declare class ProductsService {
         }[];
     } & {
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        description: string | null;
         storeId: string;
+        name: string;
         price: number;
+        description: string | null;
         currency: string;
         active: boolean;
+        updatedAt: Date;
         stockQty: number;
     })[]>;
     toggleActive(id: string, sellerId: string, active: boolean): Promise<{
@@ -220,15 +220,15 @@ export declare class ProductsService {
         }[];
     } & {
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        description: string | null;
         storeId: string;
+        name: string;
         price: number;
+        description: string | null;
         currency: string;
         active: boolean;
+        updatedAt: Date;
         stockQty: number;
     }>;
     addImage(productId: string, sellerId: string, data: {
@@ -256,15 +256,15 @@ export declare class ProductsService {
         }[];
     } & {
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        description: string | null;
         storeId: string;
+        name: string;
         price: number;
+        description: string | null;
         currency: string;
         active: boolean;
+        updatedAt: Date;
         stockQty: number;
     }>;
     remove(id: string, sellerId: string): Promise<{
@@ -273,15 +273,15 @@ export declare class ProductsService {
     }>;
     decrementStock(productId: string, quantity: number): Promise<{
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        description: string | null;
         storeId: string;
+        name: string;
         price: number;
+        description: string | null;
         currency: string;
         active: boolean;
+        updatedAt: Date;
         stockQty: number;
     }>;
     private enforcePlanLimit;

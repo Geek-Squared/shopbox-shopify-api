@@ -7,8 +7,8 @@ export declare class CommentTriggerController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        isActive: boolean;
         merchantId: string;
+        isActive: boolean;
         keyword: string;
         replyComment: boolean;
         triggerCount: number;
@@ -18,8 +18,8 @@ export declare class CommentTriggerController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        isActive: boolean;
         merchantId: string;
+        isActive: boolean;
         keyword: string;
         replyComment: boolean;
         triggerCount: number;
@@ -29,8 +29,8 @@ export declare class CommentTriggerController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        isActive: boolean;
         merchantId: string;
+        isActive: boolean;
         keyword: string;
         replyComment: boolean;
         triggerCount: number;
@@ -40,8 +40,8 @@ export declare class CommentTriggerController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        isActive: boolean;
         merchantId: string;
+        isActive: boolean;
         keyword: string;
         replyComment: boolean;
         triggerCount: number;

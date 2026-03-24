@@ -117,6 +117,9 @@ let MessengerBotService = MessengerBotService_1 = class MessengerBotService {
         if (input === 'VIEW_CART' || lowerInput === 'cart') {
             return this.handleViewCart(senderId, merchant, token, context);
         }
+        if (input === 'CHECKOUT' || lowerInput === 'checkout') {
+            return this.handleCartAction(senderId, merchant, token, 'CHECKOUT', context);
+        }
         if (input === 'MY_ORDERS') {
             return this.handleMyOrders(senderId, merchant, token);
         }
@@ -289,6 +292,8 @@ let MessengerBotService = MessengerBotService_1 = class MessengerBotService {
                                     image_url: isCommentId ? undefined : (product.primaryImage || undefined),
                                     buttons: [
                                         { type: 'web_url', title: '🛍️ Keep Shopping', url: `https://${merchant.shop}/collections/all` },
+                                        { type: 'postback', title: '🛒 Add to Cart', payload: `ADD_${product.id}` },
+                                        { type: 'postback', title: '💳 Checkout', payload: 'CHECKOUT' },
                                     ],
                                 }],
                         },
@@ -322,8 +327,9 @@ let MessengerBotService = MessengerBotService_1 = class MessengerBotService {
                                     subtitle: subtitle.substring(0, 80),
                                     image_url: product.primaryImage || undefined,
                                     buttons: [
-                                        { type: 'postback', title: '🛒 Add to Cart', payload: `ADD_${product.id}` },
                                         { type: 'web_url', title: '🛍️ Keep Shopping', url: `https://${merchant.shop}/collections/all` },
+                                        { type: 'postback', title: '🛒 Add to Cart', payload: `ADD_${product.id}` },
+                                        { type: 'postback', title: '💳 Checkout', payload: 'CHECKOUT' },
                                     ],
                                 }],
                         },

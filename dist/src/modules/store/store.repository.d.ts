@@ -5,39 +5,39 @@ export declare class StoreRepository {
     findBySlug(slug: string): import("../../../generated/prisma/models").Prisma__StoreClient<{
         seller: {
             id: string;
-            email: string | null;
-            passwordHash: string;
-            name: string;
-            phone: string;
             createdAt: Date;
+            name: string;
+            email: string | null;
+            phone: string;
+            passwordHash: string;
             updatedAt: Date;
             isVerified: boolean;
         };
     } & {
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        slug: string;
+        name: string;
         description: string | null;
-        category: string | null;
-        city: string | null;
+        slug: string;
         logoUrl: string | null;
+        city: string | null;
+        category: string | null;
+        updatedAt: Date;
     }, null, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;
     findBySellerId(sellerId: string): import("../../../generated/prisma/models").Prisma__StoreClient<{
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        slug: string;
+        name: string;
         description: string | null;
-        category: string | null;
-        city: string | null;
+        slug: string;
         logoUrl: string | null;
+        city: string | null;
+        category: string | null;
+        updatedAt: Date;
     }, null, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;
@@ -48,15 +48,15 @@ export declare class StoreRepository {
         description?: string;
     }): import("../../../generated/prisma/models").Prisma__StoreClient<{
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        slug: string;
+        name: string;
         description: string | null;
-        category: string | null;
-        city: string | null;
+        slug: string;
         logoUrl: string | null;
+        city: string | null;
+        category: string | null;
+        updatedAt: Date;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;
@@ -68,15 +68,15 @@ export declare class StoreRepository {
         category?: string;
     }): import("../../../generated/prisma/models").Prisma__StoreClient<{
         id: string;
-        name: string;
         createdAt: Date;
-        updatedAt: Date;
         sellerId: string;
-        slug: string;
+        name: string;
         description: string | null;
-        category: string | null;
-        city: string | null;
+        slug: string;
         logoUrl: string | null;
+        city: string | null;
+        category: string | null;
+        updatedAt: Date;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;

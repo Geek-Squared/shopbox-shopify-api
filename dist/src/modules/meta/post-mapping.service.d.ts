@@ -17,8 +17,8 @@ export declare class PostMappingService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        isActive: boolean;
         merchantId: string;
+        isActive: boolean;
         mediaId: string;
         platform: string;
         postUrl: string | null;
@@ -29,8 +29,8 @@ export declare class PostMappingService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        isActive: boolean;
         merchantId: string;
+        isActive: boolean;
         mediaId: string;
         platform: string;
         postUrl: string | null;
@@ -45,8 +45,8 @@ export declare class PostMappingService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        isActive: boolean;
         merchantId: string;
+        isActive: boolean;
         mediaId: string;
         platform: string;
         postUrl: string | null;
@@ -57,8 +57,8 @@ export declare class PostMappingService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        isActive: boolean;
         merchantId: string;
+        isActive: boolean;
         mediaId: string;
         platform: string;
         postUrl: string | null;
@@ -69,8 +69,8 @@ export declare class PostMappingService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        isActive: boolean;
         merchantId: string;
+        isActive: boolean;
         mediaId: string;
         platform: string;
         postUrl: string | null;
