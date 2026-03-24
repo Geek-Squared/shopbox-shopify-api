@@ -7,40 +7,21 @@ datasource db {
   provider = "postgresql"
 }
 
-enum OrderStatus {
-  PENDING
-  PAID
-  CONFIRMED
-  FULFILLED
-  CANCELLED
-}
-
-enum PaymentStatus {
-  PENDING
-  SUCCESS
-  FAILED
-}
-
-enum MessageDirection {
-  INBOUND
-  OUTBOUND
-}
-
 model Seller {
   id           String            @id @default(cuid())
   email        String?           @unique
   passwordHash String
   name         String
   phone        String            @unique
-  isVerified   Boolean           @default(false)
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
-  store        Store?
-  products     Product[]
+  isVerified   Boolean           @default(false)
   orders       Order[]
+  products     Product[]
+  plugins      SellerPlugin[]
+  sessions     SellerSession[]
+  store        Store?
   messages     WhatsappMessage[]
-   sessions     SellerSession[]
-  plugins      SellerPlugin[]  
 }
 
 model Store {
@@ -49,32 +30,32 @@ model Store {
   slug        String            @unique
   name        String
   description String?
-  logoUrl     String?
-  city        String?
-  category    String?
   createdAt   DateTime          @default(now())
   updatedAt   DateTime          @updatedAt
-  seller      Seller            @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  products    Product[]
+  category    String?
+  city        String?
+  logoUrl     String?
   orders      Order[]
+  products    Product[]
+  seller      Seller            @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   messages    WhatsappMessage[]
 }
 
 model Product {
-  id          String      @id @default(cuid())
+  id          String         @id @default(cuid())
   sellerId    String
   storeId     String
   name        String
   description String?
   price       Float
-  currency    String      @default("USD")
-  active      Boolean     @default(true)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  seller      Seller      @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  store       Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  currency    String         @default("USD")
+  active      Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  stockQty    Int            @default(0)
   orderItems  OrderItem[]
-  stockQty    Int         @default(0)
+  seller      Seller         @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  store       Store          @relation(fields: [storeId], references: [id], onDelete: Cascade)
   images      ProductImage[]
 
   @@index([sellerId])
@@ -82,43 +63,43 @@ model Product {
 }
 
 model Order {
-  id            String       @id @default(cuid())
-  sellerId      String
-  storeId       String
-  status        OrderStatus  @default(PENDING)
-  customerName  String
-  customerPhone String
-  customerEmail String?
-  totalAmount   Float
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  seller        Seller       @relation(fields: [sellerId], references: [id], onDelete: Cascade)
-  store         Store        @relation(fields: [storeId], references: [id], onDelete: Cascade)
-  items         OrderItem[]
-  payment       Payment?
-  messages      WhatsappMessage[]
-  orderNumber String? @unique            
-  deliveryCode String? @unique            
-  buyerId      String?             
+  id              String            @id @default(cuid())
+  sellerId        String
+  storeId         String
+  status          OrderStatus       @default(PENDING)
+  customerName    String
+  customerPhone   String
+  customerEmail   String?
+  totalAmount     Float
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  buyerId         String?
+  deliveryCode    String?           @unique
+  notes           String?
+  orderNumber     String?           @unique
   deliveryAddress String?
-  notes        String?            
-  buyer  Buyer? @relation(fields: [buyerId], references: [id])
-  delivery     Delivery?  
-  
+  delivery        Delivery?
+  buyer           Buyer?            @relation(fields: [buyerId], references: [id])
+  seller          Seller            @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  store           Store             @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  items           OrderItem[]
+  payment         Payment?
+  messages        WhatsappMessage[]
+
   @@index([sellerId])
   @@index([storeId])
-  @@index([buyerId]) 
+  @@index([buyerId])
 }
 
 model OrderItem {
-  id        String   @id @default(cuid())
+  id        String  @id @default(cuid())
   orderId   String
   productId String
   quantity  Int
   unitPrice Float
   lineTotal Float
-  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product   Product  @relation(fields: [productId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
 
   @@index([orderId])
   @@index([productId])
@@ -148,9 +129,9 @@ model WhatsappMessage {
   content    String
   status     String?
   createdAt  DateTime         @default(now())
-  seller     Seller?          @relation(fields: [sellerId], references: [id], onDelete: SetNull)
-  store      Store?           @relation(fields: [storeId], references: [id], onDelete: SetNull)
-  order      Order?           @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  order      Order?           @relation(fields: [orderId], references: [id])
+  seller     Seller?          @relation(fields: [sellerId], references: [id])
+  store      Store?           @relation(fields: [storeId], references: [id])
 
   @@index([sellerId])
   @@index([storeId])
@@ -179,57 +160,43 @@ model Buyer {
 }
 
 model OtpCode {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   phoneNumber String
   code        String
   purpose     OtpPurpose
-  isUsed      Boolean  @default(false)
-  attempts    Int      @default(0)
+  isUsed      Boolean    @default(false)
+  attempts    Int        @default(0)
   expiresAt   DateTime
-  createdAt   DateTime @default(now())
+  createdAt   DateTime   @default(now())
 
   @@index([phoneNumber, purpose])
 }
 
-enum OtpPurpose {
-  SELLER_LOGIN
-  SELLER_REGISTER
-  BUYER_ORDER
-  RIDER_LOGIN
-}
-
 model ProductImage {
-  id        String   @id @default(cuid())
+  id        String  @id @default(cuid())
   productId String
   imageUrl  String
-  isPrimary Boolean  @default(false)
-  sortOrder Int      @default(0)
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  isPrimary Boolean @default(false)
+  sortOrder Int     @default(0)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
 }
 
 model Rider {
-  id              String       @id @default(cuid())
-  phoneNumber     String       @unique
+  id              String         @id @default(cuid())
+  phoneNumber     String         @unique
   fullName        String
-  nationalId      String       @unique
+  nationalId      String         @unique
   city            String
   vehicleType     VehicleType
-  isVerified      Boolean      @default(false)
-  isOnline        Boolean      @default(false)
-  rating          Float        @default(5.0)
-  totalDeliveries Int          @default(0)
-  createdAt       DateTime     @default(now())
+  isVerified      Boolean        @default(false)
+  isOnline        Boolean        @default(false)
+  rating          Float          @default(5.0)
+  totalDeliveries Int            @default(0)
+  createdAt       DateTime       @default(now())
   deliveries      Delivery[]
   earnings        RiderEarning[]
-}
-
-enum VehicleType {
-  BICYCLE
-  MOTORBIKE
-  CAR
-  WALKING
 }
 
 model Delivery {
@@ -249,40 +216,19 @@ model Delivery {
   createdAt      DateTime       @default(now())
   order          Order          @relation(fields: [orderId], references: [id])
   rider          Rider?         @relation(fields: [riderId], references: [id])
-  earnings  RiderEarning[]
-}
-
-enum DeliveryStatus {
-  LOOKING_FOR_RIDER
-  RIDER_ASSIGNED
-  PICKED_UP
-  IN_TRANSIT
-  DELIVERED
-  FAILED
+  earnings       RiderEarning[]
 }
 
 model RiderEarning {
   id         String        @id @default(cuid())
   riderId    String
   deliveryId String?
-  delivery  Delivery? @relation(fields: [deliveryId], references: [id])
   amountUsd  Float
   type       EarningType
   status     EarningStatus @default(PENDING)
   createdAt  DateTime      @default(now())
+  delivery   Delivery?     @relation(fields: [deliveryId], references: [id])
   rider      Rider         @relation(fields: [riderId], references: [id])
-}
-
-enum EarningType {
-  DELIVERY_PAYOUT
-  BONUS
-  WITHDRAWAL
-}
-
-enum EarningStatus {
-  PENDING
-  PAID
-  CANCELLED
 }
 
 model Plugin {
@@ -304,8 +250,8 @@ model SellerPlugin {
   isActive    Boolean  @default(true)
   config      Json?
   installedAt DateTime @default(now())
-  seller      Seller   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
   plugin      Plugin   @relation(fields: [pluginId], references: [id])
+  seller      Seller   @relation(fields: [sellerId], references: [id], onDelete: Cascade)
 
   @@unique([sellerId, pluginId])
 }
@@ -321,15 +267,12 @@ model SellerSession {
   @@index([sellerId])
 }
 
-// Useful for your admin console
-// Tracks everything that happens
-
 model AuditLog {
   id         String   @id @default(cuid())
-  actorType  String?  // "seller" | "admin" | "system"
+  actorType  String?
   actorId    String?
-  action     String   // "order.created" | "seller.verified"
-  entityType String?  // "order" | "seller" | "product"
+  action     String
+  entityType String?
   entityId   String?
   metadata   Json?
   ipAddress  String?
@@ -346,29 +289,26 @@ model ShopifyMerchant {
   scope              String
   storeSlug          String?
   storeName          String?
-  whatsappConnected Boolean   @default(false)
-  whatsappNumber    String?
-  whatsappPhoneId   String?
+  whatsappConnected  Boolean   @default(false)
+  whatsappNumber     String?
+  whatsappPhoneId    String?
   whatsappToken      String?
   instagramConnected Boolean   @default(false)
   instagramToken     String?
   instagramAccountId String?
-  instagramUsername   String?
   messengerConnected Boolean   @default(false)
   messengerToken     String?
   messengerPageId    String?
-  messengerPageName  String?
   isActive           Boolean   @default(true)
   installedAt        DateTime  @default(now())
   uninstalledAt      DateTime?
-  
-  // Billing fields
-  planName           String?   // "BASIC" | "PRO"
-  planStatus         String?   // "ACTIVE" | "PENDING" | "EXPIRED"
-  planChargeId       String?   // Shopify AppSubscription GID
-  planTrialExpiresAt DateTime?
-
   updatedAt          DateTime  @updatedAt
+  instagramUsername  String?
+  messengerPageName  String?
+  planChargeId       String?
+  planName           String?
+  planStatus         String?
+  planTrialExpiresAt DateTime?
 
   @@index([shop])
 }
@@ -377,12 +317,12 @@ model CommentTrigger {
   id              String   @id @default(cuid())
   merchantId      String
   keyword         String
-  replyComment    Boolean  @default(true) // Whether to send public reply
-  templateMessage String?  @db.Text // Custom DM string with {{variables}}
+  replyComment    Boolean  @default(true)
   isActive        Boolean  @default(true)
   triggerCount    Int      @default(0)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  templateMessage String?
 
   @@unique([merchantId, keyword])
   @@index([merchantId])
@@ -402,11 +342,11 @@ model CommentDmLog {
 model PostProductMapping {
   id               String   @id @default(cuid())
   merchantId       String
-  platform         String   // "instagram" | "facebook"
-  postUrl          String?  // Original post URL (for merchant reference)
-  mediaId          String   // Instagram media ID or Facebook post_id
-  shopifyProductId String   // Shopify product ID to link to
-  productTitle     String?  // Cached product title for quick display
+  platform         String
+  postUrl          String?
+  mediaId          String
+  shopifyProductId String
+  productTitle     String?
   isActive         Boolean  @default(true)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -414,4 +354,58 @@ model PostProductMapping {
   @@unique([merchantId, mediaId])
   @@index([merchantId])
   @@index([mediaId])
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  CONFIRMED
+  FULFILLED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum OtpPurpose {
+  SELLER_LOGIN
+  SELLER_REGISTER
+  BUYER_ORDER
+  RIDER_LOGIN
+}
+
+enum VehicleType {
+  BICYCLE
+  MOTORBIKE
+  CAR
+  WALKING
+}
+
+enum DeliveryStatus {
+  LOOKING_FOR_RIDER
+  RIDER_ASSIGNED
+  PICKED_UP
+  IN_TRANSIT
+  DELIVERED
+  FAILED
+}
+
+enum EarningType {
+  DELIVERY_PAYOUT
+  BONUS
+  WITHDRAWAL
+}
+
+enum EarningStatus {
+  PENDING
+  PAID
+  CANCELLED
 }

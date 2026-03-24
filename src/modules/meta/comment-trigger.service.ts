@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { MetaSenderService } from './meta-sender.service';
 import { ShopifyRepository } from '../shopify/shopify.repository';
 import { ShopifyApiService } from '../shopify/shopify-api.service';
+import { InstagramBotService } from './instagram-bot.service';
 import { MessengerBotService } from './messenger-bot.service';
 import { BotSessionService } from '../whatsapp/bot-session.service';
 
@@ -17,8 +18,49 @@ export class CommentTriggerService {
     private readonly shopifyApi: ShopifyApiService,
     @Inject(forwardRef(() => MessengerBotService))
     private readonly messengerBot: MessengerBotService,
+    private readonly instagramBot: InstagramBotService,
     private readonly session: BotSessionService,
   ) {}
+
+  private normalizeFacebookUrl(postUrl?: string): string | undefined {
+    if (!postUrl) {
+      return undefined;
+    }
+
+    try {
+      const url = new URL(postUrl);
+      url.hash = '';
+
+      if (url.hostname === 'm.facebook.com') {
+        url.hostname = 'www.facebook.com';
+      }
+
+      const normalized = `${url.origin}${url.pathname}${url.search}`;
+      return normalized.endsWith('/') && !url.search
+        ? normalized.slice(0, -1)
+        : normalized;
+    } catch {
+      return postUrl;
+    }
+  }
+
+  private getProductUrl(shop: string, product: any): string | null {
+    if (product?.onlineStoreUrl) {
+      return product.onlineStoreUrl;
+    }
+    if (product?.handle) {
+      return `https://${shop}/products/${product.handle}`;
+    }
+    return null;
+  }
+
+  private getCheckoutUrl(shop: string, product: any): string | null {
+    const variantId = product?.variants?.[0]?.id;
+    if (variantId) {
+      return `https://${shop}/cart/${variantId}:1`;
+    }
+    return this.getProductUrl(shop, product);
+  }
 
   async handleInstagramComment(data: {
     merchantId: string;
@@ -42,7 +84,7 @@ export class CommentTriggerService {
 
     if (!matchingTrigger) return;
 
-    // Duplication check (prevent spam)
+    // Duplication check (prevent spam per post)
     const existingLog = await this.prisma.commentDmLog.findUnique({
       where: {
         merchantId_commenterId_mediaId: {
@@ -55,66 +97,63 @@ export class CommentTriggerService {
 
     if (existingLog) return;
 
-    // Get merchant for store info
     const merchant = await this.shopifyRepo.findById(merchantId);
     if (!merchant) return;
 
-    // Check for Active Plan (Mandatory for Shopify)
+    // Check for Active Plan
     const isDevelopment = process.env.NODE_ENV !== 'production';
     if (!isDevelopment && merchant.planStatus !== 'ACTIVE') {
        this.logger.warn(`Merchant ${merchant.shop} does not have an active plan. Skipping automation.`);
        return;
     }
 
-    const storeName = merchant.shop.split('.')[0];
-
-    // Prepare custom message
-    let dmText = matchingTrigger.templateMessage;
-    if (!dmText) {
-      dmText = `Hi @{{commenter_name}}! 👋\n\nThanks for your interest! We'd love to help you shop.\n\nTap below to browse {{store_name}} and order directly here 👇`;
-    }
-
-    // Replace basic variables
-    dmText = dmText.replace(/{{commenter_name}}/g, commenterUsername || 'there')
-                   .replace(/{{store_name}}/g, storeName || 'our store');
-
-    // Check for product mapping
-    const postMapping = await this.prisma.postProductMapping.findUnique({
-      where: { merchantId_mediaId: { merchantId, mediaId } },
+    // 🆕 SMART LOOKUP — Find mapping even if ID format varies
+    const numericId = mediaId.includes('_') ? mediaId.split('_')[1] : mediaId;
+    const postMapping = await this.prisma.postProductMapping.findFirst({
+      where: {
+        merchantId,
+        isActive: true,
+        OR: [
+          { mediaId: mediaId },
+          { mediaId: numericId },
+          { postUrl: { contains: mediaId } },
+          { postUrl: { contains: numericId } },
+        ],
+      },
     });
 
-    if (postMapping && postMapping.isActive) {
-      try {
-        const product = await this.shopifyApi.getProduct(merchant.shop, postMapping.shopifyProductId);
-        if (product) {
-          dmText = this.replaceTemplateVariables(dmText, product);
-        }
-      } catch (e) {
-        this.logger.warn(`Could not fetch product for IG variable replacement: ${e.message}`);
-      }
-    }
-
     try {
-      // Send DM
-      await this.metaSender.sendText(
-        commenterId,
-        dmText,
-        instagramToken,
-        merchantId,
-        'instagram'
-      );
+      let delivered = false;
 
-      await this.metaSender.sendQuickReplies(
-        commenterId,
-        "Select an option:",
-        [
-          { title: "🛍️ Browse Store", payload: "START_SHOPPING" },
-          { title: "💰 See Prices", payload: "SHOW_PRODUCTS" }
-        ],
-        instagramToken,
-        merchantId,
-        'instagram'
-      );
+      if (postMapping && postMapping.isActive) {
+        try {
+          const product = await this.shopifyApi.getProduct(merchant.shop, postMapping.shopifyProductId);
+          if (product) {
+            delivered = await this.instagramBot.showProductDetail(
+              commenterId, 
+              merchant,
+              instagramToken,
+              product,
+              { merchantId, shop: merchant.shop },
+              undefined, // Use default subtitle (Fixes character limit error)
+              commentId 
+            );
+            if (delivered) {
+              this.logger.log(`🎯 Sent direct product card for "${product.title}" to IG user ${commenterUsername}`);
+            } else {
+              this.logger.warn(`Meta did not accept the IG direct product reply for "${product.title}" to ${commenterUsername}`);
+            }
+          }
+        } catch (productErr) {
+          this.logger.error(`Failed to send IG product card: ${productErr.message}`);
+        }
+      } else {
+        this.logger.log(`ℹ️ Post ${mediaId} has no mapping. Skipping IG DM.`);
+      }
+
+      if (!delivered) {
+        return;
+      }
 
       // Save Log
       await this.prisma.commentDmLog.create({
@@ -132,6 +171,7 @@ export class CommentTriggerService {
         data: { triggerCount: { increment: 1 } },
       });
 
+      // Public Reply
       if (matchingTrigger.replyComment) {
         const replyUrl = `https://graph.facebook.com/v18.0/${commentId}/replies?access_token=${instagramToken}`;
         await fetch(replyUrl, {
@@ -152,15 +192,15 @@ export class CommentTriggerService {
     commenterId: string;
     commenterName: string;
     postId: string;
+    postPermalinkUrl?: string;
     commentId: string;
     messengerToken: string;
   }) {
-    const { merchantId, commentText, commenterId, commenterName, postId, commentId, messengerToken } = data;
+    const { merchantId, commentText, commenterId, commenterName, postId, postPermalinkUrl, commentId, messengerToken } = data;
 
-    // Skip comments made by the page itself
     if (commentText === undefined) return;
 
-    // Find active triggers for merchant
+    // Find active triggers
     const triggers = await this.prisma.commentTrigger.findMany({
       where: { merchantId, isActive: true },
     });
@@ -169,12 +209,9 @@ export class CommentTriggerService {
       t.keyword.trim().length > 0 && commentText.toLowerCase().includes(t.keyword.toLowerCase())
     );
 
-    if (!matchingTrigger) {
-      this.logger.debug(`No matching trigger found for keyword "${commentText}"`);
-      return;
-    }
+    if (!matchingTrigger) return;
 
-    // Duplication check (prevent spam per post)
+    // Duplication check
     const existingLog = await this.prisma.commentDmLog.findUnique({
       where: {
         merchantId_commenterId_mediaId: {
@@ -185,89 +222,158 @@ export class CommentTriggerService {
       },
     });
 
-    if (existingLog) {
-      this.logger.debug(`DM already sent to ${commenterId} on post ${postId}. Ignored.`);
-      return;
-    }
+    if (existingLog) return;
 
     const merchant = await this.shopifyRepo.findById(merchantId);
     if (!merchant) return;
 
-    // Check for Active Plan (Mandatory for Shopify)
+    // Plan check
     const isDevelopment = process.env.NODE_ENV !== 'production';
-    if (!isDevelopment && merchant.planStatus !== 'ACTIVE') {
-       this.logger.warn(`Merchant ${merchant.shop} does not have an active plan. Skipping automation.`);
-       return;
-    }
+    if (!isDevelopment && merchant.planStatus !== 'ACTIVE') return;
 
-    const storeName = merchant.shop.split('.')[0];
-
-    // 🆕 Check if this post is mapped to a specific Shopify product
-    const postMapping = await this.prisma.postProductMapping.findUnique({
+    // 🆕 SMART LOOKUP
+    const numericId = postId.includes('_') ? postId.split('_')[1] : postId;
+    const normalizedPermalinkUrl = this.normalizeFacebookUrl(postPermalinkUrl);
+    const normalizedPermalinkBase = normalizedPermalinkUrl?.split('?')[0];
+    let postMapping = await this.prisma.postProductMapping.findFirst({
       where: {
-        merchantId_mediaId: { merchantId, mediaId: postId },
+        merchantId,
+        isActive: true,
+        OR: [
+          { mediaId: postId },
+          { mediaId: numericId },
+          ...(normalizedPermalinkUrl
+            ? [
+                { mediaId: `url:${normalizedPermalinkUrl}` },
+                { postUrl: normalizedPermalinkUrl },
+              ]
+            : []),
+          ...(normalizedPermalinkUrl
+            ? [
+                { postUrl: { startsWith: normalizedPermalinkBase } },
+              ]
+            : []),
+        ],
       },
     });
 
-    // Prepare custom message if template exists
-    let dmText = matchingTrigger.templateMessage;
-    // Fallback if no template is set
-    if (!dmText) {
-      if (postMapping && postMapping.isActive) {
-        dmText = `Hi {{commenter_name}}! 👋 Here's the product you were interested in from our post:`;
-      } else {
-        dmText = `Hi {{commenter_name}}! 👋 Thanks for your interest on our post.\n\nReply "shopping" to browse {{store_name}} and order directly here 👇`;
+    // 🆕 CANONICAL & ATTACHMENT RESOLUTION FALLBACK
+    if (!postMapping && merchant.messengerToken) {
+      try {
+        const url = `https://graph.facebook.com/v18.0/${postId}?fields=permalink_url,attachments&access_token=${messengerToken}`;
+        const fbRes = await fetch(url);
+        if (fbRes.ok) {
+          const fbData = await fbRes.json();
+          
+          const canonicalUrl = this.normalizeFacebookUrl(fbData.permalink_url);
+          const canonicalBase = canonicalUrl?.split('?')[0];
+          if (canonicalUrl) {
+            postMapping = await this.prisma.postProductMapping.findFirst({
+              where: {
+                merchantId,
+                isActive: true,
+                OR: [
+                  { mediaId: `url:${canonicalUrl}` },
+                  { postUrl: canonicalUrl },
+                  { postUrl: { startsWith: canonicalBase } },
+                ],
+              }
+            });
+          }
+
+          if (!postMapping && fbData.attachments?.data) {
+            const photoIds = fbData.attachments.data.flatMap((at: any) => {
+              const ids = [];
+              if (at.target?.id) ids.push(at.target.id);
+              if (at.subattachments?.data) {
+                ids.push(...at.subattachments.data.map((sat: any) => sat.target?.id).filter(Boolean));
+              }
+              return ids;
+            });
+
+            if (photoIds.length > 0) {
+              postMapping = await this.prisma.postProductMapping.findFirst({
+                where: {
+                  merchantId,
+                  isActive: true,
+                  OR: photoIds.flatMap(pid => [
+                    { mediaId: pid },
+                    { mediaId: { endsWith: `_${pid}` } },
+                    { postUrl: { contains: pid } },
+                  ]),
+                }
+              });
+            }
+          }
+        }
+      } catch (err) {
+        this.logger.warn(`Failed canonical resolution for ${postId}: ${err.message}`);
       }
     }
 
-    // Replace basic variables
-    dmText = dmText.replace(/{{commenter_name}}/g, commenterName || 'there')
-                   .replace(/{{store_name}}/g, storeName || 'our store');
-
-    this.logger.debug(`Sending DM with template: "${dmText}"`);
-
     try {
-      // Step 1: Send private reply DM via the Send API
-      const dmUrl = `https://graph.facebook.com/v18.0/me/messages?access_token=${messengerToken}`;
+      let delivered = false;
+      let selectedProduct: any = null;
 
       if (postMapping && postMapping.isActive) {
-        // 🎯 DIRECT PRODUCT DM — the killer feature!
-        this.logger.log(`🎯 Post ${postId} is mapped to product "${postMapping.productTitle}" (${postMapping.shopifyProductId})`);
-
-        // If we have a product, try to replace product variables in the template
-        let finalDmText = dmText;
         try {
           const product = await this.shopifyApi.getProduct(merchant.shop, postMapping.shopifyProductId);
           if (product) {
-            finalDmText = this.replaceTemplateVariables(finalDmText, product);
-          }
-        } catch (e) {
-          this.logger.warn(`Could not fetch product for variable replacement: ${e.message}`);
-        }
+            selectedProduct = product;
+            const privateReplyLines = [
+              `${product.title} - $${product.price.toFixed(2)}`,
+              `Reply "shop" here to continue in Messenger.`,
+            ];
 
-        // First: Send the private reply to open the DM thread
-        const dmRes = await fetch(dmUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            recipient: { comment_id: commentId },
-            message: {
-              text: finalDmText
+            const commentSuffix = commentId.includes('_') ? commentId.split('_').pop() : commentId;
+            const pagePrefixedCommentId =
+              commentSuffix && merchant.messengerPageId
+                ? `${merchant.messengerPageId}_${commentSuffix}`
+                : null;
+
+            let privateReplySent = await this.metaSender.sendText(
+              commentId,
+              privateReplyLines.join('\n').substring(0, 640),
+              messengerToken,
+              merchant.id,
+              'messenger',
+              true,
+            );
+
+            if (!privateReplySent && pagePrefixedCommentId && pagePrefixedCommentId !== commentId) {
+              this.logger.warn(
+                `Private reply failed with commentId ${commentId}. Retrying with page-prefixed id ${pagePrefixedCommentId}.`,
+              );
+              privateReplySent = await this.metaSender.sendText(
+                pagePrefixedCommentId,
+                privateReplyLines.join('\n').substring(0, 640),
+                messengerToken,
+                merchant.id,
+                'messenger',
+                true,
+              );
             }
-          })
-        });
 
-        if (!dmRes.ok) {
-          const errorText = await dmRes.text();
-          this.logger.error(`Meta Private Reply Error: ${errorText}`);
-        } else {
-          this.logger.log(`✅ Sent private reply DM for comment ${commentId}`);
+            let directOpenerSent = false;
+            if (!privateReplySent) {
+              this.logger.warn(`Meta did not accept the private reply opener for "${product.title}" to ${commenterName}. Trying direct DM opener.`);
+              directOpenerSent = await this.metaSender.sendText(
+                commenterId,
+                `${product.title} - $${product.price.toFixed(2)}\nReply "shop" to continue.`,
+                messengerToken,
+                merchant.id,
+                'messenger',
+              );
+              if (!directOpenerSent) {
+                this.logger.warn(`Meta did not accept direct DM opener for "${product.title}" to ${commenterName}. Skipping product flow and using fallback.`);
+              }
+            }
 
-          // Now send the actual product card via the bot
-          try {
-            const product = await this.shopifyApi.getProduct(merchant.shop, postMapping.shopifyProductId);
-            if (product) {
-              // Initialize a bot session so the buyer can interact with the product
+            // If we cannot open any DM path, don't attempt rich product sends that will
+            // inevitably fail with the same policy error.
+            if (!privateReplySent && !directOpenerSent) {
+              delivered = false;
+            } else {
               const sessionKey = `msg_${commenterId}_${merchantId}`;
               await this.session.updateContext(sessionKey, 'VIEWING_PRODUCT', {
                 merchantId,
@@ -275,42 +381,59 @@ export class CommentTriggerService {
                 selectedProduct: product,
               });
 
-              // Send the product card directly
-              await this.messengerBot.showProductDetail(
+              delivered = await this.messengerBot.showProductDetail(
                 commenterId,
                 merchant,
                 messengerToken,
                 product,
-                { merchantId, shop: merchant.shop }
+                { merchantId, shop: merchant.shop },
+                undefined,
               );
-              this.logger.log(`🎯 Sent direct product card for "${product.title}" to ${commenterName}`);
-            } else {
-              this.logger.warn(`Product ${postMapping.shopifyProductId} not found in Shopify`);
+
+              if (delivered) {
+                this.logger.log(`🎯 Sent Messenger product flow for "${product.title}" to ${commenterName}`);
+              } else {
+                this.logger.warn(`Meta did not accept the Messenger product flow for "${product.title}" to ${commenterName}`);
+              }
             }
-          } catch (productErr) {
-            this.logger.error(`Failed to send product card: ${productErr.message}`);
+          } else {
+            this.logger.warn(`Product ${postMapping.shopifyProductId} not found. Skipping DM.`);
           }
+        } catch (productErr) {
+          this.logger.error(`Failed to send Facebook product card: ${productErr.message}`);
         }
-
       } else {
-        // No product mapping, just send the (potentially customized) welcome message
-        const dmRes = await fetch(dmUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            recipient: { comment_id: commentId },
-            message: {
-              text: dmText
-            }
-          })
-        });
+        this.logger.log(`ℹ️ Post ${postId} has no mapping. Skipping Facebook DM.`);
+      }
 
-        if (!dmRes.ok) {
-          const errorText = await dmRes.text();
-          this.logger.error(`Meta Private Reply Error: ${errorText}`);
-        } else {
-          this.logger.log(`✅ Successfully sent private reply DM for comment ${commentId}`);
+      if (!delivered) {
+        if (matchingTrigger.replyComment && selectedProduct) {
+          const checkoutUrl = this.getCheckoutUrl(merchant.shop, selectedProduct);
+          const productUrl = this.getProductUrl(merchant.shop, selectedProduct);
+          const pageLink = merchant.messengerPageId
+            ? `https://m.me/${merchant.messengerPageId}?ref=product_${selectedProduct.id}`
+            : null;
+
+          const fallbackParts = [
+            `Hi ${commenterName}! DM is blocked by Facebook right now.`,
+          ];
+          if (checkoutUrl) {
+            fallbackParts.push(`Checkout now: ${checkoutUrl}`);
+          } else if (productUrl) {
+            fallbackParts.push(`Product: ${productUrl}`);
+          }
+          if (pageLink) {
+            fallbackParts.push(`Tap to start Messenger: ${pageLink}`);
+          }
+
+          const replyUrl = `https://graph.facebook.com/v18.0/${commentId}/comments?access_token=${messengerToken}`;
+          await fetch(replyUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: fallbackParts.join('\n').substring(0, 600) }),
+          });
         }
+        return;
       }
 
       // Save Log
@@ -329,21 +452,14 @@ export class CommentTriggerService {
         data: { triggerCount: { increment: 1 } },
       });
 
-      // Step 2: Public Reply (Optional)
+      // Public Reply
       if (matchingTrigger.replyComment) {
         const replyUrl = `https://graph.facebook.com/v18.0/${commentId}/comments?access_token=${messengerToken}`;
-        const replyRes = await fetch(replyUrl, {
+        await fetch(replyUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: `Hi ${commenterName}! We just sent you a DM 😊` }),
         });
-
-        if (!replyRes.ok) {
-          const replyError = await replyRes.text();
-          this.logger.error(`Meta Public Reply Error: ${replyError}`);
-        } else {
-          this.logger.log(`✅ Successfully sent public reply to comment ${commentId}`);
-        }
       }
 
     } catch (error) {
@@ -399,7 +515,6 @@ export class CommentTriggerService {
     const totalTriggers = await this.prisma.commentTrigger.count({ where: { merchantId } });
     const totalDms = await this.prisma.commentDmLog.count({ where: { merchantId } });
     
-    // Simplistic conversion rate: orders / DMs (In a real app would filter by order tags)
     const totalOrders = await this.prisma.order.count({
       where: { sellerId: merchantId, notes: { contains: 'Instagram' } }
     });
@@ -414,11 +529,10 @@ export class CommentTriggerService {
 
   private replaceTemplateVariables(template: string, product: any): string {
     if (!template) return '';
-    
     return template
       .replace(/{{product_name}}/g, product.title || '')
       .replace(/{{price}}/g, `$${product.price ? product.price.toFixed(2) : '0.00'}`)
-      .replace(/{{currency}}/g, 'USD') // Can be made dynamic from merchant data later
+      .replace(/{{currency}}/g, 'USD')
       .replace(/{{link}}/g, product.onlineStoreUrl || '');
   }
 }

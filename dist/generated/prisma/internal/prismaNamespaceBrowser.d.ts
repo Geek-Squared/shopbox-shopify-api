@@ -48,9 +48,9 @@ export declare const SellerScalarFieldEnum: {
     readonly passwordHash: "passwordHash";
     readonly name: "name";
     readonly phone: "phone";
-    readonly isVerified: "isVerified";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
+    readonly isVerified: "isVerified";
 };
 export type SellerScalarFieldEnum = (typeof SellerScalarFieldEnum)[keyof typeof SellerScalarFieldEnum];
 export declare const StoreScalarFieldEnum: {
@@ -59,11 +59,11 @@ export declare const StoreScalarFieldEnum: {
     readonly slug: "slug";
     readonly name: "name";
     readonly description: "description";
-    readonly logoUrl: "logoUrl";
-    readonly city: "city";
-    readonly category: "category";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
+    readonly category: "category";
+    readonly city: "city";
+    readonly logoUrl: "logoUrl";
 };
 export type StoreScalarFieldEnum = (typeof StoreScalarFieldEnum)[keyof typeof StoreScalarFieldEnum];
 export declare const ProductScalarFieldEnum: {
@@ -91,11 +91,11 @@ export declare const OrderScalarFieldEnum: {
     readonly totalAmount: "totalAmount";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
-    readonly orderNumber: "orderNumber";
-    readonly deliveryCode: "deliveryCode";
     readonly buyerId: "buyerId";
-    readonly deliveryAddress: "deliveryAddress";
+    readonly deliveryCode: "deliveryCode";
     readonly notes: "notes";
+    readonly orderNumber: "orderNumber";
+    readonly deliveryAddress: "deliveryAddress";
 };
 export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum];
 export declare const OrderItemScalarFieldEnum: {
@@ -264,19 +264,19 @@ export declare const ShopifyMerchantScalarFieldEnum: {
     readonly instagramConnected: "instagramConnected";
     readonly instagramToken: "instagramToken";
     readonly instagramAccountId: "instagramAccountId";
-    readonly instagramUsername: "instagramUsername";
     readonly messengerConnected: "messengerConnected";
     readonly messengerToken: "messengerToken";
     readonly messengerPageId: "messengerPageId";
-    readonly messengerPageName: "messengerPageName";
     readonly isActive: "isActive";
     readonly installedAt: "installedAt";
     readonly uninstalledAt: "uninstalledAt";
+    readonly updatedAt: "updatedAt";
+    readonly instagramUsername: "instagramUsername";
+    readonly messengerPageName: "messengerPageName";
+    readonly planChargeId: "planChargeId";
     readonly planName: "planName";
     readonly planStatus: "planStatus";
-    readonly planChargeId: "planChargeId";
     readonly planTrialExpiresAt: "planTrialExpiresAt";
-    readonly updatedAt: "updatedAt";
 };
 export type ShopifyMerchantScalarFieldEnum = (typeof ShopifyMerchantScalarFieldEnum)[keyof typeof ShopifyMerchantScalarFieldEnum];
 export declare const CommentTriggerScalarFieldEnum: {
@@ -284,11 +284,11 @@ export declare const CommentTriggerScalarFieldEnum: {
     readonly merchantId: "merchantId";
     readonly keyword: "keyword";
     readonly replyComment: "replyComment";
-    readonly templateMessage: "templateMessage";
     readonly isActive: "isActive";
     readonly triggerCount: "triggerCount";
     readonly createdAt: "createdAt";
     readonly updatedAt: "updatedAt";
+    readonly templateMessage: "templateMessage";
 };
 export type CommentTriggerScalarFieldEnum = (typeof CommentTriggerScalarFieldEnum)[keyof typeof CommentTriggerScalarFieldEnum];
 export declare const CommentDmLogScalarFieldEnum: {

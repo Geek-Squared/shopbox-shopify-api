@@ -14,14 +14,14 @@ export declare class OrdersService {
     findAll(sellerId: string): import("../../../generated/prisma/internal/prismaNamespace").PrismaPromise<({
         payment: {
             id: string;
-            status: import("../../../generated/prisma/enums").PaymentStatus;
             createdAt: Date;
-            orderId: string;
-            currency: string;
-            provider: string;
-            gatewayReference: string | null;
             updatedAt: Date;
+            currency: string;
+            status: import("../../../generated/prisma/enums").PaymentStatus;
+            orderId: string;
+            provider: string;
             amount: number;
+            gatewayReference: string | null;
         };
         items: {
             id: string;
@@ -33,20 +33,20 @@ export declare class OrdersService {
         }[];
     } & {
         id: string;
-        status: import("../../../generated/prisma/enums").OrderStatus;
         createdAt: Date;
+        updatedAt: Date;
         sellerId: string;
         storeId: string;
+        status: import("../../../generated/prisma/enums").OrderStatus;
         customerName: string;
         customerPhone: string;
         customerEmail: string | null;
-        updatedAt: Date;
-        deliveryAddress: string | null;
-        notes: string | null;
         totalAmount: number;
-        orderNumber: string | null;
-        deliveryCode: string | null;
         buyerId: string | null;
+        deliveryCode: string | null;
+        notes: string | null;
+        orderNumber: string | null;
+        deliveryAddress: string | null;
     })[]>;
     create(payload: CreateOrderDto): Promise<{
         items: {
@@ -59,32 +59,32 @@ export declare class OrdersService {
         }[];
     } & {
         id: string;
-        status: import("../../../generated/prisma/enums").OrderStatus;
         createdAt: Date;
+        updatedAt: Date;
         sellerId: string;
         storeId: string;
+        status: import("../../../generated/prisma/enums").OrderStatus;
         customerName: string;
         customerPhone: string;
         customerEmail: string | null;
-        updatedAt: Date;
-        deliveryAddress: string | null;
-        notes: string | null;
         totalAmount: number;
-        orderNumber: string | null;
-        deliveryCode: string | null;
         buyerId: string | null;
+        deliveryCode: string | null;
+        notes: string | null;
+        orderNumber: string | null;
+        deliveryAddress: string | null;
     }>;
     findOne(id: string, sellerId: string): Promise<{
         payment: {
             id: string;
-            status: import("../../../generated/prisma/enums").PaymentStatus;
             createdAt: Date;
-            orderId: string;
-            currency: string;
-            provider: string;
-            gatewayReference: string | null;
             updatedAt: Date;
+            currency: string;
+            status: import("../../../generated/prisma/enums").PaymentStatus;
+            orderId: string;
+            provider: string;
             amount: number;
+            gatewayReference: string | null;
         };
         items: {
             id: string;
@@ -96,32 +96,32 @@ export declare class OrdersService {
         }[];
     } & {
         id: string;
-        status: import("../../../generated/prisma/enums").OrderStatus;
         createdAt: Date;
+        updatedAt: Date;
         sellerId: string;
         storeId: string;
+        status: import("../../../generated/prisma/enums").OrderStatus;
         customerName: string;
         customerPhone: string;
         customerEmail: string | null;
-        updatedAt: Date;
-        deliveryAddress: string | null;
-        notes: string | null;
         totalAmount: number;
-        orderNumber: string | null;
-        deliveryCode: string | null;
         buyerId: string | null;
+        deliveryCode: string | null;
+        notes: string | null;
+        orderNumber: string | null;
+        deliveryAddress: string | null;
     }>;
     update(id: string, sellerId: string, payload: UpdateOrderDto): Promise<{
         payment: {
             id: string;
-            status: import("../../../generated/prisma/enums").PaymentStatus;
             createdAt: Date;
-            orderId: string;
-            currency: string;
-            provider: string;
-            gatewayReference: string | null;
             updatedAt: Date;
+            currency: string;
+            status: import("../../../generated/prisma/enums").PaymentStatus;
+            orderId: string;
+            provider: string;
             amount: number;
+            gatewayReference: string | null;
         };
         items: {
             id: string;
@@ -133,20 +133,20 @@ export declare class OrdersService {
         }[];
     } & {
         id: string;
-        status: import("../../../generated/prisma/enums").OrderStatus;
         createdAt: Date;
+        updatedAt: Date;
         sellerId: string;
         storeId: string;
+        status: import("../../../generated/prisma/enums").OrderStatus;
         customerName: string;
         customerPhone: string;
         customerEmail: string | null;
-        updatedAt: Date;
-        deliveryAddress: string | null;
-        notes: string | null;
         totalAmount: number;
-        orderNumber: string | null;
-        deliveryCode: string | null;
         buyerId: string | null;
+        deliveryCode: string | null;
+        notes: string | null;
+        orderNumber: string | null;
+        deliveryAddress: string | null;
     }>;
     private sendOrderNotifications;
 }

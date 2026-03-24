@@ -28,6 +28,32 @@ let MessengerBotService = MessengerBotService_1 = class MessengerBotService {
         this.config = config;
         this.logger = new common_1.Logger(MessengerBotService_1.name);
     }
+    getProductUrl(merchant, product) {
+        if (product.onlineStoreUrl) {
+            return product.onlineStoreUrl;
+        }
+        if (product.handle) {
+            return `https://${merchant.shop}/products/${product.handle}`;
+        }
+        return null;
+    }
+    getCheckoutUrl(merchant, product) {
+        const defaultVariant = product.variants?.[0];
+        if (defaultVariant?.id) {
+            return `https://${merchant.shop}/cart/${defaultVariant.id}:1`;
+        }
+        return this.getProductUrl(merchant, product);
+    }
+    isAmountVariantProduct(product) {
+        const variants = product?.variants ?? [];
+        if (variants.length === 0) {
+            return false;
+        }
+        return variants.every((variant) => {
+            const title = (variant.title ?? '').trim();
+            return /^\$?\d+([.,]\d{1,2})?$/.test(title);
+        });
+    }
     async handle(data) {
         const { senderId, merchantId, text, postbackPayload, referral } = data;
         const sessionKey = `msg_${senderId}_${merchantId}`;
@@ -39,6 +65,27 @@ let MessengerBotService = MessengerBotService_1 = class MessengerBotService {
             return;
         }
         const token = merchant.messengerToken;
+        if (!postbackPayload && text) {
+            const normalizedText = text.trim().toLowerCase();
+            if (normalizedText.includes('keep shopping')) {
+                input = 'SHOP_NOW';
+            }
+            else if (normalizedText.includes('checkout')) {
+                input = 'CHECKOUT';
+            }
+            else if (normalizedText.includes('clear')) {
+                input = 'CLEAR_CART';
+            }
+            else if (normalizedText.includes('my cart')) {
+                input = 'VIEW_CART';
+            }
+            else if (normalizedText.includes('add to cart')) {
+                const selectedProduct = context?.selectedProduct;
+                if (selectedProduct?.id) {
+                    input = `ADD_${selectedProduct.id}`;
+                }
+            }
+        }
         const lowerInput = input.toLowerCase();
         if (referral) {
             return this.handleReferral(senderId, merchant, token, referral);
@@ -200,10 +247,36 @@ let MessengerBotService = MessengerBotService_1 = class MessengerBotService {
         }
         return this.showProductDetail(senderId, merchant, token, product, context);
     }
-    async showProductDetail(senderId, merchant, token, product, context) {
+    async showProductDetail(senderId, merchant, token, product, context, customMessage, recipientId) {
         const sessionKey = `msg_${senderId}_${merchant.id}`;
-        const subtitle = `💰 $${product.price.toFixed(2)}${product.description ? '\n' + product.description.substring(0, 70) : ''}`;
+        const targetRecipient = recipientId || senderId;
+        const isCommentId = !!recipientId;
+        const productUrl = this.getProductUrl(merchant, product);
+        const checkoutUrl = this.getCheckoutUrl(merchant, product);
+        const subtitle = isCommentId
+            ? `💰 $${product.price.toFixed(2)}`
+            : `💰 $${product.price.toFixed(2)}${product.description ? ' · ' + product.description.substring(0, 30) : ''}`;
+        if (isCommentId) {
+            const replyTextParts = [
+                `${product.title}`,
+                `Price: $${product.price.toFixed(2)}`,
+            ];
+            if (product.description) {
+                replyTextParts.push(product.description.substring(0, 80));
+            }
+            if (checkoutUrl) {
+                replyTextParts.push(`${product.variants.length > 1 ? 'View product' : 'Buy now'}: ${checkoutUrl}`);
+            }
+            else if (productUrl) {
+                replyTextParts.push(`View product: ${productUrl}`);
+            }
+            return this.metaSender.sendText(targetRecipient, replyTextParts.join('\n').substring(0, 640), token, merchant.id, 'messenger', true);
+        }
         if (product.variants.length > 1) {
+            const isAmountProduct = this.isAmountVariantProduct(product);
+            const variantPrompt = isAmountProduct
+                ? 'Select an amount:'
+                : 'Select a size/variant:';
             const cardPayload = {
                 message: {
                     attachment: {
@@ -211,25 +284,31 @@ let MessengerBotService = MessengerBotService_1 = class MessengerBotService {
                         payload: {
                             template_type: 'generic',
                             elements: [{
-                                    title: product.title,
-                                    subtitle,
-                                    image_url: product.primaryImage || undefined,
+                                    title: product.title.substring(0, 80),
+                                    subtitle: subtitle,
+                                    image_url: isCommentId ? undefined : (product.primaryImage || undefined),
                                     buttons: [
-                                        { type: 'postback', title: '🛒 Add to Cart', payload: `ADD_${product.id}` },
-                                        { type: 'postback', title: '🛍️ Keep Shopping', payload: 'SHOP_NOW' },
+                                        { type: 'web_url', title: '🛍️ Keep Shopping', url: `https://${merchant.shop}/collections/all` },
                                     ],
                                 }],
                         },
                     },
                 },
             };
-            await this.metaSender.sendToMeta(token, senderId, cardPayload, merchant.id, 'messenger');
+            const cardSent = await this.metaSender.sendToMeta(token, targetRecipient, cardPayload, merchant.id, 'messenger', isCommentId);
+            if (!cardSent) {
+                return false;
+            }
             const replies = product.variants.slice(0, 13).map(v => ({
                 title: v.title,
                 payload: `VAR_${v.id}`
             }));
-            await this.metaSender.sendQuickReplies(senderId, 'Select a size/variant:', replies, token, merchant.id, 'messenger');
+            const repliesSent = await this.metaSender.sendQuickReplies(targetRecipient, variantPrompt, replies, token, merchant.id, 'messenger', isCommentId);
+            if (!repliesSent) {
+                return false;
+            }
             await this.session.updateContext(sessionKey, 'SELECTING_VARIANT', { ...context, selectedProduct: product });
+            return true;
         }
         else {
             const cardPayload = {
@@ -239,20 +318,24 @@ let MessengerBotService = MessengerBotService_1 = class MessengerBotService {
                         payload: {
                             template_type: 'generic',
                             elements: [{
-                                    title: product.title,
-                                    subtitle,
+                                    title: product.title.substring(0, 80),
+                                    subtitle: subtitle.substring(0, 80),
                                     image_url: product.primaryImage || undefined,
                                     buttons: [
                                         { type: 'postback', title: '🛒 Add to Cart', payload: `ADD_${product.id}` },
-                                        { type: 'postback', title: '🛍️ Keep Shopping', payload: 'SHOP_NOW' },
+                                        { type: 'web_url', title: '🛍️ Keep Shopping', url: `https://${merchant.shop}/collections/all` },
                                     ],
                                 }],
                         },
                     },
                 },
             };
-            await this.metaSender.sendToMeta(token, senderId, cardPayload, merchant.id, 'messenger');
+            const cardSent = await this.metaSender.sendToMeta(token, targetRecipient, cardPayload, merchant.id, 'messenger', isCommentId);
+            if (!cardSent) {
+                return false;
+            }
             await this.session.updateContext(sessionKey, 'VIEWING_PRODUCT', { ...context, selectedProduct: product });
+            return true;
         }
     }
     async handleVariantSelection(senderId, merchant, token, input, context) {
@@ -291,7 +374,7 @@ let MessengerBotService = MessengerBotService_1 = class MessengerBotService {
     }
     async showAddedToCart(senderId, merchant, token, cart) {
         const subtotal = this.session.cartSubtotal(cart);
-        await this.metaSender.sendQuickReplies(senderId, `✅ Added to cart!\n🛒 ${cart.length} item(s) — $${subtotal.toFixed(2)}`, [
+        return this.metaSender.sendQuickReplies(senderId, `✅ Added to cart!\n🛒 ${cart.length} item(s) — $${subtotal.toFixed(2)}`, [
             { title: '✅ Checkout', payload: 'CHECKOUT' },
             { title: '🛍️ Keep Shopping', payload: 'SHOP_NOW' }
         ], token, merchant.id, 'messenger');

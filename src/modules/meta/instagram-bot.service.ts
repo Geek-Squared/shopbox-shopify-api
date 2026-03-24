@@ -24,7 +24,7 @@ export class InstagramBotService {
     merchantId: string;
     text?: string;
     postbackPayload?: string;
-  }): Promise<void> {
+  }): Promise<void | boolean> {
     const { senderId, merchantId, text, postbackPayload } = data;
     this.logger.debug(`Looking up merchant by ID: ${merchantId}`);
 
@@ -100,7 +100,7 @@ export class InstagramBotService {
     }
   }
 
-  private async handleWelcome(senderId: string, merchant: any, token: string) {
+  private async handleWelcome(senderId: string, merchant: any, token: string): Promise<void | boolean> {
     const sessionKey = `ig_${senderId}_${merchant.id}`;
     await this.metaSender.sendTypingOn(senderId, token, 'instagram');
     
@@ -128,7 +128,7 @@ export class InstagramBotService {
     }
   }
 
-  private async handleCategorySelection(senderId: string, merchant: any, token: string, input: string, context: BotContext) {
+  private async handleCategorySelection(senderId: string, merchant: any, token: string, input: string, context: BotContext): Promise<void | boolean> {
     if (!input.startsWith('CAT_')) {
       await this.session.reset(`ig_${senderId}_${merchant.id}`);
       return;
@@ -146,7 +146,7 @@ export class InstagramBotService {
     await this.session.updateContext(sessionKey, 'BROWSING_PRODUCTS', { ...context, products, collectionId });
   }
 
-  private async handleProductSelection(senderId: string, merchant: any, token: string, input: string, context: BotContext) {
+  private async handleProductSelection(senderId: string, merchant: any, token: string, input: string, context: BotContext): Promise<void | boolean> {
     if (!input.startsWith('SELECT_')) {
       await this.session.reset(`ig_${senderId}_${merchant.id}`);
       return;
@@ -181,7 +181,7 @@ export class InstagramBotService {
     }
   }
 
-  private async handleVariantSelection(senderId: string, merchant: any, token: string, input: string, context: BotContext) {
+  private async handleVariantSelection(senderId: string, merchant: any, token: string, input: string, context: BotContext): Promise<void | boolean> {
     if (!input.startsWith('VAR_')) {
       await this.session.reset(`ig_${senderId}_${merchant.id}`);
       return;
@@ -205,7 +205,7 @@ export class InstagramBotService {
     return this.showAddedToCart(senderId, merchant, token, cart);
   }
 
-  private async handleProductAction(senderId: string, merchant: any, token: string, input: string, context: BotContext) {
+  private async handleProductAction(senderId: string, merchant: any, token: string, input: string, context: BotContext): Promise<void | boolean> {
     const sessionKey = `ig_${senderId}_${merchant.id}`;
     const product = (context as any).selectedProduct;
 
@@ -227,9 +227,9 @@ export class InstagramBotService {
     }
   }
 
-  private async showAddedToCart(senderId: string, merchant: any, token: string, cart: any[]) {
+  private async showAddedToCart(senderId: string, merchant: any, token: string, cart: any[]): Promise<boolean> {
     const subtotal = this.session.cartSubtotal(cart);
-    await this.metaSender.sendQuickReplies(
+    return this.metaSender.sendQuickReplies(
       senderId,
       `✅ Added to cart!\n🛒 ${cart.length} item(s) — $${subtotal.toFixed(2)}`,
       [
@@ -242,7 +242,7 @@ export class InstagramBotService {
     );
   }
 
-  private async handleViewCart(senderId: string, merchant: any, token: string, context: BotContext) {
+  private async handleViewCart(senderId: string, merchant: any, token: string, context: BotContext): Promise<boolean> {
     const sessionKey = `ig_${senderId}_${merchant.id}`;
     const cart = context.cart ?? [];
     if (cart.length === 0) {
@@ -264,7 +264,7 @@ export class InstagramBotService {
     await this.session.set(sessionKey, 'CART', context);
   }
 
-  private async handleCartAction(senderId: string, merchant: any, token: string, input: string, context: BotContext) {
+  private async handleCartAction(senderId: string, merchant: any, token: string, input: string, context: BotContext): Promise<void | boolean> {
     const sessionKey = `ig_${senderId}_${merchant.id}`;
     if (input === 'CHECKOUT') {
       await this.session.updateContext(sessionKey, 'CHECKOUT_NAME', {});
@@ -279,14 +279,14 @@ export class InstagramBotService {
     }
   }
 
-  private async handleCheckoutName(senderId: string, merchant: any, token: string, text: string, context: BotContext) {
+  private async handleCheckoutName(senderId: string, merchant: any, token: string, text: string, context: BotContext): Promise<boolean> {
     const sessionKey = `ig_${senderId}_${merchant.id}`;
     if (text.length < 2) return this.metaSender.sendText(senderId, "❌ Please enter a valid name:", token, merchant.id, 'instagram');
     await this.session.updateContext(sessionKey, 'CHECKOUT_ADDRESS', { ...context, buyerName: text });
     return this.metaSender.sendText(senderId, "📍 Your delivery address?", token, merchant.id, 'instagram');
   }
 
-  private async handleCheckoutAddress(senderId: string, merchant: any, token: string, text: string, context: BotContext) {
+  private async handleCheckoutAddress(senderId: string, merchant: any, token: string, text: string, context: BotContext): Promise<boolean> {
     const sessionKey = `ig_${senderId}_${merchant.id}`;
     if (text.length < 5) return this.metaSender.sendText(senderId, "❌ Please enter a valid address:", token, merchant.id, 'instagram');
     await this.session.updateContext(sessionKey, 'CHECKOUT_PAYMENT', { ...context, deliveryAddress: text });
@@ -297,7 +297,7 @@ export class InstagramBotService {
     ], token, merchant.id, 'instagram');
   }
 
-  private async handlePaymentSelection(senderId: string, merchant: any, token: string, input: string, context: BotContext) {
+  private async handlePaymentSelection(senderId: string, merchant: any, token: string, input: string, context: BotContext): Promise<void | boolean> {
     const sessionKey = `ig_${senderId}_${merchant.id}`;
     const paymentMap = { PAY_COD: 'Cash on Delivery', PAY_CARD: 'Card', PAY_BANK: 'Bank Transfer' };
     const paymentMethod = (paymentMap as any)[input];
@@ -319,6 +319,37 @@ export class InstagramBotService {
       await this.session.set(sessionKey, 'ORDER_COMPLETE', {});
     } catch (e) {
       await this.metaSender.sendText(senderId, `❌ Sorry, failed to create order: ${e.message}`, token, merchant.id, 'instagram');
+    }
+  }
+
+  async showProductDetail(senderId: string, merchant: any, token: string, product: any, context: BotContext, customMessage?: string, recipientId?: string): Promise<boolean> {
+    const sessionKey = `ig_${senderId}_${merchant.id}`;
+    const targetRecipient = recipientId || senderId;
+    const isCommentId = !!recipientId;
+    const stockStatus = product.available ? '✅ In stock' : '❌ Out of stock';
+    const message = customMessage || `👗 *${product.title}*\n──────────────────\n💰 $${product.price.toFixed(2)}\n${product.description ? product.description.substring(0, 120) + '...' : ''}\n\n${stockStatus}`;
+
+    if (product.variants.length > 1) {
+      const replies = product.variants.slice(0, 13).map(v => ({
+        title: v.title,
+        payload: `VAR_${v.id}`
+      }));
+      const sent = await this.metaSender.sendQuickReplies(targetRecipient, message + "\n\nSelect a variant:", replies, token, merchant.id, 'instagram', isCommentId);
+      if (!sent) {
+        return false;
+      }
+      await this.session.updateContext(sessionKey, 'SELECTING_VARIANT', { ...context, selectedProduct: product });
+      return true;
+    } else {
+      const sent = await this.metaSender.sendButtons(targetRecipient, message, [
+        { title: '🛒 Add to Cart', payload: `ADD_${product.id}` },
+        { title: '🛍️ Keep Shopping', payload: 'START_OVER' }
+      ], token, merchant.id, 'instagram', isCommentId);
+      if (!sent) {
+        return false;
+      }
+      await this.session.updateContext(sessionKey, 'VIEWING_PRODUCT', { ...context, selectedProduct: product });
+      return true;
     }
   }
 }

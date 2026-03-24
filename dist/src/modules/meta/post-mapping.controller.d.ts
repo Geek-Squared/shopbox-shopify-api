@@ -10,8 +10,8 @@ export declare class PostMappingController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         mediaId: string;
         platform: string;
         postUrl: string | null;
@@ -22,8 +22,8 @@ export declare class PostMappingController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         mediaId: string;
         platform: string;
         postUrl: string | null;
@@ -34,8 +34,8 @@ export declare class PostMappingController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         mediaId: string;
         platform: string;
         postUrl: string | null;
@@ -46,8 +46,8 @@ export declare class PostMappingController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         mediaId: string;
         platform: string;
         postUrl: string | null;

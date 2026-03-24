@@ -78,15 +78,15 @@ export declare class WhatsappService {
         orderId?: string;
     }): Promise<{
         id: string;
+        createdAt: Date;
+        sellerId: string | null;
+        storeId: string | null;
+        status: string | null;
+        orderId: string | null;
         direction: import("../../../generated/prisma/enums").MessageDirection;
         toNumber: string | null;
         fromNumber: string | null;
         content: string;
-        status: string | null;
-        createdAt: Date;
-        sellerId: string | null;
-        storeId: string | null;
-        orderId: string | null;
     }>;
     formatPhone(phone: string): string;
 }

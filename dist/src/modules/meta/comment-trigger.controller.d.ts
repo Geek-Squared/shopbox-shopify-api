@@ -7,45 +7,45 @@ export declare class CommentTriggerController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         keyword: string;
         replyComment: boolean;
-        templateMessage: string | null;
         triggerCount: number;
+        templateMessage: string | null;
     }[]>;
     create(dto: CreateTriggerDto, req: any): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         keyword: string;
         replyComment: boolean;
-        templateMessage: string | null;
         triggerCount: number;
+        templateMessage: string | null;
     }>;
     update(id: string, dto: any, req: any): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         keyword: string;
         replyComment: boolean;
-        templateMessage: string | null;
         triggerCount: number;
+        templateMessage: string | null;
     }>;
     delete(id: string, req: any): Promise<{
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         keyword: string;
         replyComment: boolean;
-        templateMessage: string | null;
         triggerCount: number;
+        templateMessage: string | null;
     }>;
     stats(req: any): Promise<{
         totalTriggers: number;

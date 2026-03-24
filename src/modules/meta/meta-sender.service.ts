@@ -3,6 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ShopifyRepository } from '../shopify/shopify.repository';
 
+type MetaTemplateButton =
+  | { type: 'postback'; title: string; payload: string }
+  | { type: 'web_url'; title: string; url: string };
+
 @Injectable()
 export class MetaSenderService {
   private readonly logger = new Logger(MetaSenderService.name);
@@ -14,17 +18,108 @@ export class MetaSenderService {
     private readonly repository: ShopifyRepository,
   ) {}
 
+  private async parseResponseBody(response: Response): Promise<any> {
+    const rawBody = await response.text();
+    if (!rawBody.trim()) {
+      return null;
+    }
+
+    try {
+      return JSON.parse(rawBody);
+    } catch {
+      return { rawBody };
+    }
+  }
+
+  private extractTextFromMessage(message: any): string | null {
+    const text = message?.message?.text;
+    if (typeof text !== 'string') {
+      return null;
+    }
+
+    const trimmed = text.trim();
+    if (!trimmed) {
+      return null;
+    }
+
+    // Keep private replies compact; oversized payloads are rejected more often.
+    return trimmed.substring(0, 500);
+  }
+
+  private async sendCommentPrivateReply(
+    token: string,
+    commentId: string,
+    text: string,
+    channel: 'messenger' | 'instagram',
+  ): Promise<boolean> {
+    const idCandidates = [commentId];
+    if (commentId.includes('_')) {
+      const trailingId = commentId.split('_').pop();
+      if (trailingId && trailingId !== commentId) {
+        idCandidates.push(trailingId);
+      }
+    }
+
+    for (const candidateId of idCandidates) {
+      const url = `https://graph.facebook.com/v25.0/${candidateId}/private_replies?access_token=${token}`;
+      const body = new URLSearchParams({ message: text });
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body,
+      });
+      const data = await this.parseResponseBody(response);
+
+      if (response.ok) {
+        return true;
+      }
+
+      const error = data?.error ?? {
+        code: response.status,
+        message: typeof data?.rawBody === 'string' ? data.rawBody : response.statusText,
+      };
+      this.logger.error(`Meta private reply error (${channel}): ${JSON.stringify(error)}`);
+    }
+    return false;
+  }
+
   async sendToMeta(
     token: string,
     recipientId: string,
     message: object,
     merchantId: string,
     channel: 'messenger' | 'instagram',
-  ): Promise<void> {
+    isCommentId = false,
+    retryCount = 0,
+  ): Promise<boolean> {
     try {
+      if (isCommentId) {
+        const text = this.extractTextFromMessage(message);
+        if (text) {
+          const privateReplySent = await this.sendCommentPrivateReply(
+            token,
+            recipientId,
+            text,
+            channel,
+          );
+          if (privateReplySent) {
+            return true;
+          }
+
+          // Fallback for environments where private_replies edge is unavailable.
+          this.logger.warn(
+            `Private reply edge failed for ${recipientId}. Falling back to Send API comment_id recipient.`,
+          );
+        } else {
+          this.logger.warn(
+            `Skipping private reply edge for ${recipientId}: only plain text private replies are supported.`,
+          );
+        }
+      }
+
       const url = `${this.baseUrl}?access_token=${token}`;
       const payload = {
-        recipient: { id: recipientId },
+        recipient: isCommentId ? { comment_id: recipientId } : { id: recipientId },
         ...message,
       };
 
@@ -34,10 +129,13 @@ export class MetaSenderService {
         body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      const data = await this.parseResponseBody(response);
 
       if (!response.ok) {
-        const error = data.error;
+        const error = data?.error ?? {
+          code: response.status,
+          message: typeof data?.rawBody === 'string' ? data.rawBody : response.statusText,
+        };
         this.logger.error(`Meta API Error (${channel}): ${JSON.stringify(error)}`);
 
         // Error 190: Access token has expired
@@ -55,19 +153,27 @@ export class MetaSenderService {
         }
 
         // Error 613: Rate limit
-        if (error.code === 613) {
+        if (error.code === 613 && retryCount < 1) {
           this.logger.warn(`Rate limit hit for ${channel}, retrying once in 1s...`);
           await new Promise((resolve) => setTimeout(resolve, 1000));
-          return this.sendToMeta(token, recipientId, message, merchantId, channel);
+          return this.sendToMeta(
+            token,
+            recipientId,
+            message,
+            merchantId,
+            channel,
+            isCommentId,
+            retryCount + 1,
+          );
         }
 
         // Error 100: Cannot message user
         if (error.code === 100) {
           this.logger.debug(`Cannot message user ${recipientId} on ${channel} (likely outside 24h window).`);
-          return;
+          return false;
         }
 
-        throw new Error(error.message || 'Failed to send Meta message');
+        return false;
       }
 
       // Disable logging Meta messages to Whatsapp table for now to avoid FK crash
@@ -80,8 +186,10 @@ export class MetaSenderService {
       //     status: 'sent',
       //   },
       // });
+      return true;
     } catch (error) {
       this.logger.error(`Failed to send ${channel} message: ${error.message}`);
+      return false;
     }
   }
 
@@ -91,8 +199,9 @@ export class MetaSenderService {
     token: string,
     merchantId: string,
     channel: 'messenger' | 'instagram',
+    isCommentId = false,
   ) {
-    return this.sendToMeta(token, recipientId, { message: { text } }, merchantId, channel);
+    return this.sendToMeta(token, recipientId, { message: { text } }, merchantId, channel, isCommentId);
   }
 
   async sendImage(
@@ -101,6 +210,7 @@ export class MetaSenderService {
     token: string,
     merchantId: string,
     channel: 'messenger' | 'instagram',
+    isCommentId = false,
   ) {
     const message = {
       message: {
@@ -110,7 +220,7 @@ export class MetaSenderService {
         },
       },
     };
-    return this.sendToMeta(token, recipientId, message, merchantId, channel);
+    return this.sendToMeta(token, recipientId, message, merchantId, channel, isCommentId);
   }
 
   async sendQuickReplies(
@@ -120,6 +230,7 @@ export class MetaSenderService {
     token: string,
     merchantId: string,
     channel: 'messenger' | 'instagram',
+    isCommentId = false,
   ) {
     const message = {
       message: {
@@ -131,7 +242,7 @@ export class MetaSenderService {
         })),
       },
     };
-    return this.sendToMeta(token, recipientId, message, merchantId, channel);
+    return this.sendToMeta(token, recipientId, message, merchantId, channel, isCommentId);
   }
 
   async sendButtons(
@@ -141,6 +252,31 @@ export class MetaSenderService {
     token: string,
     merchantId: string,
     channel: 'messenger' | 'instagram',
+    isCommentId = false,
+  ) {
+    return this.sendButtonTemplate(
+      recipientId,
+      text,
+      buttons.map((button) => ({
+        type: 'postback' as const,
+        title: button.title,
+        payload: button.payload,
+      })),
+      token,
+      merchantId,
+      channel,
+      isCommentId,
+    );
+  }
+
+  async sendButtonTemplate(
+    recipientId: string,
+    text: string,
+    buttons: MetaTemplateButton[],
+    token: string,
+    merchantId: string,
+    channel: 'messenger' | 'instagram',
+    isCommentId = false,
   ) {
     const message = {
       message: {
@@ -149,16 +285,26 @@ export class MetaSenderService {
           payload: {
             template_type: 'button',
             text,
-            buttons: buttons.slice(0, 3).map((b) => ({
-              type: 'postback',
-              title: b.title.substring(0, 20),
-              payload: b.payload,
-            })),
+            buttons: buttons.slice(0, 3).map((button) => {
+              if (button.type === 'web_url') {
+                return {
+                  type: 'web_url',
+                  title: button.title.substring(0, 20),
+                  url: button.url,
+                };
+              }
+
+              return {
+                type: 'postback',
+                title: button.title.substring(0, 20),
+                payload: button.payload,
+              };
+            }),
           },
         },
       },
     };
-    return this.sendToMeta(token, recipientId, message, merchantId, channel);
+    return this.sendToMeta(token, recipientId, message, merchantId, channel, isCommentId);
   }
 
   async sendCarousel(

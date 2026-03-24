@@ -137,9 +137,9 @@ export type WhatsappMessageWhereInput = {
     content?: Prisma.StringFilter<"WhatsappMessage"> | string;
     status?: Prisma.StringNullableFilter<"WhatsappMessage"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"WhatsappMessage"> | Date | string;
+    order?: Prisma.XOR<Prisma.OrderNullableScalarRelationFilter, Prisma.OrderWhereInput> | null;
     seller?: Prisma.XOR<Prisma.SellerNullableScalarRelationFilter, Prisma.SellerWhereInput> | null;
     store?: Prisma.XOR<Prisma.StoreNullableScalarRelationFilter, Prisma.StoreWhereInput> | null;
-    order?: Prisma.XOR<Prisma.OrderNullableScalarRelationFilter, Prisma.OrderWhereInput> | null;
 };
 export type WhatsappMessageOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -152,9 +152,9 @@ export type WhatsappMessageOrderByWithRelationInput = {
     content?: Prisma.SortOrder;
     status?: Prisma.SortOrderInput | Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
+    order?: Prisma.OrderOrderByWithRelationInput;
     seller?: Prisma.SellerOrderByWithRelationInput;
     store?: Prisma.StoreOrderByWithRelationInput;
-    order?: Prisma.OrderOrderByWithRelationInput;
 };
 export type WhatsappMessageWhereUniqueInput = Prisma.AtLeast<{
     id?: string;
@@ -170,9 +170,9 @@ export type WhatsappMessageWhereUniqueInput = Prisma.AtLeast<{
     content?: Prisma.StringFilter<"WhatsappMessage"> | string;
     status?: Prisma.StringNullableFilter<"WhatsappMessage"> | string | null;
     createdAt?: Prisma.DateTimeFilter<"WhatsappMessage"> | Date | string;
+    order?: Prisma.XOR<Prisma.OrderNullableScalarRelationFilter, Prisma.OrderWhereInput> | null;
     seller?: Prisma.XOR<Prisma.SellerNullableScalarRelationFilter, Prisma.SellerWhereInput> | null;
     store?: Prisma.XOR<Prisma.StoreNullableScalarRelationFilter, Prisma.StoreWhereInput> | null;
-    order?: Prisma.XOR<Prisma.OrderNullableScalarRelationFilter, Prisma.OrderWhereInput> | null;
 }, "id">;
 export type WhatsappMessageOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
@@ -212,9 +212,9 @@ export type WhatsappMessageCreateInput = {
     content: string;
     status?: string | null;
     createdAt?: Date | string;
+    order?: Prisma.OrderCreateNestedOneWithoutMessagesInput;
     seller?: Prisma.SellerCreateNestedOneWithoutMessagesInput;
     store?: Prisma.StoreCreateNestedOneWithoutMessagesInput;
-    order?: Prisma.OrderCreateNestedOneWithoutMessagesInput;
 };
 export type WhatsappMessageUncheckedCreateInput = {
     id?: string;
@@ -236,9 +236,9 @@ export type WhatsappMessageUpdateInput = {
     content?: Prisma.StringFieldUpdateOperationsInput | string;
     status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    order?: Prisma.OrderUpdateOneWithoutMessagesNestedInput;
     seller?: Prisma.SellerUpdateOneWithoutMessagesNestedInput;
     store?: Prisma.StoreUpdateOneWithoutMessagesNestedInput;
-    order?: Prisma.OrderUpdateOneWithoutMessagesNestedInput;
 };
 export type WhatsappMessageUncheckedUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -454,8 +454,8 @@ export type WhatsappMessageCreateWithoutSellerInput = {
     content: string;
     status?: string | null;
     createdAt?: Date | string;
-    store?: Prisma.StoreCreateNestedOneWithoutMessagesInput;
     order?: Prisma.OrderCreateNestedOneWithoutMessagesInput;
+    store?: Prisma.StoreCreateNestedOneWithoutMessagesInput;
 };
 export type WhatsappMessageUncheckedCreateWithoutSellerInput = {
     id?: string;
@@ -512,8 +512,8 @@ export type WhatsappMessageCreateWithoutStoreInput = {
     content: string;
     status?: string | null;
     createdAt?: Date | string;
-    seller?: Prisma.SellerCreateNestedOneWithoutMessagesInput;
     order?: Prisma.OrderCreateNestedOneWithoutMessagesInput;
+    seller?: Prisma.SellerCreateNestedOneWithoutMessagesInput;
 };
 export type WhatsappMessageUncheckedCreateWithoutStoreInput = {
     id?: string;
@@ -609,8 +609,8 @@ export type WhatsappMessageUpdateWithoutSellerInput = {
     content?: Prisma.StringFieldUpdateOperationsInput | string;
     status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    store?: Prisma.StoreUpdateOneWithoutMessagesNestedInput;
     order?: Prisma.OrderUpdateOneWithoutMessagesNestedInput;
+    store?: Prisma.StoreUpdateOneWithoutMessagesNestedInput;
 };
 export type WhatsappMessageUncheckedUpdateWithoutSellerInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -653,8 +653,8 @@ export type WhatsappMessageUpdateWithoutStoreInput = {
     content?: Prisma.StringFieldUpdateOperationsInput | string;
     status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    seller?: Prisma.SellerUpdateOneWithoutMessagesNestedInput;
     order?: Prisma.OrderUpdateOneWithoutMessagesNestedInput;
+    seller?: Prisma.SellerUpdateOneWithoutMessagesNestedInput;
 };
 export type WhatsappMessageUncheckedUpdateWithoutStoreInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -733,9 +733,9 @@ export type WhatsappMessageSelect<ExtArgs extends runtime.Types.Extensions.Inter
     content?: boolean;
     status?: boolean;
     createdAt?: boolean;
+    order?: boolean | Prisma.WhatsappMessage$orderArgs<ExtArgs>;
     seller?: boolean | Prisma.WhatsappMessage$sellerArgs<ExtArgs>;
     store?: boolean | Prisma.WhatsappMessage$storeArgs<ExtArgs>;
-    order?: boolean | Prisma.WhatsappMessage$orderArgs<ExtArgs>;
 }, ExtArgs["result"]["whatsappMessage"]>;
 export type WhatsappMessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -748,9 +748,9 @@ export type WhatsappMessageSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
     content?: boolean;
     status?: boolean;
     createdAt?: boolean;
+    order?: boolean | Prisma.WhatsappMessage$orderArgs<ExtArgs>;
     seller?: boolean | Prisma.WhatsappMessage$sellerArgs<ExtArgs>;
     store?: boolean | Prisma.WhatsappMessage$storeArgs<ExtArgs>;
-    order?: boolean | Prisma.WhatsappMessage$orderArgs<ExtArgs>;
 }, ExtArgs["result"]["whatsappMessage"]>;
 export type WhatsappMessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -763,9 +763,9 @@ export type WhatsappMessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
     content?: boolean;
     status?: boolean;
     createdAt?: boolean;
+    order?: boolean | Prisma.WhatsappMessage$orderArgs<ExtArgs>;
     seller?: boolean | Prisma.WhatsappMessage$sellerArgs<ExtArgs>;
     store?: boolean | Prisma.WhatsappMessage$storeArgs<ExtArgs>;
-    order?: boolean | Prisma.WhatsappMessage$orderArgs<ExtArgs>;
 }, ExtArgs["result"]["whatsappMessage"]>;
 export type WhatsappMessageSelectScalar = {
     id?: boolean;
@@ -781,26 +781,26 @@ export type WhatsappMessageSelectScalar = {
 };
 export type WhatsappMessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sellerId" | "storeId" | "orderId" | "direction" | "toNumber" | "fromNumber" | "content" | "status" | "createdAt", ExtArgs["result"]["whatsappMessage"]>;
 export type WhatsappMessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    order?: boolean | Prisma.WhatsappMessage$orderArgs<ExtArgs>;
     seller?: boolean | Prisma.WhatsappMessage$sellerArgs<ExtArgs>;
     store?: boolean | Prisma.WhatsappMessage$storeArgs<ExtArgs>;
-    order?: boolean | Prisma.WhatsappMessage$orderArgs<ExtArgs>;
 };
 export type WhatsappMessageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    order?: boolean | Prisma.WhatsappMessage$orderArgs<ExtArgs>;
     seller?: boolean | Prisma.WhatsappMessage$sellerArgs<ExtArgs>;
     store?: boolean | Prisma.WhatsappMessage$storeArgs<ExtArgs>;
-    order?: boolean | Prisma.WhatsappMessage$orderArgs<ExtArgs>;
 };
 export type WhatsappMessageIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    order?: boolean | Prisma.WhatsappMessage$orderArgs<ExtArgs>;
     seller?: boolean | Prisma.WhatsappMessage$sellerArgs<ExtArgs>;
     store?: boolean | Prisma.WhatsappMessage$storeArgs<ExtArgs>;
-    order?: boolean | Prisma.WhatsappMessage$orderArgs<ExtArgs>;
 };
 export type $WhatsappMessagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "WhatsappMessage";
     objects: {
+        order: Prisma.$OrderPayload<ExtArgs> | null;
         seller: Prisma.$SellerPayload<ExtArgs> | null;
         store: Prisma.$StorePayload<ExtArgs> | null;
-        order: Prisma.$OrderPayload<ExtArgs> | null;
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: string;
@@ -865,9 +865,9 @@ export interface WhatsappMessageDelegate<ExtArgs extends runtime.Types.Extension
 }
 export interface Prisma__WhatsappMessageClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
+    order<T extends Prisma.WhatsappMessage$orderArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WhatsappMessage$orderArgs<ExtArgs>>): Prisma.Prisma__OrderClient<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     seller<T extends Prisma.WhatsappMessage$sellerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WhatsappMessage$sellerArgs<ExtArgs>>): Prisma.Prisma__SellerClient<runtime.Types.Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     store<T extends Prisma.WhatsappMessage$storeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WhatsappMessage$storeArgs<ExtArgs>>): Prisma.Prisma__StoreClient<runtime.Types.Result.GetResult<Prisma.$StorePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
-    order<T extends Prisma.WhatsappMessage$orderArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.WhatsappMessage$orderArgs<ExtArgs>>): Prisma.Prisma__OrderClient<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
     finally(onfinally?: (() => void) | undefined | null): runtime.Types.Utils.JsPromise<T>;
@@ -984,6 +984,12 @@ export type WhatsappMessageDeleteManyArgs<ExtArgs extends runtime.Types.Extensio
     where?: Prisma.WhatsappMessageWhereInput;
     limit?: number;
 };
+export type WhatsappMessage$orderArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.OrderSelect<ExtArgs> | null;
+    omit?: Prisma.OrderOmit<ExtArgs> | null;
+    include?: Prisma.OrderInclude<ExtArgs> | null;
+    where?: Prisma.OrderWhereInput;
+};
 export type WhatsappMessage$sellerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.SellerSelect<ExtArgs> | null;
     omit?: Prisma.SellerOmit<ExtArgs> | null;
@@ -995,12 +1001,6 @@ export type WhatsappMessage$storeArgs<ExtArgs extends runtime.Types.Extensions.I
     omit?: Prisma.StoreOmit<ExtArgs> | null;
     include?: Prisma.StoreInclude<ExtArgs> | null;
     where?: Prisma.StoreWhereInput;
-};
-export type WhatsappMessage$orderArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    select?: Prisma.OrderSelect<ExtArgs> | null;
-    omit?: Prisma.OrderOmit<ExtArgs> | null;
-    include?: Prisma.OrderInclude<ExtArgs> | null;
-    where?: Prisma.OrderWhereInput;
 };
 export type WhatsappMessageDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.WhatsappMessageSelect<ExtArgs> | null;

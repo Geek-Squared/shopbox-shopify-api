@@ -201,7 +201,7 @@ let InstagramBotService = InstagramBotService_1 = class InstagramBotService {
     }
     async showAddedToCart(senderId, merchant, token, cart) {
         const subtotal = this.session.cartSubtotal(cart);
-        await this.metaSender.sendQuickReplies(senderId, `✅ Added to cart!\n🛒 ${cart.length} item(s) — $${subtotal.toFixed(2)}`, [
+        return this.metaSender.sendQuickReplies(senderId, `✅ Added to cart!\n🛒 ${cart.length} item(s) — $${subtotal.toFixed(2)}`, [
             { title: '✅ Checkout', payload: 'CHECKOUT' },
             { title: '🛍️ Keep Shopping', payload: 'KEEP_SHOPPING' }
         ], token, merchant.id, 'instagram');
@@ -278,6 +278,36 @@ let InstagramBotService = InstagramBotService_1 = class InstagramBotService {
         }
         catch (e) {
             await this.metaSender.sendText(senderId, `❌ Sorry, failed to create order: ${e.message}`, token, merchant.id, 'instagram');
+        }
+    }
+    async showProductDetail(senderId, merchant, token, product, context, customMessage, recipientId) {
+        const sessionKey = `ig_${senderId}_${merchant.id}`;
+        const targetRecipient = recipientId || senderId;
+        const isCommentId = !!recipientId;
+        const stockStatus = product.available ? '✅ In stock' : '❌ Out of stock';
+        const message = customMessage || `👗 *${product.title}*\n──────────────────\n💰 $${product.price.toFixed(2)}\n${product.description ? product.description.substring(0, 120) + '...' : ''}\n\n${stockStatus}`;
+        if (product.variants.length > 1) {
+            const replies = product.variants.slice(0, 13).map(v => ({
+                title: v.title,
+                payload: `VAR_${v.id}`
+            }));
+            const sent = await this.metaSender.sendQuickReplies(targetRecipient, message + "\n\nSelect a variant:", replies, token, merchant.id, 'instagram', isCommentId);
+            if (!sent) {
+                return false;
+            }
+            await this.session.updateContext(sessionKey, 'SELECTING_VARIANT', { ...context, selectedProduct: product });
+            return true;
+        }
+        else {
+            const sent = await this.metaSender.sendButtons(targetRecipient, message, [
+                { title: '🛒 Add to Cart', payload: `ADD_${product.id}` },
+                { title: '🛍️ Keep Shopping', payload: 'START_OVER' }
+            ], token, merchant.id, 'instagram', isCommentId);
+            if (!sent) {
+                return false;
+            }
+            await this.session.updateContext(sessionKey, 'VIEWING_PRODUCT', { ...context, selectedProduct: product });
+            return true;
         }
     }
 };

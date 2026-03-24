@@ -14,6 +14,8 @@ export declare class ShopifyApiService {
     getProduct(shop: string, productId: string): Promise<{
         id: any;
         title: any;
+        handle: any;
+        onlineStoreUrl: any;
         description: string;
         price: number;
         available: any;

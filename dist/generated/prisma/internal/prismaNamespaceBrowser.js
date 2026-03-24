@@ -47,9 +47,9 @@ exports.SellerScalarFieldEnum = {
     passwordHash: 'passwordHash',
     name: 'name',
     phone: 'phone',
-    isVerified: 'isVerified',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    isVerified: 'isVerified'
 };
 exports.StoreScalarFieldEnum = {
     id: 'id',
@@ -57,11 +57,11 @@ exports.StoreScalarFieldEnum = {
     slug: 'slug',
     name: 'name',
     description: 'description',
-    logoUrl: 'logoUrl',
-    city: 'city',
-    category: 'category',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    category: 'category',
+    city: 'city',
+    logoUrl: 'logoUrl'
 };
 exports.ProductScalarFieldEnum = {
     id: 'id',
@@ -87,11 +87,11 @@ exports.OrderScalarFieldEnum = {
     totalAmount: 'totalAmount',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
-    orderNumber: 'orderNumber',
-    deliveryCode: 'deliveryCode',
     buyerId: 'buyerId',
-    deliveryAddress: 'deliveryAddress',
-    notes: 'notes'
+    deliveryCode: 'deliveryCode',
+    notes: 'notes',
+    orderNumber: 'orderNumber',
+    deliveryAddress: 'deliveryAddress'
 };
 exports.OrderItemScalarFieldEnum = {
     id: 'id',
@@ -245,30 +245,30 @@ exports.ShopifyMerchantScalarFieldEnum = {
     instagramConnected: 'instagramConnected',
     instagramToken: 'instagramToken',
     instagramAccountId: 'instagramAccountId',
-    instagramUsername: 'instagramUsername',
     messengerConnected: 'messengerConnected',
     messengerToken: 'messengerToken',
     messengerPageId: 'messengerPageId',
-    messengerPageName: 'messengerPageName',
     isActive: 'isActive',
     installedAt: 'installedAt',
     uninstalledAt: 'uninstalledAt',
+    updatedAt: 'updatedAt',
+    instagramUsername: 'instagramUsername',
+    messengerPageName: 'messengerPageName',
+    planChargeId: 'planChargeId',
     planName: 'planName',
     planStatus: 'planStatus',
-    planChargeId: 'planChargeId',
-    planTrialExpiresAt: 'planTrialExpiresAt',
-    updatedAt: 'updatedAt'
+    planTrialExpiresAt: 'planTrialExpiresAt'
 };
 exports.CommentTriggerScalarFieldEnum = {
     id: 'id',
     merchantId: 'merchantId',
     keyword: 'keyword',
     replyComment: 'replyComment',
-    templateMessage: 'templateMessage',
     isActive: 'isActive',
     triggerCount: 'triggerCount',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    templateMessage: 'templateMessage'
 };
 exports.CommentDmLogScalarFieldEnum = {
     id: 'id',

@@ -12,9 +12,9 @@ export type SellerMinAggregateOutputType = {
     passwordHash: string | null;
     name: string | null;
     phone: string | null;
-    isVerified: boolean | null;
     createdAt: Date | null;
     updatedAt: Date | null;
+    isVerified: boolean | null;
 };
 export type SellerMaxAggregateOutputType = {
     id: string | null;
@@ -22,9 +22,9 @@ export type SellerMaxAggregateOutputType = {
     passwordHash: string | null;
     name: string | null;
     phone: string | null;
-    isVerified: boolean | null;
     createdAt: Date | null;
     updatedAt: Date | null;
+    isVerified: boolean | null;
 };
 export type SellerCountAggregateOutputType = {
     id: number;
@@ -32,9 +32,9 @@ export type SellerCountAggregateOutputType = {
     passwordHash: number;
     name: number;
     phone: number;
-    isVerified: number;
     createdAt: number;
     updatedAt: number;
+    isVerified: number;
     _all: number;
 };
 export type SellerMinAggregateInputType = {
@@ -43,9 +43,9 @@ export type SellerMinAggregateInputType = {
     passwordHash?: true;
     name?: true;
     phone?: true;
-    isVerified?: true;
     createdAt?: true;
     updatedAt?: true;
+    isVerified?: true;
 };
 export type SellerMaxAggregateInputType = {
     id?: true;
@@ -53,9 +53,9 @@ export type SellerMaxAggregateInputType = {
     passwordHash?: true;
     name?: true;
     phone?: true;
-    isVerified?: true;
     createdAt?: true;
     updatedAt?: true;
+    isVerified?: true;
 };
 export type SellerCountAggregateInputType = {
     id?: true;
@@ -63,9 +63,9 @@ export type SellerCountAggregateInputType = {
     passwordHash?: true;
     name?: true;
     phone?: true;
-    isVerified?: true;
     createdAt?: true;
     updatedAt?: true;
+    isVerified?: true;
     _all?: true;
 };
 export type SellerAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -98,9 +98,9 @@ export type SellerGroupByOutputType = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified: boolean;
     createdAt: Date;
     updatedAt: Date;
+    isVerified: boolean;
     _count: SellerCountAggregateOutputType | null;
     _min: SellerMinAggregateOutputType | null;
     _max: SellerMaxAggregateOutputType | null;
@@ -117,15 +117,15 @@ export type SellerWhereInput = {
     passwordHash?: Prisma.StringFilter<"Seller"> | string;
     name?: Prisma.StringFilter<"Seller"> | string;
     phone?: Prisma.StringFilter<"Seller"> | string;
-    isVerified?: Prisma.BoolFilter<"Seller"> | boolean;
     createdAt?: Prisma.DateTimeFilter<"Seller"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Seller"> | Date | string;
-    store?: Prisma.XOR<Prisma.StoreNullableScalarRelationFilter, Prisma.StoreWhereInput> | null;
-    products?: Prisma.ProductListRelationFilter;
+    isVerified?: Prisma.BoolFilter<"Seller"> | boolean;
     orders?: Prisma.OrderListRelationFilter;
-    messages?: Prisma.WhatsappMessageListRelationFilter;
-    sessions?: Prisma.SellerSessionListRelationFilter;
+    products?: Prisma.ProductListRelationFilter;
     plugins?: Prisma.SellerPluginListRelationFilter;
+    sessions?: Prisma.SellerSessionListRelationFilter;
+    store?: Prisma.XOR<Prisma.StoreNullableScalarRelationFilter, Prisma.StoreWhereInput> | null;
+    messages?: Prisma.WhatsappMessageListRelationFilter;
 };
 export type SellerOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -133,15 +133,15 @@ export type SellerOrderByWithRelationInput = {
     passwordHash?: Prisma.SortOrder;
     name?: Prisma.SortOrder;
     phone?: Prisma.SortOrder;
-    isVerified?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
-    store?: Prisma.StoreOrderByWithRelationInput;
-    products?: Prisma.ProductOrderByRelationAggregateInput;
+    isVerified?: Prisma.SortOrder;
     orders?: Prisma.OrderOrderByRelationAggregateInput;
-    messages?: Prisma.WhatsappMessageOrderByRelationAggregateInput;
-    sessions?: Prisma.SellerSessionOrderByRelationAggregateInput;
+    products?: Prisma.ProductOrderByRelationAggregateInput;
     plugins?: Prisma.SellerPluginOrderByRelationAggregateInput;
+    sessions?: Prisma.SellerSessionOrderByRelationAggregateInput;
+    store?: Prisma.StoreOrderByWithRelationInput;
+    messages?: Prisma.WhatsappMessageOrderByRelationAggregateInput;
 };
 export type SellerWhereUniqueInput = Prisma.AtLeast<{
     id?: string;
@@ -152,15 +152,15 @@ export type SellerWhereUniqueInput = Prisma.AtLeast<{
     NOT?: Prisma.SellerWhereInput | Prisma.SellerWhereInput[];
     passwordHash?: Prisma.StringFilter<"Seller"> | string;
     name?: Prisma.StringFilter<"Seller"> | string;
-    isVerified?: Prisma.BoolFilter<"Seller"> | boolean;
     createdAt?: Prisma.DateTimeFilter<"Seller"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Seller"> | Date | string;
-    store?: Prisma.XOR<Prisma.StoreNullableScalarRelationFilter, Prisma.StoreWhereInput> | null;
-    products?: Prisma.ProductListRelationFilter;
+    isVerified?: Prisma.BoolFilter<"Seller"> | boolean;
     orders?: Prisma.OrderListRelationFilter;
-    messages?: Prisma.WhatsappMessageListRelationFilter;
-    sessions?: Prisma.SellerSessionListRelationFilter;
+    products?: Prisma.ProductListRelationFilter;
     plugins?: Prisma.SellerPluginListRelationFilter;
+    sessions?: Prisma.SellerSessionListRelationFilter;
+    store?: Prisma.XOR<Prisma.StoreNullableScalarRelationFilter, Prisma.StoreWhereInput> | null;
+    messages?: Prisma.WhatsappMessageListRelationFilter;
 }, "id" | "email" | "phone">;
 export type SellerOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
@@ -168,9 +168,9 @@ export type SellerOrderByWithAggregationInput = {
     passwordHash?: Prisma.SortOrder;
     name?: Prisma.SortOrder;
     phone?: Prisma.SortOrder;
-    isVerified?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    isVerified?: Prisma.SortOrder;
     _count?: Prisma.SellerCountOrderByAggregateInput;
     _max?: Prisma.SellerMaxOrderByAggregateInput;
     _min?: Prisma.SellerMinOrderByAggregateInput;
@@ -184,9 +184,9 @@ export type SellerScalarWhereWithAggregatesInput = {
     passwordHash?: Prisma.StringWithAggregatesFilter<"Seller"> | string;
     name?: Prisma.StringWithAggregatesFilter<"Seller"> | string;
     phone?: Prisma.StringWithAggregatesFilter<"Seller"> | string;
-    isVerified?: Prisma.BoolWithAggregatesFilter<"Seller"> | boolean;
     createdAt?: Prisma.DateTimeWithAggregatesFilter<"Seller"> | Date | string;
     updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Seller"> | Date | string;
+    isVerified?: Prisma.BoolWithAggregatesFilter<"Seller"> | boolean;
 };
 export type SellerCreateInput = {
     id?: string;
@@ -194,15 +194,15 @@ export type SellerCreateInput = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    store?: Prisma.StoreCreateNestedOneWithoutSellerInput;
-    products?: Prisma.ProductCreateNestedManyWithoutSellerInput;
+    isVerified?: boolean;
     orders?: Prisma.OrderCreateNestedManyWithoutSellerInput;
-    messages?: Prisma.WhatsappMessageCreateNestedManyWithoutSellerInput;
-    sessions?: Prisma.SellerSessionCreateNestedManyWithoutSellerInput;
+    products?: Prisma.ProductCreateNestedManyWithoutSellerInput;
     plugins?: Prisma.SellerPluginCreateNestedManyWithoutSellerInput;
+    sessions?: Prisma.SellerSessionCreateNestedManyWithoutSellerInput;
+    store?: Prisma.StoreCreateNestedOneWithoutSellerInput;
+    messages?: Prisma.WhatsappMessageCreateNestedManyWithoutSellerInput;
 };
 export type SellerUncheckedCreateInput = {
     id?: string;
@@ -210,15 +210,15 @@ export type SellerUncheckedCreateInput = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    store?: Prisma.StoreUncheckedCreateNestedOneWithoutSellerInput;
-    products?: Prisma.ProductUncheckedCreateNestedManyWithoutSellerInput;
+    isVerified?: boolean;
     orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSellerInput;
-    messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutSellerInput;
-    sessions?: Prisma.SellerSessionUncheckedCreateNestedManyWithoutSellerInput;
+    products?: Prisma.ProductUncheckedCreateNestedManyWithoutSellerInput;
     plugins?: Prisma.SellerPluginUncheckedCreateNestedManyWithoutSellerInput;
+    sessions?: Prisma.SellerSessionUncheckedCreateNestedManyWithoutSellerInput;
+    store?: Prisma.StoreUncheckedCreateNestedOneWithoutSellerInput;
+    messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutSellerInput;
 };
 export type SellerUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -226,15 +226,15 @@ export type SellerUpdateInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    store?: Prisma.StoreUpdateOneWithoutSellerNestedInput;
-    products?: Prisma.ProductUpdateManyWithoutSellerNestedInput;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     orders?: Prisma.OrderUpdateManyWithoutSellerNestedInput;
-    messages?: Prisma.WhatsappMessageUpdateManyWithoutSellerNestedInput;
-    sessions?: Prisma.SellerSessionUpdateManyWithoutSellerNestedInput;
+    products?: Prisma.ProductUpdateManyWithoutSellerNestedInput;
     plugins?: Prisma.SellerPluginUpdateManyWithoutSellerNestedInput;
+    sessions?: Prisma.SellerSessionUpdateManyWithoutSellerNestedInput;
+    store?: Prisma.StoreUpdateOneWithoutSellerNestedInput;
+    messages?: Prisma.WhatsappMessageUpdateManyWithoutSellerNestedInput;
 };
 export type SellerUncheckedUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -242,15 +242,15 @@ export type SellerUncheckedUpdateInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    store?: Prisma.StoreUncheckedUpdateOneWithoutSellerNestedInput;
-    products?: Prisma.ProductUncheckedUpdateManyWithoutSellerNestedInput;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     orders?: Prisma.OrderUncheckedUpdateManyWithoutSellerNestedInput;
-    messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutSellerNestedInput;
-    sessions?: Prisma.SellerSessionUncheckedUpdateManyWithoutSellerNestedInput;
+    products?: Prisma.ProductUncheckedUpdateManyWithoutSellerNestedInput;
     plugins?: Prisma.SellerPluginUncheckedUpdateManyWithoutSellerNestedInput;
+    sessions?: Prisma.SellerSessionUncheckedUpdateManyWithoutSellerNestedInput;
+    store?: Prisma.StoreUncheckedUpdateOneWithoutSellerNestedInput;
+    messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutSellerNestedInput;
 };
 export type SellerCreateManyInput = {
     id?: string;
@@ -258,9 +258,9 @@ export type SellerCreateManyInput = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    isVerified?: boolean;
 };
 export type SellerUpdateManyMutationInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -268,9 +268,9 @@ export type SellerUpdateManyMutationInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
 };
 export type SellerUncheckedUpdateManyInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -278,9 +278,9 @@ export type SellerUncheckedUpdateManyInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
 };
 export type SellerCountOrderByAggregateInput = {
     id?: Prisma.SortOrder;
@@ -288,9 +288,9 @@ export type SellerCountOrderByAggregateInput = {
     passwordHash?: Prisma.SortOrder;
     name?: Prisma.SortOrder;
     phone?: Prisma.SortOrder;
-    isVerified?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    isVerified?: Prisma.SortOrder;
 };
 export type SellerMaxOrderByAggregateInput = {
     id?: Prisma.SortOrder;
@@ -298,9 +298,9 @@ export type SellerMaxOrderByAggregateInput = {
     passwordHash?: Prisma.SortOrder;
     name?: Prisma.SortOrder;
     phone?: Prisma.SortOrder;
-    isVerified?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    isVerified?: Prisma.SortOrder;
 };
 export type SellerMinOrderByAggregateInput = {
     id?: Prisma.SortOrder;
@@ -308,9 +308,9 @@ export type SellerMinOrderByAggregateInput = {
     passwordHash?: Prisma.SortOrder;
     name?: Prisma.SortOrder;
     phone?: Prisma.SortOrder;
-    isVerified?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    isVerified?: Prisma.SortOrder;
 };
 export type SellerScalarRelationFilter = {
     is?: Prisma.SellerWhereInput;
@@ -326,11 +326,11 @@ export type StringFieldUpdateOperationsInput = {
 export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null;
 };
-export type BoolFieldUpdateOperationsInput = {
-    set?: boolean;
-};
 export type DateTimeFieldUpdateOperationsInput = {
     set?: Date | string;
+};
+export type BoolFieldUpdateOperationsInput = {
+    set?: boolean;
 };
 export type SellerCreateNestedOneWithoutStoreInput = {
     create?: Prisma.XOR<Prisma.SellerCreateWithoutStoreInput, Prisma.SellerUncheckedCreateWithoutStoreInput>;
@@ -412,14 +412,14 @@ export type SellerCreateWithoutStoreInput = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    products?: Prisma.ProductCreateNestedManyWithoutSellerInput;
+    isVerified?: boolean;
     orders?: Prisma.OrderCreateNestedManyWithoutSellerInput;
-    messages?: Prisma.WhatsappMessageCreateNestedManyWithoutSellerInput;
-    sessions?: Prisma.SellerSessionCreateNestedManyWithoutSellerInput;
+    products?: Prisma.ProductCreateNestedManyWithoutSellerInput;
     plugins?: Prisma.SellerPluginCreateNestedManyWithoutSellerInput;
+    sessions?: Prisma.SellerSessionCreateNestedManyWithoutSellerInput;
+    messages?: Prisma.WhatsappMessageCreateNestedManyWithoutSellerInput;
 };
 export type SellerUncheckedCreateWithoutStoreInput = {
     id?: string;
@@ -427,14 +427,14 @@ export type SellerUncheckedCreateWithoutStoreInput = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    products?: Prisma.ProductUncheckedCreateNestedManyWithoutSellerInput;
+    isVerified?: boolean;
     orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSellerInput;
-    messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutSellerInput;
-    sessions?: Prisma.SellerSessionUncheckedCreateNestedManyWithoutSellerInput;
+    products?: Prisma.ProductUncheckedCreateNestedManyWithoutSellerInput;
     plugins?: Prisma.SellerPluginUncheckedCreateNestedManyWithoutSellerInput;
+    sessions?: Prisma.SellerSessionUncheckedCreateNestedManyWithoutSellerInput;
+    messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutSellerInput;
 };
 export type SellerCreateOrConnectWithoutStoreInput = {
     where: Prisma.SellerWhereUniqueInput;
@@ -455,14 +455,14 @@ export type SellerUpdateWithoutStoreInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    products?: Prisma.ProductUpdateManyWithoutSellerNestedInput;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     orders?: Prisma.OrderUpdateManyWithoutSellerNestedInput;
-    messages?: Prisma.WhatsappMessageUpdateManyWithoutSellerNestedInput;
-    sessions?: Prisma.SellerSessionUpdateManyWithoutSellerNestedInput;
+    products?: Prisma.ProductUpdateManyWithoutSellerNestedInput;
     plugins?: Prisma.SellerPluginUpdateManyWithoutSellerNestedInput;
+    sessions?: Prisma.SellerSessionUpdateManyWithoutSellerNestedInput;
+    messages?: Prisma.WhatsappMessageUpdateManyWithoutSellerNestedInput;
 };
 export type SellerUncheckedUpdateWithoutStoreInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -470,14 +470,14 @@ export type SellerUncheckedUpdateWithoutStoreInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    products?: Prisma.ProductUncheckedUpdateManyWithoutSellerNestedInput;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     orders?: Prisma.OrderUncheckedUpdateManyWithoutSellerNestedInput;
-    messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutSellerNestedInput;
-    sessions?: Prisma.SellerSessionUncheckedUpdateManyWithoutSellerNestedInput;
+    products?: Prisma.ProductUncheckedUpdateManyWithoutSellerNestedInput;
     plugins?: Prisma.SellerPluginUncheckedUpdateManyWithoutSellerNestedInput;
+    sessions?: Prisma.SellerSessionUncheckedUpdateManyWithoutSellerNestedInput;
+    messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutSellerNestedInput;
 };
 export type SellerCreateWithoutProductsInput = {
     id?: string;
@@ -485,14 +485,14 @@ export type SellerCreateWithoutProductsInput = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    store?: Prisma.StoreCreateNestedOneWithoutSellerInput;
+    isVerified?: boolean;
     orders?: Prisma.OrderCreateNestedManyWithoutSellerInput;
-    messages?: Prisma.WhatsappMessageCreateNestedManyWithoutSellerInput;
-    sessions?: Prisma.SellerSessionCreateNestedManyWithoutSellerInput;
     plugins?: Prisma.SellerPluginCreateNestedManyWithoutSellerInput;
+    sessions?: Prisma.SellerSessionCreateNestedManyWithoutSellerInput;
+    store?: Prisma.StoreCreateNestedOneWithoutSellerInput;
+    messages?: Prisma.WhatsappMessageCreateNestedManyWithoutSellerInput;
 };
 export type SellerUncheckedCreateWithoutProductsInput = {
     id?: string;
@@ -500,14 +500,14 @@ export type SellerUncheckedCreateWithoutProductsInput = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    store?: Prisma.StoreUncheckedCreateNestedOneWithoutSellerInput;
+    isVerified?: boolean;
     orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSellerInput;
-    messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutSellerInput;
-    sessions?: Prisma.SellerSessionUncheckedCreateNestedManyWithoutSellerInput;
     plugins?: Prisma.SellerPluginUncheckedCreateNestedManyWithoutSellerInput;
+    sessions?: Prisma.SellerSessionUncheckedCreateNestedManyWithoutSellerInput;
+    store?: Prisma.StoreUncheckedCreateNestedOneWithoutSellerInput;
+    messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutSellerInput;
 };
 export type SellerCreateOrConnectWithoutProductsInput = {
     where: Prisma.SellerWhereUniqueInput;
@@ -528,14 +528,14 @@ export type SellerUpdateWithoutProductsInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    store?: Prisma.StoreUpdateOneWithoutSellerNestedInput;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     orders?: Prisma.OrderUpdateManyWithoutSellerNestedInput;
-    messages?: Prisma.WhatsappMessageUpdateManyWithoutSellerNestedInput;
-    sessions?: Prisma.SellerSessionUpdateManyWithoutSellerNestedInput;
     plugins?: Prisma.SellerPluginUpdateManyWithoutSellerNestedInput;
+    sessions?: Prisma.SellerSessionUpdateManyWithoutSellerNestedInput;
+    store?: Prisma.StoreUpdateOneWithoutSellerNestedInput;
+    messages?: Prisma.WhatsappMessageUpdateManyWithoutSellerNestedInput;
 };
 export type SellerUncheckedUpdateWithoutProductsInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -543,14 +543,14 @@ export type SellerUncheckedUpdateWithoutProductsInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    store?: Prisma.StoreUncheckedUpdateOneWithoutSellerNestedInput;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     orders?: Prisma.OrderUncheckedUpdateManyWithoutSellerNestedInput;
-    messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutSellerNestedInput;
-    sessions?: Prisma.SellerSessionUncheckedUpdateManyWithoutSellerNestedInput;
     plugins?: Prisma.SellerPluginUncheckedUpdateManyWithoutSellerNestedInput;
+    sessions?: Prisma.SellerSessionUncheckedUpdateManyWithoutSellerNestedInput;
+    store?: Prisma.StoreUncheckedUpdateOneWithoutSellerNestedInput;
+    messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutSellerNestedInput;
 };
 export type SellerCreateWithoutOrdersInput = {
     id?: string;
@@ -558,14 +558,14 @@ export type SellerCreateWithoutOrdersInput = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    store?: Prisma.StoreCreateNestedOneWithoutSellerInput;
+    isVerified?: boolean;
     products?: Prisma.ProductCreateNestedManyWithoutSellerInput;
-    messages?: Prisma.WhatsappMessageCreateNestedManyWithoutSellerInput;
-    sessions?: Prisma.SellerSessionCreateNestedManyWithoutSellerInput;
     plugins?: Prisma.SellerPluginCreateNestedManyWithoutSellerInput;
+    sessions?: Prisma.SellerSessionCreateNestedManyWithoutSellerInput;
+    store?: Prisma.StoreCreateNestedOneWithoutSellerInput;
+    messages?: Prisma.WhatsappMessageCreateNestedManyWithoutSellerInput;
 };
 export type SellerUncheckedCreateWithoutOrdersInput = {
     id?: string;
@@ -573,14 +573,14 @@ export type SellerUncheckedCreateWithoutOrdersInput = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    store?: Prisma.StoreUncheckedCreateNestedOneWithoutSellerInput;
+    isVerified?: boolean;
     products?: Prisma.ProductUncheckedCreateNestedManyWithoutSellerInput;
-    messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutSellerInput;
-    sessions?: Prisma.SellerSessionUncheckedCreateNestedManyWithoutSellerInput;
     plugins?: Prisma.SellerPluginUncheckedCreateNestedManyWithoutSellerInput;
+    sessions?: Prisma.SellerSessionUncheckedCreateNestedManyWithoutSellerInput;
+    store?: Prisma.StoreUncheckedCreateNestedOneWithoutSellerInput;
+    messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutSellerInput;
 };
 export type SellerCreateOrConnectWithoutOrdersInput = {
     where: Prisma.SellerWhereUniqueInput;
@@ -601,14 +601,14 @@ export type SellerUpdateWithoutOrdersInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    store?: Prisma.StoreUpdateOneWithoutSellerNestedInput;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     products?: Prisma.ProductUpdateManyWithoutSellerNestedInput;
-    messages?: Prisma.WhatsappMessageUpdateManyWithoutSellerNestedInput;
-    sessions?: Prisma.SellerSessionUpdateManyWithoutSellerNestedInput;
     plugins?: Prisma.SellerPluginUpdateManyWithoutSellerNestedInput;
+    sessions?: Prisma.SellerSessionUpdateManyWithoutSellerNestedInput;
+    store?: Prisma.StoreUpdateOneWithoutSellerNestedInput;
+    messages?: Prisma.WhatsappMessageUpdateManyWithoutSellerNestedInput;
 };
 export type SellerUncheckedUpdateWithoutOrdersInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -616,14 +616,14 @@ export type SellerUncheckedUpdateWithoutOrdersInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    store?: Prisma.StoreUncheckedUpdateOneWithoutSellerNestedInput;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     products?: Prisma.ProductUncheckedUpdateManyWithoutSellerNestedInput;
-    messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutSellerNestedInput;
-    sessions?: Prisma.SellerSessionUncheckedUpdateManyWithoutSellerNestedInput;
     plugins?: Prisma.SellerPluginUncheckedUpdateManyWithoutSellerNestedInput;
+    sessions?: Prisma.SellerSessionUncheckedUpdateManyWithoutSellerNestedInput;
+    store?: Prisma.StoreUncheckedUpdateOneWithoutSellerNestedInput;
+    messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutSellerNestedInput;
 };
 export type SellerCreateWithoutMessagesInput = {
     id?: string;
@@ -631,14 +631,14 @@ export type SellerCreateWithoutMessagesInput = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    store?: Prisma.StoreCreateNestedOneWithoutSellerInput;
-    products?: Prisma.ProductCreateNestedManyWithoutSellerInput;
+    isVerified?: boolean;
     orders?: Prisma.OrderCreateNestedManyWithoutSellerInput;
-    sessions?: Prisma.SellerSessionCreateNestedManyWithoutSellerInput;
+    products?: Prisma.ProductCreateNestedManyWithoutSellerInput;
     plugins?: Prisma.SellerPluginCreateNestedManyWithoutSellerInput;
+    sessions?: Prisma.SellerSessionCreateNestedManyWithoutSellerInput;
+    store?: Prisma.StoreCreateNestedOneWithoutSellerInput;
 };
 export type SellerUncheckedCreateWithoutMessagesInput = {
     id?: string;
@@ -646,14 +646,14 @@ export type SellerUncheckedCreateWithoutMessagesInput = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    store?: Prisma.StoreUncheckedCreateNestedOneWithoutSellerInput;
-    products?: Prisma.ProductUncheckedCreateNestedManyWithoutSellerInput;
+    isVerified?: boolean;
     orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSellerInput;
-    sessions?: Prisma.SellerSessionUncheckedCreateNestedManyWithoutSellerInput;
+    products?: Prisma.ProductUncheckedCreateNestedManyWithoutSellerInput;
     plugins?: Prisma.SellerPluginUncheckedCreateNestedManyWithoutSellerInput;
+    sessions?: Prisma.SellerSessionUncheckedCreateNestedManyWithoutSellerInput;
+    store?: Prisma.StoreUncheckedCreateNestedOneWithoutSellerInput;
 };
 export type SellerCreateOrConnectWithoutMessagesInput = {
     where: Prisma.SellerWhereUniqueInput;
@@ -674,14 +674,14 @@ export type SellerUpdateWithoutMessagesInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    store?: Prisma.StoreUpdateOneWithoutSellerNestedInput;
-    products?: Prisma.ProductUpdateManyWithoutSellerNestedInput;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     orders?: Prisma.OrderUpdateManyWithoutSellerNestedInput;
-    sessions?: Prisma.SellerSessionUpdateManyWithoutSellerNestedInput;
+    products?: Prisma.ProductUpdateManyWithoutSellerNestedInput;
     plugins?: Prisma.SellerPluginUpdateManyWithoutSellerNestedInput;
+    sessions?: Prisma.SellerSessionUpdateManyWithoutSellerNestedInput;
+    store?: Prisma.StoreUpdateOneWithoutSellerNestedInput;
 };
 export type SellerUncheckedUpdateWithoutMessagesInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -689,14 +689,14 @@ export type SellerUncheckedUpdateWithoutMessagesInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    store?: Prisma.StoreUncheckedUpdateOneWithoutSellerNestedInput;
-    products?: Prisma.ProductUncheckedUpdateManyWithoutSellerNestedInput;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     orders?: Prisma.OrderUncheckedUpdateManyWithoutSellerNestedInput;
-    sessions?: Prisma.SellerSessionUncheckedUpdateManyWithoutSellerNestedInput;
+    products?: Prisma.ProductUncheckedUpdateManyWithoutSellerNestedInput;
     plugins?: Prisma.SellerPluginUncheckedUpdateManyWithoutSellerNestedInput;
+    sessions?: Prisma.SellerSessionUncheckedUpdateManyWithoutSellerNestedInput;
+    store?: Prisma.StoreUncheckedUpdateOneWithoutSellerNestedInput;
 };
 export type SellerCreateWithoutPluginsInput = {
     id?: string;
@@ -704,14 +704,14 @@ export type SellerCreateWithoutPluginsInput = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    store?: Prisma.StoreCreateNestedOneWithoutSellerInput;
-    products?: Prisma.ProductCreateNestedManyWithoutSellerInput;
+    isVerified?: boolean;
     orders?: Prisma.OrderCreateNestedManyWithoutSellerInput;
-    messages?: Prisma.WhatsappMessageCreateNestedManyWithoutSellerInput;
+    products?: Prisma.ProductCreateNestedManyWithoutSellerInput;
     sessions?: Prisma.SellerSessionCreateNestedManyWithoutSellerInput;
+    store?: Prisma.StoreCreateNestedOneWithoutSellerInput;
+    messages?: Prisma.WhatsappMessageCreateNestedManyWithoutSellerInput;
 };
 export type SellerUncheckedCreateWithoutPluginsInput = {
     id?: string;
@@ -719,14 +719,14 @@ export type SellerUncheckedCreateWithoutPluginsInput = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    store?: Prisma.StoreUncheckedCreateNestedOneWithoutSellerInput;
-    products?: Prisma.ProductUncheckedCreateNestedManyWithoutSellerInput;
+    isVerified?: boolean;
     orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSellerInput;
-    messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutSellerInput;
+    products?: Prisma.ProductUncheckedCreateNestedManyWithoutSellerInput;
     sessions?: Prisma.SellerSessionUncheckedCreateNestedManyWithoutSellerInput;
+    store?: Prisma.StoreUncheckedCreateNestedOneWithoutSellerInput;
+    messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutSellerInput;
 };
 export type SellerCreateOrConnectWithoutPluginsInput = {
     where: Prisma.SellerWhereUniqueInput;
@@ -747,14 +747,14 @@ export type SellerUpdateWithoutPluginsInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    store?: Prisma.StoreUpdateOneWithoutSellerNestedInput;
-    products?: Prisma.ProductUpdateManyWithoutSellerNestedInput;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     orders?: Prisma.OrderUpdateManyWithoutSellerNestedInput;
-    messages?: Prisma.WhatsappMessageUpdateManyWithoutSellerNestedInput;
+    products?: Prisma.ProductUpdateManyWithoutSellerNestedInput;
     sessions?: Prisma.SellerSessionUpdateManyWithoutSellerNestedInput;
+    store?: Prisma.StoreUpdateOneWithoutSellerNestedInput;
+    messages?: Prisma.WhatsappMessageUpdateManyWithoutSellerNestedInput;
 };
 export type SellerUncheckedUpdateWithoutPluginsInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -762,14 +762,14 @@ export type SellerUncheckedUpdateWithoutPluginsInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    store?: Prisma.StoreUncheckedUpdateOneWithoutSellerNestedInput;
-    products?: Prisma.ProductUncheckedUpdateManyWithoutSellerNestedInput;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     orders?: Prisma.OrderUncheckedUpdateManyWithoutSellerNestedInput;
-    messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutSellerNestedInput;
+    products?: Prisma.ProductUncheckedUpdateManyWithoutSellerNestedInput;
     sessions?: Prisma.SellerSessionUncheckedUpdateManyWithoutSellerNestedInput;
+    store?: Prisma.StoreUncheckedUpdateOneWithoutSellerNestedInput;
+    messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutSellerNestedInput;
 };
 export type SellerCreateWithoutSessionsInput = {
     id?: string;
@@ -777,14 +777,14 @@ export type SellerCreateWithoutSessionsInput = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    store?: Prisma.StoreCreateNestedOneWithoutSellerInput;
-    products?: Prisma.ProductCreateNestedManyWithoutSellerInput;
+    isVerified?: boolean;
     orders?: Prisma.OrderCreateNestedManyWithoutSellerInput;
-    messages?: Prisma.WhatsappMessageCreateNestedManyWithoutSellerInput;
+    products?: Prisma.ProductCreateNestedManyWithoutSellerInput;
     plugins?: Prisma.SellerPluginCreateNestedManyWithoutSellerInput;
+    store?: Prisma.StoreCreateNestedOneWithoutSellerInput;
+    messages?: Prisma.WhatsappMessageCreateNestedManyWithoutSellerInput;
 };
 export type SellerUncheckedCreateWithoutSessionsInput = {
     id?: string;
@@ -792,14 +792,14 @@ export type SellerUncheckedCreateWithoutSessionsInput = {
     passwordHash: string;
     name: string;
     phone: string;
-    isVerified?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    store?: Prisma.StoreUncheckedCreateNestedOneWithoutSellerInput;
-    products?: Prisma.ProductUncheckedCreateNestedManyWithoutSellerInput;
+    isVerified?: boolean;
     orders?: Prisma.OrderUncheckedCreateNestedManyWithoutSellerInput;
-    messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutSellerInput;
+    products?: Prisma.ProductUncheckedCreateNestedManyWithoutSellerInput;
     plugins?: Prisma.SellerPluginUncheckedCreateNestedManyWithoutSellerInput;
+    store?: Prisma.StoreUncheckedCreateNestedOneWithoutSellerInput;
+    messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutSellerInput;
 };
 export type SellerCreateOrConnectWithoutSessionsInput = {
     where: Prisma.SellerWhereUniqueInput;
@@ -820,14 +820,14 @@ export type SellerUpdateWithoutSessionsInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    store?: Prisma.StoreUpdateOneWithoutSellerNestedInput;
-    products?: Prisma.ProductUpdateManyWithoutSellerNestedInput;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     orders?: Prisma.OrderUpdateManyWithoutSellerNestedInput;
-    messages?: Prisma.WhatsappMessageUpdateManyWithoutSellerNestedInput;
+    products?: Prisma.ProductUpdateManyWithoutSellerNestedInput;
     plugins?: Prisma.SellerPluginUpdateManyWithoutSellerNestedInput;
+    store?: Prisma.StoreUpdateOneWithoutSellerNestedInput;
+    messages?: Prisma.WhatsappMessageUpdateManyWithoutSellerNestedInput;
 };
 export type SellerUncheckedUpdateWithoutSessionsInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -835,46 +835,46 @@ export type SellerUncheckedUpdateWithoutSessionsInput = {
     passwordHash?: Prisma.StringFieldUpdateOperationsInput | string;
     name?: Prisma.StringFieldUpdateOperationsInput | string;
     phone?: Prisma.StringFieldUpdateOperationsInput | string;
-    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    store?: Prisma.StoreUncheckedUpdateOneWithoutSellerNestedInput;
-    products?: Prisma.ProductUncheckedUpdateManyWithoutSellerNestedInput;
+    isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     orders?: Prisma.OrderUncheckedUpdateManyWithoutSellerNestedInput;
-    messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutSellerNestedInput;
+    products?: Prisma.ProductUncheckedUpdateManyWithoutSellerNestedInput;
     plugins?: Prisma.SellerPluginUncheckedUpdateManyWithoutSellerNestedInput;
+    store?: Prisma.StoreUncheckedUpdateOneWithoutSellerNestedInput;
+    messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutSellerNestedInput;
 };
 export type SellerCountOutputType = {
-    products: number;
     orders: number;
-    messages: number;
-    sessions: number;
+    products: number;
     plugins: number;
+    sessions: number;
+    messages: number;
 };
 export type SellerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    products?: boolean | SellerCountOutputTypeCountProductsArgs;
     orders?: boolean | SellerCountOutputTypeCountOrdersArgs;
-    messages?: boolean | SellerCountOutputTypeCountMessagesArgs;
-    sessions?: boolean | SellerCountOutputTypeCountSessionsArgs;
+    products?: boolean | SellerCountOutputTypeCountProductsArgs;
     plugins?: boolean | SellerCountOutputTypeCountPluginsArgs;
+    sessions?: boolean | SellerCountOutputTypeCountSessionsArgs;
+    messages?: boolean | SellerCountOutputTypeCountMessagesArgs;
 };
 export type SellerCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.SellerCountOutputTypeSelect<ExtArgs> | null;
 };
-export type SellerCountOutputTypeCountProductsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    where?: Prisma.ProductWhereInput;
-};
 export type SellerCountOutputTypeCountOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.OrderWhereInput;
 };
-export type SellerCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    where?: Prisma.WhatsappMessageWhereInput;
+export type SellerCountOutputTypeCountProductsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.ProductWhereInput;
+};
+export type SellerCountOutputTypeCountPluginsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.SellerPluginWhereInput;
 };
 export type SellerCountOutputTypeCountSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     where?: Prisma.SellerSessionWhereInput;
 };
-export type SellerCountOutputTypeCountPluginsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    where?: Prisma.SellerPluginWhereInput;
+export type SellerCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    where?: Prisma.WhatsappMessageWhereInput;
 };
 export type SellerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -882,15 +882,15 @@ export type SellerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     passwordHash?: boolean;
     name?: boolean;
     phone?: boolean;
-    isVerified?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    store?: boolean | Prisma.Seller$storeArgs<ExtArgs>;
-    products?: boolean | Prisma.Seller$productsArgs<ExtArgs>;
+    isVerified?: boolean;
     orders?: boolean | Prisma.Seller$ordersArgs<ExtArgs>;
-    messages?: boolean | Prisma.Seller$messagesArgs<ExtArgs>;
-    sessions?: boolean | Prisma.Seller$sessionsArgs<ExtArgs>;
+    products?: boolean | Prisma.Seller$productsArgs<ExtArgs>;
     plugins?: boolean | Prisma.Seller$pluginsArgs<ExtArgs>;
+    sessions?: boolean | Prisma.Seller$sessionsArgs<ExtArgs>;
+    store?: boolean | Prisma.Seller$storeArgs<ExtArgs>;
+    messages?: boolean | Prisma.Seller$messagesArgs<ExtArgs>;
     _count?: boolean | Prisma.SellerCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["seller"]>;
 export type SellerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -899,9 +899,9 @@ export type SellerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
     passwordHash?: boolean;
     name?: boolean;
     phone?: boolean;
-    isVerified?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    isVerified?: boolean;
 }, ExtArgs["result"]["seller"]>;
 export type SellerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -909,9 +909,9 @@ export type SellerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
     passwordHash?: boolean;
     name?: boolean;
     phone?: boolean;
-    isVerified?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    isVerified?: boolean;
 }, ExtArgs["result"]["seller"]>;
 export type SellerSelectScalar = {
     id?: boolean;
@@ -919,18 +919,18 @@ export type SellerSelectScalar = {
     passwordHash?: boolean;
     name?: boolean;
     phone?: boolean;
-    isVerified?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    isVerified?: boolean;
 };
-export type SellerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "name" | "phone" | "isVerified" | "createdAt" | "updatedAt", ExtArgs["result"]["seller"]>;
+export type SellerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "passwordHash" | "name" | "phone" | "createdAt" | "updatedAt" | "isVerified", ExtArgs["result"]["seller"]>;
 export type SellerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    store?: boolean | Prisma.Seller$storeArgs<ExtArgs>;
-    products?: boolean | Prisma.Seller$productsArgs<ExtArgs>;
     orders?: boolean | Prisma.Seller$ordersArgs<ExtArgs>;
-    messages?: boolean | Prisma.Seller$messagesArgs<ExtArgs>;
-    sessions?: boolean | Prisma.Seller$sessionsArgs<ExtArgs>;
+    products?: boolean | Prisma.Seller$productsArgs<ExtArgs>;
     plugins?: boolean | Prisma.Seller$pluginsArgs<ExtArgs>;
+    sessions?: boolean | Prisma.Seller$sessionsArgs<ExtArgs>;
+    store?: boolean | Prisma.Seller$storeArgs<ExtArgs>;
+    messages?: boolean | Prisma.Seller$messagesArgs<ExtArgs>;
     _count?: boolean | Prisma.SellerCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type SellerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {};
@@ -938,12 +938,12 @@ export type SellerIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type $SellerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "Seller";
     objects: {
-        store: Prisma.$StorePayload<ExtArgs> | null;
-        products: Prisma.$ProductPayload<ExtArgs>[];
         orders: Prisma.$OrderPayload<ExtArgs>[];
-        messages: Prisma.$WhatsappMessagePayload<ExtArgs>[];
-        sessions: Prisma.$SellerSessionPayload<ExtArgs>[];
+        products: Prisma.$ProductPayload<ExtArgs>[];
         plugins: Prisma.$SellerPluginPayload<ExtArgs>[];
+        sessions: Prisma.$SellerSessionPayload<ExtArgs>[];
+        store: Prisma.$StorePayload<ExtArgs> | null;
+        messages: Prisma.$WhatsappMessagePayload<ExtArgs>[];
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: string;
@@ -951,9 +951,9 @@ export type $SellerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
         passwordHash: string;
         name: string;
         phone: string;
-        isVerified: boolean;
         createdAt: Date;
         updatedAt: Date;
+        isVerified: boolean;
     }, ExtArgs["result"]["seller"]>;
     composites: {};
 };
@@ -1006,12 +1006,12 @@ export interface SellerDelegate<ExtArgs extends runtime.Types.Extensions.Interna
 }
 export interface Prisma__SellerClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
-    store<T extends Prisma.Seller$storeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$storeArgs<ExtArgs>>): Prisma.Prisma__StoreClient<runtime.Types.Result.GetResult<Prisma.$StorePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
-    products<T extends Prisma.Seller$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     orders<T extends Prisma.Seller$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
-    messages<T extends Prisma.Seller$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WhatsappMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
-    sessions<T extends Prisma.Seller$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SellerSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    products<T extends Prisma.Seller$productsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$productsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     plugins<T extends Prisma.Seller$pluginsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$pluginsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SellerPluginPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    sessions<T extends Prisma.Seller$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SellerSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
+    store<T extends Prisma.Seller$storeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$storeArgs<ExtArgs>>): Prisma.Prisma__StoreClient<runtime.Types.Result.GetResult<Prisma.$StorePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
+    messages<T extends Prisma.Seller$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Seller$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WhatsappMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
     finally(onfinally?: (() => void) | undefined | null): runtime.Types.Utils.JsPromise<T>;
@@ -1022,9 +1022,9 @@ export interface SellerFieldRefs {
     readonly passwordHash: Prisma.FieldRef<"Seller", 'String'>;
     readonly name: Prisma.FieldRef<"Seller", 'String'>;
     readonly phone: Prisma.FieldRef<"Seller", 'String'>;
-    readonly isVerified: Prisma.FieldRef<"Seller", 'Boolean'>;
     readonly createdAt: Prisma.FieldRef<"Seller", 'DateTime'>;
     readonly updatedAt: Prisma.FieldRef<"Seller", 'DateTime'>;
+    readonly isVerified: Prisma.FieldRef<"Seller", 'Boolean'>;
 }
 export type SellerFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.SellerSelect<ExtArgs> | null;
@@ -1124,11 +1124,16 @@ export type SellerDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
     where?: Prisma.SellerWhereInput;
     limit?: number;
 };
-export type Seller$storeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    select?: Prisma.StoreSelect<ExtArgs> | null;
-    omit?: Prisma.StoreOmit<ExtArgs> | null;
-    include?: Prisma.StoreInclude<ExtArgs> | null;
-    where?: Prisma.StoreWhereInput;
+export type Seller$ordersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.OrderSelect<ExtArgs> | null;
+    omit?: Prisma.OrderOmit<ExtArgs> | null;
+    include?: Prisma.OrderInclude<ExtArgs> | null;
+    where?: Prisma.OrderWhereInput;
+    orderBy?: Prisma.OrderOrderByWithRelationInput | Prisma.OrderOrderByWithRelationInput[];
+    cursor?: Prisma.OrderWhereUniqueInput;
+    take?: number;
+    skip?: number;
+    distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[];
 };
 export type Seller$productsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.ProductSelect<ExtArgs> | null;
@@ -1141,27 +1146,16 @@ export type Seller$productsArgs<ExtArgs extends runtime.Types.Extensions.Interna
     skip?: number;
     distinct?: Prisma.ProductScalarFieldEnum | Prisma.ProductScalarFieldEnum[];
 };
-export type Seller$ordersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    select?: Prisma.OrderSelect<ExtArgs> | null;
-    omit?: Prisma.OrderOmit<ExtArgs> | null;
-    include?: Prisma.OrderInclude<ExtArgs> | null;
-    where?: Prisma.OrderWhereInput;
-    orderBy?: Prisma.OrderOrderByWithRelationInput | Prisma.OrderOrderByWithRelationInput[];
-    cursor?: Prisma.OrderWhereUniqueInput;
+export type Seller$pluginsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.SellerPluginSelect<ExtArgs> | null;
+    omit?: Prisma.SellerPluginOmit<ExtArgs> | null;
+    include?: Prisma.SellerPluginInclude<ExtArgs> | null;
+    where?: Prisma.SellerPluginWhereInput;
+    orderBy?: Prisma.SellerPluginOrderByWithRelationInput | Prisma.SellerPluginOrderByWithRelationInput[];
+    cursor?: Prisma.SellerPluginWhereUniqueInput;
     take?: number;
     skip?: number;
-    distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[];
-};
-export type Seller$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    select?: Prisma.WhatsappMessageSelect<ExtArgs> | null;
-    omit?: Prisma.WhatsappMessageOmit<ExtArgs> | null;
-    include?: Prisma.WhatsappMessageInclude<ExtArgs> | null;
-    where?: Prisma.WhatsappMessageWhereInput;
-    orderBy?: Prisma.WhatsappMessageOrderByWithRelationInput | Prisma.WhatsappMessageOrderByWithRelationInput[];
-    cursor?: Prisma.WhatsappMessageWhereUniqueInput;
-    take?: number;
-    skip?: number;
-    distinct?: Prisma.WhatsappMessageScalarFieldEnum | Prisma.WhatsappMessageScalarFieldEnum[];
+    distinct?: Prisma.SellerPluginScalarFieldEnum | Prisma.SellerPluginScalarFieldEnum[];
 };
 export type Seller$sessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.SellerSessionSelect<ExtArgs> | null;
@@ -1174,16 +1168,22 @@ export type Seller$sessionsArgs<ExtArgs extends runtime.Types.Extensions.Interna
     skip?: number;
     distinct?: Prisma.SellerSessionScalarFieldEnum | Prisma.SellerSessionScalarFieldEnum[];
 };
-export type Seller$pluginsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    select?: Prisma.SellerPluginSelect<ExtArgs> | null;
-    omit?: Prisma.SellerPluginOmit<ExtArgs> | null;
-    include?: Prisma.SellerPluginInclude<ExtArgs> | null;
-    where?: Prisma.SellerPluginWhereInput;
-    orderBy?: Prisma.SellerPluginOrderByWithRelationInput | Prisma.SellerPluginOrderByWithRelationInput[];
-    cursor?: Prisma.SellerPluginWhereUniqueInput;
+export type Seller$storeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.StoreSelect<ExtArgs> | null;
+    omit?: Prisma.StoreOmit<ExtArgs> | null;
+    include?: Prisma.StoreInclude<ExtArgs> | null;
+    where?: Prisma.StoreWhereInput;
+};
+export type Seller$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.WhatsappMessageSelect<ExtArgs> | null;
+    omit?: Prisma.WhatsappMessageOmit<ExtArgs> | null;
+    include?: Prisma.WhatsappMessageInclude<ExtArgs> | null;
+    where?: Prisma.WhatsappMessageWhereInput;
+    orderBy?: Prisma.WhatsappMessageOrderByWithRelationInput | Prisma.WhatsappMessageOrderByWithRelationInput[];
+    cursor?: Prisma.WhatsappMessageWhereUniqueInput;
     take?: number;
     skip?: number;
-    distinct?: Prisma.SellerPluginScalarFieldEnum | Prisma.SellerPluginScalarFieldEnum[];
+    distinct?: Prisma.WhatsappMessageScalarFieldEnum | Prisma.WhatsappMessageScalarFieldEnum[];
 };
 export type SellerDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.SellerSelect<ExtArgs> | null;

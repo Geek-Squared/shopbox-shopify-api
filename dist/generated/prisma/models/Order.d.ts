@@ -26,11 +26,11 @@ export type OrderMinAggregateOutputType = {
     totalAmount: number | null;
     createdAt: Date | null;
     updatedAt: Date | null;
-    orderNumber: string | null;
-    deliveryCode: string | null;
     buyerId: string | null;
-    deliveryAddress: string | null;
+    deliveryCode: string | null;
     notes: string | null;
+    orderNumber: string | null;
+    deliveryAddress: string | null;
 };
 export type OrderMaxAggregateOutputType = {
     id: string | null;
@@ -43,11 +43,11 @@ export type OrderMaxAggregateOutputType = {
     totalAmount: number | null;
     createdAt: Date | null;
     updatedAt: Date | null;
-    orderNumber: string | null;
-    deliveryCode: string | null;
     buyerId: string | null;
-    deliveryAddress: string | null;
+    deliveryCode: string | null;
     notes: string | null;
+    orderNumber: string | null;
+    deliveryAddress: string | null;
 };
 export type OrderCountAggregateOutputType = {
     id: number;
@@ -60,11 +60,11 @@ export type OrderCountAggregateOutputType = {
     totalAmount: number;
     createdAt: number;
     updatedAt: number;
-    orderNumber: number;
-    deliveryCode: number;
     buyerId: number;
-    deliveryAddress: number;
+    deliveryCode: number;
     notes: number;
+    orderNumber: number;
+    deliveryAddress: number;
     _all: number;
 };
 export type OrderAvgAggregateInputType = {
@@ -84,11 +84,11 @@ export type OrderMinAggregateInputType = {
     totalAmount?: true;
     createdAt?: true;
     updatedAt?: true;
-    orderNumber?: true;
-    deliveryCode?: true;
     buyerId?: true;
-    deliveryAddress?: true;
+    deliveryCode?: true;
     notes?: true;
+    orderNumber?: true;
+    deliveryAddress?: true;
 };
 export type OrderMaxAggregateInputType = {
     id?: true;
@@ -101,11 +101,11 @@ export type OrderMaxAggregateInputType = {
     totalAmount?: true;
     createdAt?: true;
     updatedAt?: true;
-    orderNumber?: true;
-    deliveryCode?: true;
     buyerId?: true;
-    deliveryAddress?: true;
+    deliveryCode?: true;
     notes?: true;
+    orderNumber?: true;
+    deliveryAddress?: true;
 };
 export type OrderCountAggregateInputType = {
     id?: true;
@@ -118,11 +118,11 @@ export type OrderCountAggregateInputType = {
     totalAmount?: true;
     createdAt?: true;
     updatedAt?: true;
-    orderNumber?: true;
-    deliveryCode?: true;
     buyerId?: true;
-    deliveryAddress?: true;
+    deliveryCode?: true;
     notes?: true;
+    orderNumber?: true;
+    deliveryAddress?: true;
     _all?: true;
 };
 export type OrderAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -164,11 +164,11 @@ export type OrderGroupByOutputType = {
     totalAmount: number;
     createdAt: Date;
     updatedAt: Date;
-    orderNumber: string | null;
-    deliveryCode: string | null;
     buyerId: string | null;
-    deliveryAddress: string | null;
+    deliveryCode: string | null;
     notes: string | null;
+    orderNumber: string | null;
+    deliveryAddress: string | null;
     _count: OrderCountAggregateOutputType | null;
     _avg: OrderAvgAggregateOutputType | null;
     _sum: OrderSumAggregateOutputType | null;
@@ -192,18 +192,18 @@ export type OrderWhereInput = {
     totalAmount?: Prisma.FloatFilter<"Order"> | number;
     createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string;
-    orderNumber?: Prisma.StringNullableFilter<"Order"> | string | null;
-    deliveryCode?: Prisma.StringNullableFilter<"Order"> | string | null;
     buyerId?: Prisma.StringNullableFilter<"Order"> | string | null;
-    deliveryAddress?: Prisma.StringNullableFilter<"Order"> | string | null;
+    deliveryCode?: Prisma.StringNullableFilter<"Order"> | string | null;
     notes?: Prisma.StringNullableFilter<"Order"> | string | null;
+    orderNumber?: Prisma.StringNullableFilter<"Order"> | string | null;
+    deliveryAddress?: Prisma.StringNullableFilter<"Order"> | string | null;
+    delivery?: Prisma.XOR<Prisma.DeliveryNullableScalarRelationFilter, Prisma.DeliveryWhereInput> | null;
+    buyer?: Prisma.XOR<Prisma.BuyerNullableScalarRelationFilter, Prisma.BuyerWhereInput> | null;
     seller?: Prisma.XOR<Prisma.SellerScalarRelationFilter, Prisma.SellerWhereInput>;
     store?: Prisma.XOR<Prisma.StoreScalarRelationFilter, Prisma.StoreWhereInput>;
     items?: Prisma.OrderItemListRelationFilter;
     payment?: Prisma.XOR<Prisma.PaymentNullableScalarRelationFilter, Prisma.PaymentWhereInput> | null;
     messages?: Prisma.WhatsappMessageListRelationFilter;
-    buyer?: Prisma.XOR<Prisma.BuyerNullableScalarRelationFilter, Prisma.BuyerWhereInput> | null;
-    delivery?: Prisma.XOR<Prisma.DeliveryNullableScalarRelationFilter, Prisma.DeliveryWhereInput> | null;
 };
 export type OrderOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -216,23 +216,23 @@ export type OrderOrderByWithRelationInput = {
     totalAmount?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
-    orderNumber?: Prisma.SortOrderInput | Prisma.SortOrder;
-    deliveryCode?: Prisma.SortOrderInput | Prisma.SortOrder;
     buyerId?: Prisma.SortOrderInput | Prisma.SortOrder;
-    deliveryAddress?: Prisma.SortOrderInput | Prisma.SortOrder;
+    deliveryCode?: Prisma.SortOrderInput | Prisma.SortOrder;
     notes?: Prisma.SortOrderInput | Prisma.SortOrder;
+    orderNumber?: Prisma.SortOrderInput | Prisma.SortOrder;
+    deliveryAddress?: Prisma.SortOrderInput | Prisma.SortOrder;
+    delivery?: Prisma.DeliveryOrderByWithRelationInput;
+    buyer?: Prisma.BuyerOrderByWithRelationInput;
     seller?: Prisma.SellerOrderByWithRelationInput;
     store?: Prisma.StoreOrderByWithRelationInput;
     items?: Prisma.OrderItemOrderByRelationAggregateInput;
     payment?: Prisma.PaymentOrderByWithRelationInput;
     messages?: Prisma.WhatsappMessageOrderByRelationAggregateInput;
-    buyer?: Prisma.BuyerOrderByWithRelationInput;
-    delivery?: Prisma.DeliveryOrderByWithRelationInput;
 };
 export type OrderWhereUniqueInput = Prisma.AtLeast<{
     id?: string;
-    orderNumber?: string;
     deliveryCode?: string;
+    orderNumber?: string;
     AND?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[];
     OR?: Prisma.OrderWhereInput[];
     NOT?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[];
@@ -246,16 +246,16 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
     createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string;
     buyerId?: Prisma.StringNullableFilter<"Order"> | string | null;
-    deliveryAddress?: Prisma.StringNullableFilter<"Order"> | string | null;
     notes?: Prisma.StringNullableFilter<"Order"> | string | null;
+    deliveryAddress?: Prisma.StringNullableFilter<"Order"> | string | null;
+    delivery?: Prisma.XOR<Prisma.DeliveryNullableScalarRelationFilter, Prisma.DeliveryWhereInput> | null;
+    buyer?: Prisma.XOR<Prisma.BuyerNullableScalarRelationFilter, Prisma.BuyerWhereInput> | null;
     seller?: Prisma.XOR<Prisma.SellerScalarRelationFilter, Prisma.SellerWhereInput>;
     store?: Prisma.XOR<Prisma.StoreScalarRelationFilter, Prisma.StoreWhereInput>;
     items?: Prisma.OrderItemListRelationFilter;
     payment?: Prisma.XOR<Prisma.PaymentNullableScalarRelationFilter, Prisma.PaymentWhereInput> | null;
     messages?: Prisma.WhatsappMessageListRelationFilter;
-    buyer?: Prisma.XOR<Prisma.BuyerNullableScalarRelationFilter, Prisma.BuyerWhereInput> | null;
-    delivery?: Prisma.XOR<Prisma.DeliveryNullableScalarRelationFilter, Prisma.DeliveryWhereInput> | null;
-}, "id" | "orderNumber" | "deliveryCode">;
+}, "id" | "deliveryCode" | "orderNumber">;
 export type OrderOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
     sellerId?: Prisma.SortOrder;
@@ -267,11 +267,11 @@ export type OrderOrderByWithAggregationInput = {
     totalAmount?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
-    orderNumber?: Prisma.SortOrderInput | Prisma.SortOrder;
-    deliveryCode?: Prisma.SortOrderInput | Prisma.SortOrder;
     buyerId?: Prisma.SortOrderInput | Prisma.SortOrder;
-    deliveryAddress?: Prisma.SortOrderInput | Prisma.SortOrder;
+    deliveryCode?: Prisma.SortOrderInput | Prisma.SortOrder;
     notes?: Prisma.SortOrderInput | Prisma.SortOrder;
+    orderNumber?: Prisma.SortOrderInput | Prisma.SortOrder;
+    deliveryAddress?: Prisma.SortOrderInput | Prisma.SortOrder;
     _count?: Prisma.OrderCountOrderByAggregateInput;
     _avg?: Prisma.OrderAvgOrderByAggregateInput;
     _max?: Prisma.OrderMaxOrderByAggregateInput;
@@ -292,11 +292,11 @@ export type OrderScalarWhereWithAggregatesInput = {
     totalAmount?: Prisma.FloatWithAggregatesFilter<"Order"> | number;
     createdAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string;
     updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string;
-    orderNumber?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null;
-    deliveryCode?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null;
     buyerId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null;
-    deliveryAddress?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null;
+    deliveryCode?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null;
     notes?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null;
+    orderNumber?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null;
+    deliveryAddress?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null;
 };
 export type OrderCreateInput = {
     id?: string;
@@ -307,17 +307,17 @@ export type OrderCreateInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
     deliveryCode?: string | null;
-    deliveryAddress?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
+    delivery?: Prisma.DeliveryCreateNestedOneWithoutOrderInput;
+    buyer?: Prisma.BuyerCreateNestedOneWithoutOrdersInput;
     seller: Prisma.SellerCreateNestedOneWithoutOrdersInput;
     store: Prisma.StoreCreateNestedOneWithoutOrdersInput;
     items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput;
     payment?: Prisma.PaymentCreateNestedOneWithoutOrderInput;
     messages?: Prisma.WhatsappMessageCreateNestedManyWithoutOrderInput;
-    buyer?: Prisma.BuyerCreateNestedOneWithoutOrdersInput;
-    delivery?: Prisma.DeliveryCreateNestedOneWithoutOrderInput;
 };
 export type OrderUncheckedCreateInput = {
     id?: string;
@@ -330,15 +330,15 @@ export type OrderUncheckedCreateInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
-    deliveryCode?: string | null;
     buyerId?: string | null;
-    deliveryAddress?: string | null;
+    deliveryCode?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
+    delivery?: Prisma.DeliveryUncheckedCreateNestedOneWithoutOrderInput;
     items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput;
     payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput;
     messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutOrderInput;
-    delivery?: Prisma.DeliveryUncheckedCreateNestedOneWithoutOrderInput;
 };
 export type OrderUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -349,17 +349,17 @@ export type OrderUpdateInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    delivery?: Prisma.DeliveryUpdateOneWithoutOrderNestedInput;
+    buyer?: Prisma.BuyerUpdateOneWithoutOrdersNestedInput;
     seller?: Prisma.SellerUpdateOneRequiredWithoutOrdersNestedInput;
     store?: Prisma.StoreUpdateOneRequiredWithoutOrdersNestedInput;
     items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput;
     payment?: Prisma.PaymentUpdateOneWithoutOrderNestedInput;
     messages?: Prisma.WhatsappMessageUpdateManyWithoutOrderNestedInput;
-    buyer?: Prisma.BuyerUpdateOneWithoutOrdersNestedInput;
-    delivery?: Prisma.DeliveryUpdateOneWithoutOrderNestedInput;
 };
 export type OrderUncheckedUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -372,15 +372,15 @@ export type OrderUncheckedUpdateInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     buyerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    delivery?: Prisma.DeliveryUncheckedUpdateOneWithoutOrderNestedInput;
     items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput;
     payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput;
     messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutOrderNestedInput;
-    delivery?: Prisma.DeliveryUncheckedUpdateOneWithoutOrderNestedInput;
 };
 export type OrderCreateManyInput = {
     id?: string;
@@ -393,11 +393,11 @@ export type OrderCreateManyInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
-    deliveryCode?: string | null;
     buyerId?: string | null;
-    deliveryAddress?: string | null;
+    deliveryCode?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
 };
 export type OrderUpdateManyMutationInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -408,10 +408,10 @@ export type OrderUpdateManyMutationInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type OrderUncheckedUpdateManyInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -424,11 +424,11 @@ export type OrderUncheckedUpdateManyInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     buyerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type OrderListRelationFilter = {
     every?: Prisma.OrderWhereInput;
@@ -449,11 +449,11 @@ export type OrderCountOrderByAggregateInput = {
     totalAmount?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
-    orderNumber?: Prisma.SortOrder;
-    deliveryCode?: Prisma.SortOrder;
     buyerId?: Prisma.SortOrder;
-    deliveryAddress?: Prisma.SortOrder;
+    deliveryCode?: Prisma.SortOrder;
     notes?: Prisma.SortOrder;
+    orderNumber?: Prisma.SortOrder;
+    deliveryAddress?: Prisma.SortOrder;
 };
 export type OrderAvgOrderByAggregateInput = {
     totalAmount?: Prisma.SortOrder;
@@ -469,11 +469,11 @@ export type OrderMaxOrderByAggregateInput = {
     totalAmount?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
-    orderNumber?: Prisma.SortOrder;
-    deliveryCode?: Prisma.SortOrder;
     buyerId?: Prisma.SortOrder;
-    deliveryAddress?: Prisma.SortOrder;
+    deliveryCode?: Prisma.SortOrder;
     notes?: Prisma.SortOrder;
+    orderNumber?: Prisma.SortOrder;
+    deliveryAddress?: Prisma.SortOrder;
 };
 export type OrderMinOrderByAggregateInput = {
     id?: Prisma.SortOrder;
@@ -486,11 +486,11 @@ export type OrderMinOrderByAggregateInput = {
     totalAmount?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
-    orderNumber?: Prisma.SortOrder;
-    deliveryCode?: Prisma.SortOrder;
     buyerId?: Prisma.SortOrder;
-    deliveryAddress?: Prisma.SortOrder;
+    deliveryCode?: Prisma.SortOrder;
     notes?: Prisma.SortOrder;
+    orderNumber?: Prisma.SortOrder;
+    deliveryAddress?: Prisma.SortOrder;
 };
 export type OrderSumOrderByAggregateInput = {
     totalAmount?: Prisma.SortOrder;
@@ -679,16 +679,16 @@ export type OrderCreateWithoutSellerInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
     deliveryCode?: string | null;
-    deliveryAddress?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
+    delivery?: Prisma.DeliveryCreateNestedOneWithoutOrderInput;
+    buyer?: Prisma.BuyerCreateNestedOneWithoutOrdersInput;
     store: Prisma.StoreCreateNestedOneWithoutOrdersInput;
     items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput;
     payment?: Prisma.PaymentCreateNestedOneWithoutOrderInput;
     messages?: Prisma.WhatsappMessageCreateNestedManyWithoutOrderInput;
-    buyer?: Prisma.BuyerCreateNestedOneWithoutOrdersInput;
-    delivery?: Prisma.DeliveryCreateNestedOneWithoutOrderInput;
 };
 export type OrderUncheckedCreateWithoutSellerInput = {
     id?: string;
@@ -700,15 +700,15 @@ export type OrderUncheckedCreateWithoutSellerInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
-    deliveryCode?: string | null;
     buyerId?: string | null;
-    deliveryAddress?: string | null;
+    deliveryCode?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
+    delivery?: Prisma.DeliveryUncheckedCreateNestedOneWithoutOrderInput;
     items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput;
     payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput;
     messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutOrderInput;
-    delivery?: Prisma.DeliveryUncheckedCreateNestedOneWithoutOrderInput;
 };
 export type OrderCreateOrConnectWithoutSellerInput = {
     where: Prisma.OrderWhereUniqueInput;
@@ -745,11 +745,11 @@ export type OrderScalarWhereInput = {
     totalAmount?: Prisma.FloatFilter<"Order"> | number;
     createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string;
-    orderNumber?: Prisma.StringNullableFilter<"Order"> | string | null;
-    deliveryCode?: Prisma.StringNullableFilter<"Order"> | string | null;
     buyerId?: Prisma.StringNullableFilter<"Order"> | string | null;
-    deliveryAddress?: Prisma.StringNullableFilter<"Order"> | string | null;
+    deliveryCode?: Prisma.StringNullableFilter<"Order"> | string | null;
     notes?: Prisma.StringNullableFilter<"Order"> | string | null;
+    orderNumber?: Prisma.StringNullableFilter<"Order"> | string | null;
+    deliveryAddress?: Prisma.StringNullableFilter<"Order"> | string | null;
 };
 export type OrderCreateWithoutStoreInput = {
     id?: string;
@@ -760,16 +760,16 @@ export type OrderCreateWithoutStoreInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
     deliveryCode?: string | null;
-    deliveryAddress?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
+    delivery?: Prisma.DeliveryCreateNestedOneWithoutOrderInput;
+    buyer?: Prisma.BuyerCreateNestedOneWithoutOrdersInput;
     seller: Prisma.SellerCreateNestedOneWithoutOrdersInput;
     items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput;
     payment?: Prisma.PaymentCreateNestedOneWithoutOrderInput;
     messages?: Prisma.WhatsappMessageCreateNestedManyWithoutOrderInput;
-    buyer?: Prisma.BuyerCreateNestedOneWithoutOrdersInput;
-    delivery?: Prisma.DeliveryCreateNestedOneWithoutOrderInput;
 };
 export type OrderUncheckedCreateWithoutStoreInput = {
     id?: string;
@@ -781,15 +781,15 @@ export type OrderUncheckedCreateWithoutStoreInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
-    deliveryCode?: string | null;
     buyerId?: string | null;
-    deliveryAddress?: string | null;
+    deliveryCode?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
+    delivery?: Prisma.DeliveryUncheckedCreateNestedOneWithoutOrderInput;
     items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput;
     payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput;
     messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutOrderInput;
-    delivery?: Prisma.DeliveryUncheckedCreateNestedOneWithoutOrderInput;
 };
 export type OrderCreateOrConnectWithoutStoreInput = {
     where: Prisma.OrderWhereUniqueInput;
@@ -821,16 +821,16 @@ export type OrderCreateWithoutItemsInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
     deliveryCode?: string | null;
-    deliveryAddress?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
+    delivery?: Prisma.DeliveryCreateNestedOneWithoutOrderInput;
+    buyer?: Prisma.BuyerCreateNestedOneWithoutOrdersInput;
     seller: Prisma.SellerCreateNestedOneWithoutOrdersInput;
     store: Prisma.StoreCreateNestedOneWithoutOrdersInput;
     payment?: Prisma.PaymentCreateNestedOneWithoutOrderInput;
     messages?: Prisma.WhatsappMessageCreateNestedManyWithoutOrderInput;
-    buyer?: Prisma.BuyerCreateNestedOneWithoutOrdersInput;
-    delivery?: Prisma.DeliveryCreateNestedOneWithoutOrderInput;
 };
 export type OrderUncheckedCreateWithoutItemsInput = {
     id?: string;
@@ -843,14 +843,14 @@ export type OrderUncheckedCreateWithoutItemsInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
-    deliveryCode?: string | null;
     buyerId?: string | null;
-    deliveryAddress?: string | null;
+    deliveryCode?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
+    delivery?: Prisma.DeliveryUncheckedCreateNestedOneWithoutOrderInput;
     payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput;
     messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutOrderInput;
-    delivery?: Prisma.DeliveryUncheckedCreateNestedOneWithoutOrderInput;
 };
 export type OrderCreateOrConnectWithoutItemsInput = {
     where: Prisma.OrderWhereUniqueInput;
@@ -874,16 +874,16 @@ export type OrderUpdateWithoutItemsInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    delivery?: Prisma.DeliveryUpdateOneWithoutOrderNestedInput;
+    buyer?: Prisma.BuyerUpdateOneWithoutOrdersNestedInput;
     seller?: Prisma.SellerUpdateOneRequiredWithoutOrdersNestedInput;
     store?: Prisma.StoreUpdateOneRequiredWithoutOrdersNestedInput;
     payment?: Prisma.PaymentUpdateOneWithoutOrderNestedInput;
     messages?: Prisma.WhatsappMessageUpdateManyWithoutOrderNestedInput;
-    buyer?: Prisma.BuyerUpdateOneWithoutOrdersNestedInput;
-    delivery?: Prisma.DeliveryUpdateOneWithoutOrderNestedInput;
 };
 export type OrderUncheckedUpdateWithoutItemsInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -896,14 +896,14 @@ export type OrderUncheckedUpdateWithoutItemsInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     buyerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    delivery?: Prisma.DeliveryUncheckedUpdateOneWithoutOrderNestedInput;
     payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput;
     messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutOrderNestedInput;
-    delivery?: Prisma.DeliveryUncheckedUpdateOneWithoutOrderNestedInput;
 };
 export type OrderCreateWithoutPaymentInput = {
     id?: string;
@@ -914,16 +914,16 @@ export type OrderCreateWithoutPaymentInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
     deliveryCode?: string | null;
-    deliveryAddress?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
+    delivery?: Prisma.DeliveryCreateNestedOneWithoutOrderInput;
+    buyer?: Prisma.BuyerCreateNestedOneWithoutOrdersInput;
     seller: Prisma.SellerCreateNestedOneWithoutOrdersInput;
     store: Prisma.StoreCreateNestedOneWithoutOrdersInput;
     items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput;
     messages?: Prisma.WhatsappMessageCreateNestedManyWithoutOrderInput;
-    buyer?: Prisma.BuyerCreateNestedOneWithoutOrdersInput;
-    delivery?: Prisma.DeliveryCreateNestedOneWithoutOrderInput;
 };
 export type OrderUncheckedCreateWithoutPaymentInput = {
     id?: string;
@@ -936,14 +936,14 @@ export type OrderUncheckedCreateWithoutPaymentInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
-    deliveryCode?: string | null;
     buyerId?: string | null;
-    deliveryAddress?: string | null;
+    deliveryCode?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
+    delivery?: Prisma.DeliveryUncheckedCreateNestedOneWithoutOrderInput;
     items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput;
     messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutOrderInput;
-    delivery?: Prisma.DeliveryUncheckedCreateNestedOneWithoutOrderInput;
 };
 export type OrderCreateOrConnectWithoutPaymentInput = {
     where: Prisma.OrderWhereUniqueInput;
@@ -967,16 +967,16 @@ export type OrderUpdateWithoutPaymentInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    delivery?: Prisma.DeliveryUpdateOneWithoutOrderNestedInput;
+    buyer?: Prisma.BuyerUpdateOneWithoutOrdersNestedInput;
     seller?: Prisma.SellerUpdateOneRequiredWithoutOrdersNestedInput;
     store?: Prisma.StoreUpdateOneRequiredWithoutOrdersNestedInput;
     items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput;
     messages?: Prisma.WhatsappMessageUpdateManyWithoutOrderNestedInput;
-    buyer?: Prisma.BuyerUpdateOneWithoutOrdersNestedInput;
-    delivery?: Prisma.DeliveryUpdateOneWithoutOrderNestedInput;
 };
 export type OrderUncheckedUpdateWithoutPaymentInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -989,14 +989,14 @@ export type OrderUncheckedUpdateWithoutPaymentInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     buyerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    delivery?: Prisma.DeliveryUncheckedUpdateOneWithoutOrderNestedInput;
     items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput;
     messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutOrderNestedInput;
-    delivery?: Prisma.DeliveryUncheckedUpdateOneWithoutOrderNestedInput;
 };
 export type OrderCreateWithoutMessagesInput = {
     id?: string;
@@ -1007,16 +1007,16 @@ export type OrderCreateWithoutMessagesInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
     deliveryCode?: string | null;
-    deliveryAddress?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
+    delivery?: Prisma.DeliveryCreateNestedOneWithoutOrderInput;
+    buyer?: Prisma.BuyerCreateNestedOneWithoutOrdersInput;
     seller: Prisma.SellerCreateNestedOneWithoutOrdersInput;
     store: Prisma.StoreCreateNestedOneWithoutOrdersInput;
     items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput;
     payment?: Prisma.PaymentCreateNestedOneWithoutOrderInput;
-    buyer?: Prisma.BuyerCreateNestedOneWithoutOrdersInput;
-    delivery?: Prisma.DeliveryCreateNestedOneWithoutOrderInput;
 };
 export type OrderUncheckedCreateWithoutMessagesInput = {
     id?: string;
@@ -1029,14 +1029,14 @@ export type OrderUncheckedCreateWithoutMessagesInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
-    deliveryCode?: string | null;
     buyerId?: string | null;
-    deliveryAddress?: string | null;
+    deliveryCode?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
+    delivery?: Prisma.DeliveryUncheckedCreateNestedOneWithoutOrderInput;
     items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput;
     payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput;
-    delivery?: Prisma.DeliveryUncheckedCreateNestedOneWithoutOrderInput;
 };
 export type OrderCreateOrConnectWithoutMessagesInput = {
     where: Prisma.OrderWhereUniqueInput;
@@ -1060,16 +1060,16 @@ export type OrderUpdateWithoutMessagesInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    delivery?: Prisma.DeliveryUpdateOneWithoutOrderNestedInput;
+    buyer?: Prisma.BuyerUpdateOneWithoutOrdersNestedInput;
     seller?: Prisma.SellerUpdateOneRequiredWithoutOrdersNestedInput;
     store?: Prisma.StoreUpdateOneRequiredWithoutOrdersNestedInput;
     items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput;
     payment?: Prisma.PaymentUpdateOneWithoutOrderNestedInput;
-    buyer?: Prisma.BuyerUpdateOneWithoutOrdersNestedInput;
-    delivery?: Prisma.DeliveryUpdateOneWithoutOrderNestedInput;
 };
 export type OrderUncheckedUpdateWithoutMessagesInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1082,14 +1082,14 @@ export type OrderUncheckedUpdateWithoutMessagesInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     buyerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    delivery?: Prisma.DeliveryUncheckedUpdateOneWithoutOrderNestedInput;
     items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput;
     payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput;
-    delivery?: Prisma.DeliveryUncheckedUpdateOneWithoutOrderNestedInput;
 };
 export type OrderCreateWithoutBuyerInput = {
     id?: string;
@@ -1100,16 +1100,16 @@ export type OrderCreateWithoutBuyerInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
     deliveryCode?: string | null;
-    deliveryAddress?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
+    delivery?: Prisma.DeliveryCreateNestedOneWithoutOrderInput;
     seller: Prisma.SellerCreateNestedOneWithoutOrdersInput;
     store: Prisma.StoreCreateNestedOneWithoutOrdersInput;
     items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput;
     payment?: Prisma.PaymentCreateNestedOneWithoutOrderInput;
     messages?: Prisma.WhatsappMessageCreateNestedManyWithoutOrderInput;
-    delivery?: Prisma.DeliveryCreateNestedOneWithoutOrderInput;
 };
 export type OrderUncheckedCreateWithoutBuyerInput = {
     id?: string;
@@ -1122,14 +1122,14 @@ export type OrderUncheckedCreateWithoutBuyerInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
     deliveryCode?: string | null;
-    deliveryAddress?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
+    delivery?: Prisma.DeliveryUncheckedCreateNestedOneWithoutOrderInput;
     items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput;
     payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput;
     messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutOrderInput;
-    delivery?: Prisma.DeliveryUncheckedCreateNestedOneWithoutOrderInput;
 };
 export type OrderCreateOrConnectWithoutBuyerInput = {
     where: Prisma.OrderWhereUniqueInput;
@@ -1161,16 +1161,16 @@ export type OrderCreateWithoutDeliveryInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
     deliveryCode?: string | null;
-    deliveryAddress?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
+    buyer?: Prisma.BuyerCreateNestedOneWithoutOrdersInput;
     seller: Prisma.SellerCreateNestedOneWithoutOrdersInput;
     store: Prisma.StoreCreateNestedOneWithoutOrdersInput;
     items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput;
     payment?: Prisma.PaymentCreateNestedOneWithoutOrderInput;
     messages?: Prisma.WhatsappMessageCreateNestedManyWithoutOrderInput;
-    buyer?: Prisma.BuyerCreateNestedOneWithoutOrdersInput;
 };
 export type OrderUncheckedCreateWithoutDeliveryInput = {
     id?: string;
@@ -1183,11 +1183,11 @@ export type OrderUncheckedCreateWithoutDeliveryInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
-    deliveryCode?: string | null;
     buyerId?: string | null;
-    deliveryAddress?: string | null;
+    deliveryCode?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
     items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput;
     payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput;
     messages?: Prisma.WhatsappMessageUncheckedCreateNestedManyWithoutOrderInput;
@@ -1214,16 +1214,16 @@ export type OrderUpdateWithoutDeliveryInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    buyer?: Prisma.BuyerUpdateOneWithoutOrdersNestedInput;
     seller?: Prisma.SellerUpdateOneRequiredWithoutOrdersNestedInput;
     store?: Prisma.StoreUpdateOneRequiredWithoutOrdersNestedInput;
     items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput;
     payment?: Prisma.PaymentUpdateOneWithoutOrderNestedInput;
     messages?: Prisma.WhatsappMessageUpdateManyWithoutOrderNestedInput;
-    buyer?: Prisma.BuyerUpdateOneWithoutOrdersNestedInput;
 };
 export type OrderUncheckedUpdateWithoutDeliveryInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1236,11 +1236,11 @@ export type OrderUncheckedUpdateWithoutDeliveryInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     buyerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput;
     payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput;
     messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutOrderNestedInput;
@@ -1255,11 +1255,11 @@ export type OrderCreateManySellerInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
-    deliveryCode?: string | null;
     buyerId?: string | null;
-    deliveryAddress?: string | null;
+    deliveryCode?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
 };
 export type OrderUpdateWithoutSellerInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1270,16 +1270,16 @@ export type OrderUpdateWithoutSellerInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    delivery?: Prisma.DeliveryUpdateOneWithoutOrderNestedInput;
+    buyer?: Prisma.BuyerUpdateOneWithoutOrdersNestedInput;
     store?: Prisma.StoreUpdateOneRequiredWithoutOrdersNestedInput;
     items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput;
     payment?: Prisma.PaymentUpdateOneWithoutOrderNestedInput;
     messages?: Prisma.WhatsappMessageUpdateManyWithoutOrderNestedInput;
-    buyer?: Prisma.BuyerUpdateOneWithoutOrdersNestedInput;
-    delivery?: Prisma.DeliveryUpdateOneWithoutOrderNestedInput;
 };
 export type OrderUncheckedUpdateWithoutSellerInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1291,15 +1291,15 @@ export type OrderUncheckedUpdateWithoutSellerInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     buyerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    delivery?: Prisma.DeliveryUncheckedUpdateOneWithoutOrderNestedInput;
     items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput;
     payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput;
     messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutOrderNestedInput;
-    delivery?: Prisma.DeliveryUncheckedUpdateOneWithoutOrderNestedInput;
 };
 export type OrderUncheckedUpdateManyWithoutSellerInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1311,11 +1311,11 @@ export type OrderUncheckedUpdateManyWithoutSellerInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     buyerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type OrderCreateManyStoreInput = {
     id?: string;
@@ -1327,11 +1327,11 @@ export type OrderCreateManyStoreInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
-    deliveryCode?: string | null;
     buyerId?: string | null;
-    deliveryAddress?: string | null;
+    deliveryCode?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
 };
 export type OrderUpdateWithoutStoreInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1342,16 +1342,16 @@ export type OrderUpdateWithoutStoreInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    delivery?: Prisma.DeliveryUpdateOneWithoutOrderNestedInput;
+    buyer?: Prisma.BuyerUpdateOneWithoutOrdersNestedInput;
     seller?: Prisma.SellerUpdateOneRequiredWithoutOrdersNestedInput;
     items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput;
     payment?: Prisma.PaymentUpdateOneWithoutOrderNestedInput;
     messages?: Prisma.WhatsappMessageUpdateManyWithoutOrderNestedInput;
-    buyer?: Prisma.BuyerUpdateOneWithoutOrdersNestedInput;
-    delivery?: Prisma.DeliveryUpdateOneWithoutOrderNestedInput;
 };
 export type OrderUncheckedUpdateWithoutStoreInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1363,15 +1363,15 @@ export type OrderUncheckedUpdateWithoutStoreInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     buyerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    delivery?: Prisma.DeliveryUncheckedUpdateOneWithoutOrderNestedInput;
     items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput;
     payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput;
     messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutOrderNestedInput;
-    delivery?: Prisma.DeliveryUncheckedUpdateOneWithoutOrderNestedInput;
 };
 export type OrderUncheckedUpdateManyWithoutStoreInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1383,11 +1383,11 @@ export type OrderUncheckedUpdateManyWithoutStoreInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     buyerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type OrderCreateManyBuyerInput = {
     id?: string;
@@ -1400,10 +1400,10 @@ export type OrderCreateManyBuyerInput = {
     totalAmount: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
-    orderNumber?: string | null;
     deliveryCode?: string | null;
-    deliveryAddress?: string | null;
     notes?: string | null;
+    orderNumber?: string | null;
+    deliveryAddress?: string | null;
 };
 export type OrderUpdateWithoutBuyerInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1414,16 +1414,16 @@ export type OrderUpdateWithoutBuyerInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    delivery?: Prisma.DeliveryUpdateOneWithoutOrderNestedInput;
     seller?: Prisma.SellerUpdateOneRequiredWithoutOrdersNestedInput;
     store?: Prisma.StoreUpdateOneRequiredWithoutOrdersNestedInput;
     items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput;
     payment?: Prisma.PaymentUpdateOneWithoutOrderNestedInput;
     messages?: Prisma.WhatsappMessageUpdateManyWithoutOrderNestedInput;
-    delivery?: Prisma.DeliveryUpdateOneWithoutOrderNestedInput;
 };
 export type OrderUncheckedUpdateWithoutBuyerInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1436,14 +1436,14 @@ export type OrderUncheckedUpdateWithoutBuyerInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    delivery?: Prisma.DeliveryUncheckedUpdateOneWithoutOrderNestedInput;
     items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput;
     payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput;
     messages?: Prisma.WhatsappMessageUncheckedUpdateManyWithoutOrderNestedInput;
-    delivery?: Prisma.DeliveryUncheckedUpdateOneWithoutOrderNestedInput;
 };
 export type OrderUncheckedUpdateManyWithoutBuyerInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -1456,10 +1456,10 @@ export type OrderUncheckedUpdateManyWithoutBuyerInput = {
     totalAmount?: Prisma.FloatFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     deliveryCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
-    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
+    deliveryAddress?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type OrderCountOutputType = {
     items: number;
@@ -1489,18 +1489,18 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     totalAmount?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    orderNumber?: boolean;
-    deliveryCode?: boolean;
     buyerId?: boolean;
-    deliveryAddress?: boolean;
+    deliveryCode?: boolean;
     notes?: boolean;
+    orderNumber?: boolean;
+    deliveryAddress?: boolean;
+    delivery?: boolean | Prisma.Order$deliveryArgs<ExtArgs>;
+    buyer?: boolean | Prisma.Order$buyerArgs<ExtArgs>;
     seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
     store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>;
     items?: boolean | Prisma.Order$itemsArgs<ExtArgs>;
     payment?: boolean | Prisma.Order$paymentArgs<ExtArgs>;
     messages?: boolean | Prisma.Order$messagesArgs<ExtArgs>;
-    buyer?: boolean | Prisma.Order$buyerArgs<ExtArgs>;
-    delivery?: boolean | Prisma.Order$deliveryArgs<ExtArgs>;
     _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["order"]>;
 export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1514,14 +1514,14 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
     totalAmount?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    orderNumber?: boolean;
-    deliveryCode?: boolean;
     buyerId?: boolean;
-    deliveryAddress?: boolean;
+    deliveryCode?: boolean;
     notes?: boolean;
+    orderNumber?: boolean;
+    deliveryAddress?: boolean;
+    buyer?: boolean | Prisma.Order$buyerArgs<ExtArgs>;
     seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
     store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>;
-    buyer?: boolean | Prisma.Order$buyerArgs<ExtArgs>;
 }, ExtArgs["result"]["order"]>;
 export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -1534,14 +1534,14 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
     totalAmount?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    orderNumber?: boolean;
-    deliveryCode?: boolean;
     buyerId?: boolean;
-    deliveryAddress?: boolean;
+    deliveryCode?: boolean;
     notes?: boolean;
+    orderNumber?: boolean;
+    deliveryAddress?: boolean;
+    buyer?: boolean | Prisma.Order$buyerArgs<ExtArgs>;
     seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
     store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>;
-    buyer?: boolean | Prisma.Order$buyerArgs<ExtArgs>;
 }, ExtArgs["result"]["order"]>;
 export type OrderSelectScalar = {
     id?: boolean;
@@ -1554,43 +1554,43 @@ export type OrderSelectScalar = {
     totalAmount?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
-    orderNumber?: boolean;
-    deliveryCode?: boolean;
     buyerId?: boolean;
-    deliveryAddress?: boolean;
+    deliveryCode?: boolean;
     notes?: boolean;
+    orderNumber?: boolean;
+    deliveryAddress?: boolean;
 };
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sellerId" | "storeId" | "status" | "customerName" | "customerPhone" | "customerEmail" | "totalAmount" | "createdAt" | "updatedAt" | "orderNumber" | "deliveryCode" | "buyerId" | "deliveryAddress" | "notes", ExtArgs["result"]["order"]>;
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sellerId" | "storeId" | "status" | "customerName" | "customerPhone" | "customerEmail" | "totalAmount" | "createdAt" | "updatedAt" | "buyerId" | "deliveryCode" | "notes" | "orderNumber" | "deliveryAddress", ExtArgs["result"]["order"]>;
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    delivery?: boolean | Prisma.Order$deliveryArgs<ExtArgs>;
+    buyer?: boolean | Prisma.Order$buyerArgs<ExtArgs>;
     seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
     store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>;
     items?: boolean | Prisma.Order$itemsArgs<ExtArgs>;
     payment?: boolean | Prisma.Order$paymentArgs<ExtArgs>;
     messages?: boolean | Prisma.Order$messagesArgs<ExtArgs>;
-    buyer?: boolean | Prisma.Order$buyerArgs<ExtArgs>;
-    delivery?: boolean | Prisma.Order$deliveryArgs<ExtArgs>;
     _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>;
 };
 export type OrderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    buyer?: boolean | Prisma.Order$buyerArgs<ExtArgs>;
     seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
     store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>;
-    buyer?: boolean | Prisma.Order$buyerArgs<ExtArgs>;
 };
 export type OrderIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    buyer?: boolean | Prisma.Order$buyerArgs<ExtArgs>;
     seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
     store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>;
-    buyer?: boolean | Prisma.Order$buyerArgs<ExtArgs>;
 };
 export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "Order";
     objects: {
+        delivery: Prisma.$DeliveryPayload<ExtArgs> | null;
+        buyer: Prisma.$BuyerPayload<ExtArgs> | null;
         seller: Prisma.$SellerPayload<ExtArgs>;
         store: Prisma.$StorePayload<ExtArgs>;
         items: Prisma.$OrderItemPayload<ExtArgs>[];
         payment: Prisma.$PaymentPayload<ExtArgs> | null;
         messages: Prisma.$WhatsappMessagePayload<ExtArgs>[];
-        buyer: Prisma.$BuyerPayload<ExtArgs> | null;
-        delivery: Prisma.$DeliveryPayload<ExtArgs> | null;
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: string;
@@ -1603,11 +1603,11 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
         totalAmount: number;
         createdAt: Date;
         updatedAt: Date;
-        orderNumber: string | null;
-        deliveryCode: string | null;
         buyerId: string | null;
-        deliveryAddress: string | null;
+        deliveryCode: string | null;
         notes: string | null;
+        orderNumber: string | null;
+        deliveryAddress: string | null;
     }, ExtArgs["result"]["order"]>;
     composites: {};
 };
@@ -1660,13 +1660,13 @@ export interface OrderDelegate<ExtArgs extends runtime.Types.Extensions.Internal
 }
 export interface Prisma__OrderClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
+    delivery<T extends Prisma.Order$deliveryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$deliveryArgs<ExtArgs>>): Prisma.Prisma__DeliveryClient<runtime.Types.Result.GetResult<Prisma.$DeliveryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
+    buyer<T extends Prisma.Order$buyerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$buyerArgs<ExtArgs>>): Prisma.Prisma__BuyerClient<runtime.Types.Result.GetResult<Prisma.$BuyerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     seller<T extends Prisma.SellerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SellerDefaultArgs<ExtArgs>>): Prisma.Prisma__SellerClient<runtime.Types.Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
     store<T extends Prisma.StoreDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StoreDefaultArgs<ExtArgs>>): Prisma.Prisma__StoreClient<runtime.Types.Result.GetResult<Prisma.$StorePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
     items<T extends Prisma.Order$itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     payment<T extends Prisma.Order$paymentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$paymentArgs<ExtArgs>>): Prisma.Prisma__PaymentClient<runtime.Types.Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     messages<T extends Prisma.Order$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WhatsappMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
-    buyer<T extends Prisma.Order$buyerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$buyerArgs<ExtArgs>>): Prisma.Prisma__BuyerClient<runtime.Types.Result.GetResult<Prisma.$BuyerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
-    delivery<T extends Prisma.Order$deliveryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$deliveryArgs<ExtArgs>>): Prisma.Prisma__DeliveryClient<runtime.Types.Result.GetResult<Prisma.$DeliveryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>;
     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
     finally(onfinally?: (() => void) | undefined | null): runtime.Types.Utils.JsPromise<T>;
@@ -1682,11 +1682,11 @@ export interface OrderFieldRefs {
     readonly totalAmount: Prisma.FieldRef<"Order", 'Float'>;
     readonly createdAt: Prisma.FieldRef<"Order", 'DateTime'>;
     readonly updatedAt: Prisma.FieldRef<"Order", 'DateTime'>;
-    readonly orderNumber: Prisma.FieldRef<"Order", 'String'>;
-    readonly deliveryCode: Prisma.FieldRef<"Order", 'String'>;
     readonly buyerId: Prisma.FieldRef<"Order", 'String'>;
-    readonly deliveryAddress: Prisma.FieldRef<"Order", 'String'>;
+    readonly deliveryCode: Prisma.FieldRef<"Order", 'String'>;
     readonly notes: Prisma.FieldRef<"Order", 'String'>;
+    readonly orderNumber: Prisma.FieldRef<"Order", 'String'>;
+    readonly deliveryAddress: Prisma.FieldRef<"Order", 'String'>;
 }
 export type OrderFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.OrderSelect<ExtArgs> | null;
@@ -1788,6 +1788,18 @@ export type OrderDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
     where?: Prisma.OrderWhereInput;
     limit?: number;
 };
+export type Order$deliveryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.DeliverySelect<ExtArgs> | null;
+    omit?: Prisma.DeliveryOmit<ExtArgs> | null;
+    include?: Prisma.DeliveryInclude<ExtArgs> | null;
+    where?: Prisma.DeliveryWhereInput;
+};
+export type Order$buyerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    select?: Prisma.BuyerSelect<ExtArgs> | null;
+    omit?: Prisma.BuyerOmit<ExtArgs> | null;
+    include?: Prisma.BuyerInclude<ExtArgs> | null;
+    where?: Prisma.BuyerWhereInput;
+};
 export type Order$itemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.OrderItemSelect<ExtArgs> | null;
     omit?: Prisma.OrderItemOmit<ExtArgs> | null;
@@ -1815,18 +1827,6 @@ export type Order$messagesArgs<ExtArgs extends runtime.Types.Extensions.Internal
     take?: number;
     skip?: number;
     distinct?: Prisma.WhatsappMessageScalarFieldEnum | Prisma.WhatsappMessageScalarFieldEnum[];
-};
-export type Order$buyerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    select?: Prisma.BuyerSelect<ExtArgs> | null;
-    omit?: Prisma.BuyerOmit<ExtArgs> | null;
-    include?: Prisma.BuyerInclude<ExtArgs> | null;
-    where?: Prisma.BuyerWhereInput;
-};
-export type Order$deliveryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    select?: Prisma.DeliverySelect<ExtArgs> | null;
-    omit?: Prisma.DeliveryOmit<ExtArgs> | null;
-    include?: Prisma.DeliveryInclude<ExtArgs> | null;
-    where?: Prisma.DeliveryWhereInput;
 };
 export type OrderDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.OrderSelect<ExtArgs> | null;

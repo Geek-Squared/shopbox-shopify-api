@@ -151,6 +151,7 @@ export class MetaWebhookController {
         commenterId: fromId,
         commenterName: fromName,
         postId,
+        postPermalinkUrl: value.post?.permalink_url,
         commentId,
         messengerToken: merchant.messengerToken,
       });

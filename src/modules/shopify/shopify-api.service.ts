@@ -117,6 +117,8 @@ export class ShopifyApiService {
           nodes {
             id
             title
+            handle
+            onlineStoreUrl
             bodyHtml
             productType
             status
@@ -157,6 +159,8 @@ export class ShopifyApiService {
         product(id: $id) {
           id
           title
+          handle
+          onlineStoreUrl
           bodyHtml
           productType
           images(first: 5) {
@@ -227,6 +231,8 @@ export class ShopifyApiService {
             nodes {
               id
               title
+              handle
+              onlineStoreUrl
               bodyHtml
               productType
               images(first: 5) {
@@ -340,6 +346,8 @@ export class ShopifyApiService {
     return {
       id: rawId,
       title: p.title,
+      handle: p.handle,
+      onlineStoreUrl: p.onlineStoreUrl || null,
       description: this.stripHtml(p.bodyHtml),
       price: parseFloat(p.variants.nodes[0]?.price || '0'),
       available: p.variants.nodes.some((v: any) => v.inventoryQuantity > 0 || v.availableForSale),

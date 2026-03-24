@@ -168,9 +168,9 @@ export type ProductWhereInput = {
     createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string;
     stockQty?: Prisma.IntFilter<"Product"> | number;
+    orderItems?: Prisma.OrderItemListRelationFilter;
     seller?: Prisma.XOR<Prisma.SellerScalarRelationFilter, Prisma.SellerWhereInput>;
     store?: Prisma.XOR<Prisma.StoreScalarRelationFilter, Prisma.StoreWhereInput>;
-    orderItems?: Prisma.OrderItemListRelationFilter;
     images?: Prisma.ProductImageListRelationFilter;
 };
 export type ProductOrderByWithRelationInput = {
@@ -185,9 +185,9 @@ export type ProductOrderByWithRelationInput = {
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
     stockQty?: Prisma.SortOrder;
+    orderItems?: Prisma.OrderItemOrderByRelationAggregateInput;
     seller?: Prisma.SellerOrderByWithRelationInput;
     store?: Prisma.StoreOrderByWithRelationInput;
-    orderItems?: Prisma.OrderItemOrderByRelationAggregateInput;
     images?: Prisma.ProductImageOrderByRelationAggregateInput;
 };
 export type ProductWhereUniqueInput = Prisma.AtLeast<{
@@ -205,9 +205,9 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
     createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string;
     stockQty?: Prisma.IntFilter<"Product"> | number;
+    orderItems?: Prisma.OrderItemListRelationFilter;
     seller?: Prisma.XOR<Prisma.SellerScalarRelationFilter, Prisma.SellerWhereInput>;
     store?: Prisma.XOR<Prisma.StoreScalarRelationFilter, Prisma.StoreWhereInput>;
-    orderItems?: Prisma.OrderItemListRelationFilter;
     images?: Prisma.ProductImageListRelationFilter;
 }, "id">;
 export type ProductOrderByWithAggregationInput = {
@@ -254,9 +254,9 @@ export type ProductCreateInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     stockQty?: number;
+    orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput;
     seller: Prisma.SellerCreateNestedOneWithoutProductsInput;
     store: Prisma.StoreCreateNestedOneWithoutProductsInput;
-    orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput;
     images?: Prisma.ProductImageCreateNestedManyWithoutProductInput;
 };
 export type ProductUncheckedCreateInput = {
@@ -284,9 +284,9 @@ export type ProductUpdateInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     stockQty?: Prisma.IntFieldUpdateOperationsInput | number;
+    orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput;
     seller?: Prisma.SellerUpdateOneRequiredWithoutProductsNestedInput;
     store?: Prisma.StoreUpdateOneRequiredWithoutProductsNestedInput;
-    orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput;
     images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput;
 };
 export type ProductUncheckedUpdateInput = {
@@ -524,8 +524,8 @@ export type ProductCreateWithoutSellerInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     stockQty?: number;
-    store: Prisma.StoreCreateNestedOneWithoutProductsInput;
     orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput;
+    store: Prisma.StoreCreateNestedOneWithoutProductsInput;
     images?: Prisma.ProductImageCreateNestedManyWithoutProductInput;
 };
 export type ProductUncheckedCreateWithoutSellerInput = {
@@ -589,8 +589,8 @@ export type ProductCreateWithoutStoreInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     stockQty?: number;
-    seller: Prisma.SellerCreateNestedOneWithoutProductsInput;
     orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput;
+    seller: Prisma.SellerCreateNestedOneWithoutProductsInput;
     images?: Prisma.ProductImageCreateNestedManyWithoutProductInput;
 };
 export type ProductUncheckedCreateWithoutStoreInput = {
@@ -707,9 +707,9 @@ export type ProductCreateWithoutImagesInput = {
     createdAt?: Date | string;
     updatedAt?: Date | string;
     stockQty?: number;
+    orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput;
     seller: Prisma.SellerCreateNestedOneWithoutProductsInput;
     store: Prisma.StoreCreateNestedOneWithoutProductsInput;
-    orderItems?: Prisma.OrderItemCreateNestedManyWithoutProductInput;
 };
 export type ProductUncheckedCreateWithoutImagesInput = {
     id?: string;
@@ -748,9 +748,9 @@ export type ProductUpdateWithoutImagesInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     stockQty?: Prisma.IntFieldUpdateOperationsInput | number;
+    orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput;
     seller?: Prisma.SellerUpdateOneRequiredWithoutProductsNestedInput;
     store?: Prisma.StoreUpdateOneRequiredWithoutProductsNestedInput;
-    orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput;
 };
 export type ProductUncheckedUpdateWithoutImagesInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -788,8 +788,8 @@ export type ProductUpdateWithoutSellerInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     stockQty?: Prisma.IntFieldUpdateOperationsInput | number;
-    store?: Prisma.StoreUpdateOneRequiredWithoutProductsNestedInput;
     orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput;
+    store?: Prisma.StoreUpdateOneRequiredWithoutProductsNestedInput;
     images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput;
 };
 export type ProductUncheckedUpdateWithoutSellerInput = {
@@ -840,8 +840,8 @@ export type ProductUpdateWithoutStoreInput = {
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     stockQty?: Prisma.IntFieldUpdateOperationsInput | number;
-    seller?: Prisma.SellerUpdateOneRequiredWithoutProductsNestedInput;
     orderItems?: Prisma.OrderItemUpdateManyWithoutProductNestedInput;
+    seller?: Prisma.SellerUpdateOneRequiredWithoutProductsNestedInput;
     images?: Prisma.ProductImageUpdateManyWithoutProductNestedInput;
 };
 export type ProductUncheckedUpdateWithoutStoreInput = {
@@ -899,9 +899,9 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     createdAt?: boolean;
     updatedAt?: boolean;
     stockQty?: boolean;
+    orderItems?: boolean | Prisma.Product$orderItemsArgs<ExtArgs>;
     seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
     store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>;
-    orderItems?: boolean | Prisma.Product$orderItemsArgs<ExtArgs>;
     images?: boolean | Prisma.Product$imagesArgs<ExtArgs>;
     _count?: boolean | Prisma.ProductCountOutputTypeDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["product"]>;
@@ -950,9 +950,9 @@ export type ProductSelectScalar = {
 };
 export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sellerId" | "storeId" | "name" | "description" | "price" | "currency" | "active" | "createdAt" | "updatedAt" | "stockQty", ExtArgs["result"]["product"]>;
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+    orderItems?: boolean | Prisma.Product$orderItemsArgs<ExtArgs>;
     seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
     store?: boolean | Prisma.StoreDefaultArgs<ExtArgs>;
-    orderItems?: boolean | Prisma.Product$orderItemsArgs<ExtArgs>;
     images?: boolean | Prisma.Product$imagesArgs<ExtArgs>;
     _count?: boolean | Prisma.ProductCountOutputTypeDefaultArgs<ExtArgs>;
 };
@@ -967,9 +967,9 @@ export type ProductIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "Product";
     objects: {
+        orderItems: Prisma.$OrderItemPayload<ExtArgs>[];
         seller: Prisma.$SellerPayload<ExtArgs>;
         store: Prisma.$StorePayload<ExtArgs>;
-        orderItems: Prisma.$OrderItemPayload<ExtArgs>[];
         images: Prisma.$ProductImagePayload<ExtArgs>[];
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1036,9 +1036,9 @@ export interface ProductDelegate<ExtArgs extends runtime.Types.Extensions.Intern
 }
 export interface Prisma__ProductClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
+    orderItems<T extends Prisma.Product$orderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     seller<T extends Prisma.SellerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SellerDefaultArgs<ExtArgs>>): Prisma.Prisma__SellerClient<runtime.Types.Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
     store<T extends Prisma.StoreDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.StoreDefaultArgs<ExtArgs>>): Prisma.Prisma__StoreClient<runtime.Types.Result.GetResult<Prisma.$StorePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
-    orderItems<T extends Prisma.Product$orderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     images<T extends Prisma.Product$imagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Product$imagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductImagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>;
     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;

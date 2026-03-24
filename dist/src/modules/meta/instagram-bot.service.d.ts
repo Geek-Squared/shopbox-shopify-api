@@ -2,7 +2,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { MetaSenderService } from './meta-sender.service';
 import { ShopifyApiService } from '../shopify/shopify-api.service';
 import { ShopifyRepository } from '../shopify/shopify.repository';
-import { BotSessionService } from '../whatsapp/bot-session.service';
+import { BotSessionService, BotContext } from '../whatsapp/bot-session.service';
 import { ConfigService } from '@nestjs/config';
 export declare class InstagramBotService {
     private readonly prisma;
@@ -18,7 +18,7 @@ export declare class InstagramBotService {
         merchantId: string;
         text?: string;
         postbackPayload?: string;
-    }): Promise<void>;
+    }): Promise<void | boolean>;
     private handleWelcome;
     private handleCategorySelection;
     private handleProductSelection;
@@ -30,4 +30,5 @@ export declare class InstagramBotService {
     private handleCheckoutName;
     private handleCheckoutAddress;
     private handlePaymentSelection;
+    showProductDetail(senderId: string, merchant: any, token: string, product: any, context: BotContext, customMessage?: string, recipientId?: string): Promise<boolean>;
 }

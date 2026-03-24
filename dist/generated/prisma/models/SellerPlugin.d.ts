@@ -100,8 +100,8 @@ export type SellerPluginWhereInput = {
     isActive?: Prisma.BoolFilter<"SellerPlugin"> | boolean;
     config?: Prisma.JsonNullableFilter<"SellerPlugin">;
     installedAt?: Prisma.DateTimeFilter<"SellerPlugin"> | Date | string;
-    seller?: Prisma.XOR<Prisma.SellerScalarRelationFilter, Prisma.SellerWhereInput>;
     plugin?: Prisma.XOR<Prisma.PluginScalarRelationFilter, Prisma.PluginWhereInput>;
+    seller?: Prisma.XOR<Prisma.SellerScalarRelationFilter, Prisma.SellerWhereInput>;
 };
 export type SellerPluginOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
@@ -110,8 +110,8 @@ export type SellerPluginOrderByWithRelationInput = {
     isActive?: Prisma.SortOrder;
     config?: Prisma.SortOrderInput | Prisma.SortOrder;
     installedAt?: Prisma.SortOrder;
-    seller?: Prisma.SellerOrderByWithRelationInput;
     plugin?: Prisma.PluginOrderByWithRelationInput;
+    seller?: Prisma.SellerOrderByWithRelationInput;
 };
 export type SellerPluginWhereUniqueInput = Prisma.AtLeast<{
     id?: string;
@@ -124,8 +124,8 @@ export type SellerPluginWhereUniqueInput = Prisma.AtLeast<{
     isActive?: Prisma.BoolFilter<"SellerPlugin"> | boolean;
     config?: Prisma.JsonNullableFilter<"SellerPlugin">;
     installedAt?: Prisma.DateTimeFilter<"SellerPlugin"> | Date | string;
-    seller?: Prisma.XOR<Prisma.SellerScalarRelationFilter, Prisma.SellerWhereInput>;
     plugin?: Prisma.XOR<Prisma.PluginScalarRelationFilter, Prisma.PluginWhereInput>;
+    seller?: Prisma.XOR<Prisma.SellerScalarRelationFilter, Prisma.SellerWhereInput>;
 }, "id" | "sellerId_pluginId">;
 export type SellerPluginOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
@@ -154,8 +154,8 @@ export type SellerPluginCreateInput = {
     isActive?: boolean;
     config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
     installedAt?: Date | string;
-    seller: Prisma.SellerCreateNestedOneWithoutPluginsInput;
     plugin: Prisma.PluginCreateNestedOneWithoutSellersInput;
+    seller: Prisma.SellerCreateNestedOneWithoutPluginsInput;
 };
 export type SellerPluginUncheckedCreateInput = {
     id?: string;
@@ -170,8 +170,8 @@ export type SellerPluginUpdateInput = {
     isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     config?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue;
     installedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
-    seller?: Prisma.SellerUpdateOneRequiredWithoutPluginsNestedInput;
     plugin?: Prisma.PluginUpdateOneRequiredWithoutSellersNestedInput;
+    seller?: Prisma.SellerUpdateOneRequiredWithoutPluginsNestedInput;
 };
 export type SellerPluginUncheckedUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
@@ -457,8 +457,8 @@ export type SellerPluginSelect<ExtArgs extends runtime.Types.Extensions.Internal
     isActive?: boolean;
     config?: boolean;
     installedAt?: boolean;
-    seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
     plugin?: boolean | Prisma.PluginDefaultArgs<ExtArgs>;
+    seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["sellerPlugin"]>;
 export type SellerPluginSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -467,8 +467,8 @@ export type SellerPluginSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
     isActive?: boolean;
     config?: boolean;
     installedAt?: boolean;
-    seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
     plugin?: boolean | Prisma.PluginDefaultArgs<ExtArgs>;
+    seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["sellerPlugin"]>;
 export type SellerPluginSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
@@ -477,8 +477,8 @@ export type SellerPluginSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
     isActive?: boolean;
     config?: boolean;
     installedAt?: boolean;
-    seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
     plugin?: boolean | Prisma.PluginDefaultArgs<ExtArgs>;
+    seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
 }, ExtArgs["result"]["sellerPlugin"]>;
 export type SellerPluginSelectScalar = {
     id?: boolean;
@@ -490,22 +490,22 @@ export type SellerPluginSelectScalar = {
 };
 export type SellerPluginOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "sellerId" | "pluginId" | "isActive" | "config" | "installedAt", ExtArgs["result"]["sellerPlugin"]>;
 export type SellerPluginInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
     plugin?: boolean | Prisma.PluginDefaultArgs<ExtArgs>;
+    seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
 };
 export type SellerPluginIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
     plugin?: boolean | Prisma.PluginDefaultArgs<ExtArgs>;
+    seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
 };
 export type SellerPluginIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-    seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
     plugin?: boolean | Prisma.PluginDefaultArgs<ExtArgs>;
+    seller?: boolean | Prisma.SellerDefaultArgs<ExtArgs>;
 };
 export type $SellerPluginPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "SellerPlugin";
     objects: {
-        seller: Prisma.$SellerPayload<ExtArgs>;
         plugin: Prisma.$PluginPayload<ExtArgs>;
+        seller: Prisma.$SellerPayload<ExtArgs>;
     };
     scalars: runtime.Types.Extensions.GetPayloadResult<{
         id: string;
@@ -566,8 +566,8 @@ export interface SellerPluginDelegate<ExtArgs extends runtime.Types.Extensions.I
 }
 export interface Prisma__SellerPluginClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise";
-    seller<T extends Prisma.SellerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SellerDefaultArgs<ExtArgs>>): Prisma.Prisma__SellerClient<runtime.Types.Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
     plugin<T extends Prisma.PluginDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PluginDefaultArgs<ExtArgs>>): Prisma.Prisma__PluginClient<runtime.Types.Result.GetResult<Prisma.$PluginPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
+    seller<T extends Prisma.SellerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SellerDefaultArgs<ExtArgs>>): Prisma.Prisma__SellerClient<runtime.Types.Result.GetResult<Prisma.$SellerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>;
     then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): runtime.Types.Utils.JsPromise<TResult1 | TResult2>;
     catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): runtime.Types.Utils.JsPromise<T | TResult>;
     finally(onfinally?: (() => void) | undefined | null): runtime.Types.Utils.JsPromise<T>;

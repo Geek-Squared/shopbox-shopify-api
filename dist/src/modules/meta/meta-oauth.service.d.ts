@@ -33,11 +33,13 @@ export declare class MetaOauthService {
     }>;
     disconnectMessenger(shop: string): Promise<{
         id: string;
-        storeSlug: string | null;
         updatedAt: Date;
+        isActive: boolean;
+        installedAt: Date;
         shop: string;
         accessToken: string;
         scope: string;
+        storeSlug: string | null;
         storeName: string | null;
         whatsappConnected: boolean;
         whatsappNumber: string | null;
@@ -46,26 +48,26 @@ export declare class MetaOauthService {
         instagramConnected: boolean;
         instagramToken: string | null;
         instagramAccountId: string | null;
-        instagramUsername: string | null;
         messengerConnected: boolean;
         messengerToken: string | null;
         messengerPageId: string | null;
-        messengerPageName: string | null;
-        isActive: boolean;
-        installedAt: Date;
         uninstalledAt: Date | null;
+        instagramUsername: string | null;
+        messengerPageName: string | null;
+        planChargeId: string | null;
         planName: string | null;
         planStatus: string | null;
-        planChargeId: string | null;
         planTrialExpiresAt: Date | null;
     }>;
     disconnectInstagram(shop: string): Promise<{
         id: string;
-        storeSlug: string | null;
         updatedAt: Date;
+        isActive: boolean;
+        installedAt: Date;
         shop: string;
         accessToken: string;
         scope: string;
+        storeSlug: string | null;
         storeName: string | null;
         whatsappConnected: boolean;
         whatsappNumber: string | null;
@@ -74,17 +76,15 @@ export declare class MetaOauthService {
         instagramConnected: boolean;
         instagramToken: string | null;
         instagramAccountId: string | null;
-        instagramUsername: string | null;
         messengerConnected: boolean;
         messengerToken: string | null;
         messengerPageId: string | null;
-        messengerPageName: string | null;
-        isActive: boolean;
-        installedAt: Date;
         uninstalledAt: Date | null;
+        instagramUsername: string | null;
+        messengerPageName: string | null;
+        planChargeId: string | null;
         planName: string | null;
         planStatus: string | null;
-        planChargeId: string | null;
         planTrialExpiresAt: Date | null;
     }>;
 }

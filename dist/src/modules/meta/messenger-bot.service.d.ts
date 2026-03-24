@@ -13,18 +13,21 @@ export declare class MessengerBotService {
     private readonly config;
     private readonly logger;
     constructor(prisma: PrismaService, metaSender: MetaSenderService, shopifyApi: ShopifyApiService, repository: ShopifyRepository, session: BotSessionService, config: ConfigService);
+    private getProductUrl;
+    private getCheckoutUrl;
+    private isAmountVariantProduct;
     handle(data: {
         senderId: string;
         merchantId: string;
         text?: string;
         postbackPayload?: string;
         referral?: string;
-    }): Promise<void>;
+    }): Promise<void | boolean>;
     private handleReferral;
     private handleWelcome;
     private handleCategorySelection;
     private handleProductSelection;
-    showProductDetail(senderId: string, merchant: any, token: string, product: any, context: BotContext): Promise<void>;
+    showProductDetail(senderId: string, merchant: any, token: string, product: any, context: BotContext, customMessage?: string, recipientId?: string): Promise<boolean>;
     private handleVariantSelection;
     private handleProductAction;
     private showAddedToCart;

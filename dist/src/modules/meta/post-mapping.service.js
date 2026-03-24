@@ -22,20 +22,34 @@ let PostMappingService = PostMappingService_1 = class PostMappingService {
         this.shopifyRepo = shopifyRepo;
         this.logger = new common_1.Logger(PostMappingService_1.name);
     }
+    normalizeFacebookUrl(postUrl) {
+        const url = new URL(postUrl);
+        url.hash = '';
+        if (url.hostname === 'm.facebook.com') {
+            url.hostname = 'www.facebook.com';
+        }
+        const normalized = `${url.origin}${url.pathname}${url.search}`;
+        return normalized.endsWith('/') && !url.search
+            ? normalized.slice(0, -1)
+            : normalized;
+    }
     extractFacebookPostId(postUrl, messengerPageId) {
         try {
-            const url = new URL(postUrl);
-            const storyFbid = url.searchParams.get('story_fbid') || url.searchParams.get('fbid');
-            if (storyFbid) {
-                return `${messengerPageId}_${storyFbid}`;
+            const normalizedUrl = this.normalizeFacebookUrl(postUrl);
+            const url = new URL(normalizedUrl);
+            const storyFbid = url.searchParams.get('story_fbid');
+            const fbidParam = url.searchParams.get('fbid');
+            const numericId = [storyFbid, fbidParam].find((value) => /^\d+$/.test(value ?? ''));
+            if (numericId) {
+                return `${messengerPageId}_${numericId}`;
             }
-            const postsMatch = postUrl.match(/\/posts\/(\d+)/);
+            const postsMatch = normalizedUrl.match(/\/posts\/(\d+)/);
             if (postsMatch) {
                 return `${messengerPageId}_${postsMatch[1]}`;
             }
-            const pfbidMatch = postUrl.match(/pfbid([a-zA-Z0-9]+)/);
+            const pfbidMatch = normalizedUrl.match(/pfbid([a-zA-Z0-9]+)/);
             if (pfbidMatch) {
-                throw new Error('Please use the permalink URL format with story_fbid parameter');
+                return `url:${normalizedUrl}`;
             }
             throw new Error('Could not extract post ID from URL');
         }
@@ -56,11 +70,13 @@ let PostMappingService = PostMappingService_1 = class PostMappingService {
         if (!merchant)
             throw new common_1.NotFoundException('Merchant not found');
         let mediaId;
+        let normalizedPostUrl = data.postUrl;
         if (data.platform === 'facebook') {
             if (!merchant.messengerPageId) {
                 throw new common_1.ConflictException('Facebook Messenger is not connected. Connect it first.');
             }
-            mediaId = this.extractFacebookPostId(data.postUrl, merchant.messengerPageId);
+            normalizedPostUrl = this.normalizeFacebookUrl(data.postUrl);
+            mediaId = this.extractFacebookPostId(normalizedPostUrl, merchant.messengerPageId);
         }
         else {
             mediaId = data.postUrl;
@@ -80,7 +96,7 @@ let PostMappingService = PostMappingService_1 = class PostMappingService {
             create: {
                 merchantId,
                 platform: data.platform,
-                postUrl: data.postUrl,
+                postUrl: normalizedPostUrl,
                 mediaId,
                 shopifyProductId: data.shopifyProductId,
                 productTitle,
@@ -88,7 +104,7 @@ let PostMappingService = PostMappingService_1 = class PostMappingService {
             update: {
                 shopifyProductId: data.shopifyProductId,
                 productTitle,
-                postUrl: data.postUrl,
+                postUrl: normalizedPostUrl,
                 isActive: true,
             },
         });

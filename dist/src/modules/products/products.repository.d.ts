@@ -12,15 +12,15 @@ export declare class ProductsRepository {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     })[]>;
     findByIdForSeller(id: string, sellerId: string): import("../../../generated/prisma/models").Prisma__ProductClient<{
@@ -33,15 +33,15 @@ export declare class ProductsRepository {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     }, null, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
@@ -56,15 +56,15 @@ export declare class ProductsRepository {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     }, null, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
@@ -84,15 +84,15 @@ export declare class ProductsRepository {
         }[];
     }): import("../../../generated/prisma/models").Prisma__ProductClient<{
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
@@ -116,15 +116,15 @@ export declare class ProductsRepository {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     })[]>;
     listActiveByStoreGrouped(storeId: string): import("../../../generated/prisma/internal/prismaNamespace").PrismaPromise<({
@@ -137,29 +137,29 @@ export declare class ProductsRepository {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     })[]>;
     setStock(id: string, sellerId: string, quantity: number): import("../../../generated/prisma/internal/prismaNamespace").PrismaPromise<import("../../../generated/prisma/internal/prismaNamespace").BatchPayload>;
     decrementStock(id: string, quantity: number): import("../../../generated/prisma/models").Prisma__ProductClient<{
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
@@ -174,15 +174,15 @@ export declare class ProductsRepository {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     })[]>;
     findOutOfStock(sellerId: string): import("../../../generated/prisma/internal/prismaNamespace").PrismaPromise<({
@@ -195,15 +195,15 @@ export declare class ProductsRepository {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     })[]>;
     toggleActive(id: string, sellerId: string, active: boolean): import("../../../generated/prisma/internal/prismaNamespace").PrismaPromise<import("../../../generated/prisma/internal/prismaNamespace").BatchPayload>;

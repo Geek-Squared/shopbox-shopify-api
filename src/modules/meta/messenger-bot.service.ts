@@ -17,7 +17,40 @@ export class MessengerBotService {
     private readonly repository: ShopifyRepository,
     private readonly session: BotSessionService,
     private readonly config: ConfigService,
-  ) {}
+  ) { }
+
+  private getProductUrl(merchant: any, product: any): string | null {
+    if (product.onlineStoreUrl) {
+      return product.onlineStoreUrl;
+    }
+
+    if (product.handle) {
+      return `https://${merchant.shop}/products/${product.handle}`;
+    }
+
+    return null;
+  }
+
+  private getCheckoutUrl(merchant: any, product: any): string | null {
+    const defaultVariant = product.variants?.[0];
+    if (defaultVariant?.id) {
+      return `https://${merchant.shop}/cart/${defaultVariant.id}:1`;
+    }
+
+    return this.getProductUrl(merchant, product);
+  }
+
+  private isAmountVariantProduct(product: any): boolean {
+    const variants = product?.variants ?? [];
+    if (variants.length === 0) {
+      return false;
+    }
+
+    return variants.every((variant: any) => {
+      const title = (variant.title ?? '').trim();
+      return /^\$?\d+([.,]\d{1,2})?$/.test(title);
+    });
+  }
 
   async handle(data: {
     senderId: string;
@@ -25,7 +58,7 @@ export class MessengerBotService {
     text?: string;
     postbackPayload?: string;
     referral?: string;
-  }): Promise<void> {
+  }): Promise<void | boolean> {
     const { senderId, merchantId, text, postbackPayload, referral } = data;
     const sessionKey = `msg_${senderId}_${merchantId}`;
     let input = (postbackPayload ?? text ?? '').trim();
@@ -38,6 +71,24 @@ export class MessengerBotService {
     }
 
     const token = merchant.messengerToken;
+    if (!postbackPayload && text) {
+      const normalizedText = text.trim().toLowerCase();
+      if (normalizedText.includes('keep shopping')) {
+        input = 'SHOP_NOW';
+      } else if (normalizedText.includes('checkout')) {
+        input = 'CHECKOUT';
+      } else if (normalizedText.includes('clear')) {
+        input = 'CLEAR_CART';
+      } else if (normalizedText.includes('my cart')) {
+        input = 'VIEW_CART';
+      } else if (normalizedText.includes('add to cart')) {
+        const selectedProduct = (context as any)?.selectedProduct;
+        if (selectedProduct?.id) {
+          input = `ADD_${selectedProduct.id}`;
+        }
+      }
+    }
+
     const lowerInput = input.toLowerCase();
 
     // Referral parsing (click-to-messenger ads)
@@ -55,8 +106,8 @@ export class MessengerBotService {
 
     // Check for Global Keywords at any time
     const matchingTrigger = await this.prisma.commentTrigger.findFirst({
-      where: { 
-        merchantId: merchant.id, 
+      where: {
+        merchantId: merchant.id,
         isActive: true,
         keyword: { equals: input, mode: 'insensitive' }
       }
@@ -68,10 +119,10 @@ export class MessengerBotService {
       if (!dmText) {
         dmText = `Hi! 👋 Thanks for your interest in {{store_name}}.\n\nReply "shopping" to browse our collection!`;
       }
-      
+
       // Since we don't have a specific product in mind for a general chat keyword, we just replace store_name
       dmText = dmText.replace(/{{store_name}}/g, storeName || 'our store')
-                     .replace(/{{commenter_name}}/g, 'there');
+        .replace(/{{commenter_name}}/g, 'there');
 
       await this.metaSender.sendText(senderId, dmText, token, merchant.id, 'messenger');
       // If we're generic, we can show the welcome menu below the template
@@ -83,7 +134,7 @@ export class MessengerBotService {
     if (input === 'MY_ORDERS') {
       return this.handleMyOrders(senderId, merchant, token);
     }
-    
+
     // Global button recovery: If they click an old menu button, always handle it even if bot was IDLE
     if (input.startsWith('CAT_')) return this.handleCategorySelection(senderId, merchant, token, input, context);
     if (input.startsWith('VIEW_') || input.startsWith('ADD_')) return this.handleProductSelection(senderId, merchant, token, input, context);
@@ -122,7 +173,7 @@ export class MessengerBotService {
     }
   }
 
-  private async handleReferral(senderId: string, merchant: any, token: string, referral: string) {
+  private async handleReferral(senderId: string, merchant: any, token: string, referral: string): Promise<void | boolean> {
     const sessionKey = `msg_${senderId}_${merchant.id}`;
     if (referral.startsWith('product_')) {
       const productId = referral.replace('product_', '');
@@ -144,10 +195,10 @@ export class MessengerBotService {
     return this.handleWelcome(senderId, merchant, token);
   }
 
-  private async handleWelcome(senderId: string, merchant: any, token: string, skipHeader = false) {
+  private async handleWelcome(senderId: string, merchant: any, token: string, skipHeader = false): Promise<void | boolean> {
     const sessionKey = `msg_${senderId}_${merchant.id}`;
     if (!skipHeader) await this.metaSender.sendTypingOn(senderId, token, 'messenger');
-    
+
     const collections = await this.shopifyApi.getCollections(merchant.shop);
     const welcomeText = `Hey! 👋 Welcome to *${merchant.shop.split('.')[0]}*.\nWhat are you looking for today?`;
 
@@ -171,7 +222,7 @@ export class MessengerBotService {
     }
   }
 
-  private async handleCategorySelection(senderId: string, merchant: any, token: string, input: string, context: BotContext) {
+  private async handleCategorySelection(senderId: string, merchant: any, token: string, input: string, context: BotContext): Promise<void | boolean> {
     const sessionKey = `msg_${senderId}_${merchant.id}`;
     if (!input.startsWith('CAT_')) {
       return this.handleWelcome(senderId, merchant, token);
@@ -193,7 +244,7 @@ export class MessengerBotService {
     await this.session.updateContext(sessionKey, 'BROWSING_PRODUCTS', { ...context, products });
   }
 
-  private async handleProductSelection(senderId: string, merchant: any, token: string, input: string, context: BotContext) {
+  private async handleProductSelection(senderId: string, merchant: any, token: string, input: string, context: BotContext): Promise<void | boolean> {
     if (!input.startsWith('VIEW_') && !input.startsWith('ADD_')) {
       await this.session.reset(`msg_${senderId}_${merchant.id}`);
       return; // Hand over to human
@@ -219,12 +270,52 @@ export class MessengerBotService {
     return this.showProductDetail(senderId, merchant, token, product, context);
   }
 
-  async showProductDetail(senderId: string, merchant: any, token: string, product: any, context: BotContext) {
+  async showProductDetail(senderId: string, merchant: any, token: string, product: any, context: BotContext, customMessage?: string, recipientId?: string): Promise<boolean> {
     const sessionKey = `msg_${senderId}_${merchant.id}`;
-    const subtitle = `💰 $${product.price.toFixed(2)}${product.description ? '\n' + product.description.substring(0, 70) : ''}`;
+    const targetRecipient = recipientId || senderId;
+    const isCommentId = !!recipientId;
+    const productUrl = this.getProductUrl(merchant, product);
+    const checkoutUrl = this.getCheckoutUrl(merchant, product);
+    // 🛡️ PRIVATE REPLY SAFETY — Private replies have tighter payload constraints.
+    // We use an even shorter subtitle and remove images if it's a private reply to ensure delivery.
+    const subtitle = isCommentId 
+      ? `💰 $${product.price.toFixed(2)}` 
+      : `💰 $${product.price.toFixed(2)}${product.description ? ' · ' + product.description.substring(0, 30) : ''}`;
+
+    if (isCommentId) {
+      const replyTextParts = [
+        `${product.title}`,
+        `Price: $${product.price.toFixed(2)}`,
+      ];
+
+      if (product.description) {
+        replyTextParts.push(product.description.substring(0, 80));
+      }
+
+      if (checkoutUrl) {
+        replyTextParts.push(
+          `${product.variants.length > 1 ? 'View product' : 'Buy now'}: ${checkoutUrl}`,
+        );
+      } else if (productUrl) {
+        replyTextParts.push(`View product: ${productUrl}`);
+      }
+
+      return this.metaSender.sendText(
+        targetRecipient,
+        replyTextParts.join('\n').substring(0, 640),
+        token,
+        merchant.id,
+        'messenger',
+        true,
+      );
+    }
 
     if (product.variants.length > 1) {
       // Multi-variant: Show product card, then variant quick replies
+      const isAmountProduct = this.isAmountVariantProduct(product);
+      const variantPrompt = isAmountProduct
+        ? 'Select an amount:'
+        : 'Select a size/variant:';
       const cardPayload = {
         message: {
           attachment: {
@@ -232,12 +323,11 @@ export class MessengerBotService {
             payload: {
               template_type: 'generic',
               elements: [{
-                title: product.title,
-                subtitle,
-                image_url: product.primaryImage || undefined,
+                title: product.title.substring(0, 80),
+                subtitle: subtitle,
+                image_url: isCommentId ? undefined : (product.primaryImage || undefined),
                 buttons: [
-                  { type: 'postback', title: '🛒 Add to Cart', payload: `ADD_${product.id}` },
-                  { type: 'postback', title: '🛍️ Keep Shopping', payload: 'SHOP_NOW' },
+                  { type: 'web_url', title: '🛍️ Keep Shopping', url: `https://${merchant.shop}/collections/all` },
                 ],
               }],
             },
@@ -245,15 +335,30 @@ export class MessengerBotService {
         },
       };
 
-      await this.metaSender.sendToMeta(token, senderId, cardPayload, merchant.id, 'messenger');
+      const cardSent = await this.metaSender.sendToMeta(token, targetRecipient, cardPayload, merchant.id, 'messenger', isCommentId);
+      if (!cardSent) {
+        return false;
+      }
 
       // Then send variant picker
       const replies = product.variants.slice(0, 13).map(v => ({
         title: v.title,
         payload: `VAR_${v.id}`
       }));
-      await this.metaSender.sendQuickReplies(senderId, 'Select a size/variant:', replies, token, merchant.id, 'messenger');
+      const repliesSent = await this.metaSender.sendQuickReplies(
+        targetRecipient,
+        variantPrompt,
+        replies,
+        token,
+        merchant.id,
+        'messenger',
+        isCommentId,
+      );
+      if (!repliesSent) {
+        return false;
+      }
       await this.session.updateContext(sessionKey, 'SELECTING_VARIANT', { ...context, selectedProduct: product });
+      return true;
 
     } else {
       // Single variant: Show product card with buttons
@@ -264,12 +369,12 @@ export class MessengerBotService {
             payload: {
               template_type: 'generic',
               elements: [{
-                title: product.title,
-                subtitle,
+                title: product.title.substring(0, 80),
+                subtitle: subtitle.substring(0, 80),
                 image_url: product.primaryImage || undefined,
                 buttons: [
                   { type: 'postback', title: '🛒 Add to Cart', payload: `ADD_${product.id}` },
-                  { type: 'postback', title: '🛍️ Keep Shopping', payload: 'SHOP_NOW' },
+                  { type: 'web_url', title: '🛍️ Keep Shopping', url: `https://${merchant.shop}/collections/all` },
                 ],
               }],
             },
@@ -277,12 +382,16 @@ export class MessengerBotService {
         },
       };
 
-      await this.metaSender.sendToMeta(token, senderId, cardPayload, merchant.id, 'messenger');
+      const cardSent = await this.metaSender.sendToMeta(token, targetRecipient, cardPayload, merchant.id, 'messenger', isCommentId);
+      if (!cardSent) {
+        return false;
+      }
       await this.session.updateContext(sessionKey, 'VIEWING_PRODUCT', { ...context, selectedProduct: product });
+      return true;
     }
   }
 
-  private async handleVariantSelection(senderId: string, merchant: any, token: string, input: string, context: BotContext) {
+  private async handleVariantSelection(senderId: string, merchant: any, token: string, input: string, context: BotContext): Promise<void | boolean> {
     if (!input.startsWith('VAR_')) {
       await this.session.reset(`msg_${senderId}_${merchant.id}`);
       return; // Hand over to human
@@ -306,7 +415,7 @@ export class MessengerBotService {
     return this.showAddedToCart(senderId, merchant, token, cart);
   }
 
-  private async handleProductAction(senderId: string, merchant: any, token: string, input: string, context: BotContext) {
+  private async handleProductAction(senderId: string, merchant: any, token: string, input: string, context: BotContext): Promise<void | boolean> {
     if (input.startsWith('ADD_')) {
       const product = (context as any).selectedProduct;
       const cart = this.session.addToCart(context.cart ?? [], {
@@ -320,9 +429,9 @@ export class MessengerBotService {
     }
   }
 
-  private async showAddedToCart(senderId: string, merchant: any, token: string, cart: any[]) {
+  private async showAddedToCart(senderId: string, merchant: any, token: string, cart: any[]): Promise<boolean> {
     const subtotal = this.session.cartSubtotal(cart);
-    await this.metaSender.sendQuickReplies(
+    return this.metaSender.sendQuickReplies(
       senderId,
       `✅ Added to cart!\n🛒 ${cart.length} item(s) — $${subtotal.toFixed(2)}`,
       [
@@ -335,7 +444,7 @@ export class MessengerBotService {
     );
   }
 
-  private async handleViewCart(senderId: string, merchant: any, token: string, context: BotContext) {
+  private async handleViewCart(senderId: string, merchant: any, token: string, context: BotContext): Promise<boolean> {
     const cart = context.cart ?? [];
     if (cart.length === 0) {
       return this.metaSender.sendText(senderId, "🛒 Your cart is empty.", token, merchant.id, 'messenger');
@@ -355,7 +464,7 @@ export class MessengerBotService {
     ], token, merchant.id, 'messenger');
   }
 
-  private async handleCartAction(senderId: string, merchant: any, token: string, input: string, context: BotContext) {
+  private async handleCartAction(senderId: string, merchant: any, token: string, input: string, context: BotContext): Promise<void | boolean> {
     const sessionKey = `msg_${senderId}_${merchant.id}`;
     if (input === 'CHECKOUT') {
       await this.session.updateContext(sessionKey, 'CHECKOUT_NAME', {});
@@ -367,14 +476,14 @@ export class MessengerBotService {
     }
   }
 
-  private async handleCheckoutName(senderId: string, merchant: any, token: string, text: string, context: BotContext) {
+  private async handleCheckoutName(senderId: string, merchant: any, token: string, text: string, context: BotContext): Promise<boolean> {
     const sessionKey = `msg_${senderId}_${merchant.id}`;
     if (text.length < 2) return this.metaSender.sendText(senderId, "❌ Please enter a valid name:", token, merchant.id, 'messenger');
     await this.session.updateContext(sessionKey, 'CHECKOUT_ADDRESS', { ...context, buyerName: text });
     return this.metaSender.sendText(senderId, "📍 Your delivery address?", token, merchant.id, 'messenger');
   }
 
-  private async handleCheckoutAddress(senderId: string, merchant: any, token: string, text: string, context: BotContext) {
+  private async handleCheckoutAddress(senderId: string, merchant: any, token: string, text: string, context: BotContext): Promise<boolean> {
     const sessionKey = `msg_${senderId}_${merchant.id}`;
     if (text.length < 5) return this.metaSender.sendText(senderId, "❌ Please enter a valid address:", token, merchant.id, 'messenger');
     await this.session.updateContext(sessionKey, 'CHECKOUT_PAYMENT', { ...context, deliveryAddress: text });
@@ -385,7 +494,7 @@ export class MessengerBotService {
     ], token, merchant.id, 'messenger');
   }
 
-  private async handlePaymentSelection(senderId: string, merchant: any, token: string, input: string, context: BotContext) {
+  private async handlePaymentSelection(senderId: string, merchant: any, token: string, input: string, context: BotContext): Promise<void | boolean> {
     const sessionKey = `msg_${senderId}_${merchant.id}`;
     const paymentMap = { PAY_COD: 'Cash on Delivery', PAY_CARD: 'Card', PAY_BANK: 'Bank Transfer' };
     const paymentMethod = (paymentMap as any)[input];
@@ -418,7 +527,7 @@ export class MessengerBotService {
     }
   }
 
-  private async handleMyOrders(senderId: string, merchant: any, token: string) {
+  private async handleMyOrders(senderId: string, merchant: any, token: string): Promise<boolean> {
     // Note: Search order history in your local DB (Prisma)
     // assuming we log Shopify orders to a local table or just query Shopify
     // Here we query local order history if available
@@ -427,7 +536,7 @@ export class MessengerBotService {
       take: 5,
       orderBy: { createdAt: 'desc' }
     });
-    
+
     // Simplification: In a real app, you'd fetch from Shopify orders.json?customer_id=...
     return this.metaSender.sendText(senderId, "📦 *Recent Activity*\n──────────────────\nCheck your orders on Shopify Admin or here in a bit!", token, merchant.id, 'messenger');
   }

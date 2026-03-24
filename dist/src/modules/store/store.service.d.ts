@@ -12,28 +12,28 @@ export declare class StoreService {
         description: string;
         products: {
             id: string;
-            createdAt: Date;
-            sellerId: string;
-            storeId: string;
             name: string;
-            price: number;
+            createdAt: Date;
+            updatedAt: Date;
+            sellerId: string;
             description: string | null;
+            storeId: string;
+            price: number;
             currency: string;
             active: boolean;
-            updatedAt: Date;
             stockQty: number;
         }[];
     }>;
     updateStore(sellerId: string, payload: UpdateStoreDto): Promise<{
         id: string;
-        createdAt: Date;
-        sellerId: string;
         name: string;
-        description: string | null;
-        slug: string;
-        logoUrl: string | null;
-        city: string | null;
-        category: string | null;
+        createdAt: Date;
         updatedAt: Date;
+        sellerId: string;
+        slug: string;
+        description: string | null;
+        category: string | null;
+        city: string | null;
+        logoUrl: string | null;
     }>;
 }

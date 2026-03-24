@@ -19,33 +19,33 @@ export type CommentTriggerMinAggregateOutputType = {
     merchantId: string | null;
     keyword: string | null;
     replyComment: boolean | null;
-    templateMessage: string | null;
     isActive: boolean | null;
     triggerCount: number | null;
     createdAt: Date | null;
     updatedAt: Date | null;
+    templateMessage: string | null;
 };
 export type CommentTriggerMaxAggregateOutputType = {
     id: string | null;
     merchantId: string | null;
     keyword: string | null;
     replyComment: boolean | null;
-    templateMessage: string | null;
     isActive: boolean | null;
     triggerCount: number | null;
     createdAt: Date | null;
     updatedAt: Date | null;
+    templateMessage: string | null;
 };
 export type CommentTriggerCountAggregateOutputType = {
     id: number;
     merchantId: number;
     keyword: number;
     replyComment: number;
-    templateMessage: number;
     isActive: number;
     triggerCount: number;
     createdAt: number;
     updatedAt: number;
+    templateMessage: number;
     _all: number;
 };
 export type CommentTriggerAvgAggregateInputType = {
@@ -59,33 +59,33 @@ export type CommentTriggerMinAggregateInputType = {
     merchantId?: true;
     keyword?: true;
     replyComment?: true;
-    templateMessage?: true;
     isActive?: true;
     triggerCount?: true;
     createdAt?: true;
     updatedAt?: true;
+    templateMessage?: true;
 };
 export type CommentTriggerMaxAggregateInputType = {
     id?: true;
     merchantId?: true;
     keyword?: true;
     replyComment?: true;
-    templateMessage?: true;
     isActive?: true;
     triggerCount?: true;
     createdAt?: true;
     updatedAt?: true;
+    templateMessage?: true;
 };
 export type CommentTriggerCountAggregateInputType = {
     id?: true;
     merchantId?: true;
     keyword?: true;
     replyComment?: true;
-    templateMessage?: true;
     isActive?: true;
     triggerCount?: true;
     createdAt?: true;
     updatedAt?: true;
+    templateMessage?: true;
     _all?: true;
 };
 export type CommentTriggerAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -121,11 +121,11 @@ export type CommentTriggerGroupByOutputType = {
     merchantId: string;
     keyword: string;
     replyComment: boolean;
-    templateMessage: string | null;
     isActive: boolean;
     triggerCount: number;
     createdAt: Date;
     updatedAt: Date;
+    templateMessage: string | null;
     _count: CommentTriggerCountAggregateOutputType | null;
     _avg: CommentTriggerAvgAggregateOutputType | null;
     _sum: CommentTriggerSumAggregateOutputType | null;
@@ -143,22 +143,22 @@ export type CommentTriggerWhereInput = {
     merchantId?: Prisma.StringFilter<"CommentTrigger"> | string;
     keyword?: Prisma.StringFilter<"CommentTrigger"> | string;
     replyComment?: Prisma.BoolFilter<"CommentTrigger"> | boolean;
-    templateMessage?: Prisma.StringNullableFilter<"CommentTrigger"> | string | null;
     isActive?: Prisma.BoolFilter<"CommentTrigger"> | boolean;
     triggerCount?: Prisma.IntFilter<"CommentTrigger"> | number;
     createdAt?: Prisma.DateTimeFilter<"CommentTrigger"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"CommentTrigger"> | Date | string;
+    templateMessage?: Prisma.StringNullableFilter<"CommentTrigger"> | string | null;
 };
 export type CommentTriggerOrderByWithRelationInput = {
     id?: Prisma.SortOrder;
     merchantId?: Prisma.SortOrder;
     keyword?: Prisma.SortOrder;
     replyComment?: Prisma.SortOrder;
-    templateMessage?: Prisma.SortOrderInput | Prisma.SortOrder;
     isActive?: Prisma.SortOrder;
     triggerCount?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    templateMessage?: Prisma.SortOrderInput | Prisma.SortOrder;
 };
 export type CommentTriggerWhereUniqueInput = Prisma.AtLeast<{
     id?: string;
@@ -169,22 +169,22 @@ export type CommentTriggerWhereUniqueInput = Prisma.AtLeast<{
     merchantId?: Prisma.StringFilter<"CommentTrigger"> | string;
     keyword?: Prisma.StringFilter<"CommentTrigger"> | string;
     replyComment?: Prisma.BoolFilter<"CommentTrigger"> | boolean;
-    templateMessage?: Prisma.StringNullableFilter<"CommentTrigger"> | string | null;
     isActive?: Prisma.BoolFilter<"CommentTrigger"> | boolean;
     triggerCount?: Prisma.IntFilter<"CommentTrigger"> | number;
     createdAt?: Prisma.DateTimeFilter<"CommentTrigger"> | Date | string;
     updatedAt?: Prisma.DateTimeFilter<"CommentTrigger"> | Date | string;
+    templateMessage?: Prisma.StringNullableFilter<"CommentTrigger"> | string | null;
 }, "id" | "merchantId_keyword">;
 export type CommentTriggerOrderByWithAggregationInput = {
     id?: Prisma.SortOrder;
     merchantId?: Prisma.SortOrder;
     keyword?: Prisma.SortOrder;
     replyComment?: Prisma.SortOrder;
-    templateMessage?: Prisma.SortOrderInput | Prisma.SortOrder;
     isActive?: Prisma.SortOrder;
     triggerCount?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    templateMessage?: Prisma.SortOrderInput | Prisma.SortOrder;
     _count?: Prisma.CommentTriggerCountOrderByAggregateInput;
     _avg?: Prisma.CommentTriggerAvgOrderByAggregateInput;
     _max?: Prisma.CommentTriggerMaxOrderByAggregateInput;
@@ -199,88 +199,88 @@ export type CommentTriggerScalarWhereWithAggregatesInput = {
     merchantId?: Prisma.StringWithAggregatesFilter<"CommentTrigger"> | string;
     keyword?: Prisma.StringWithAggregatesFilter<"CommentTrigger"> | string;
     replyComment?: Prisma.BoolWithAggregatesFilter<"CommentTrigger"> | boolean;
-    templateMessage?: Prisma.StringNullableWithAggregatesFilter<"CommentTrigger"> | string | null;
     isActive?: Prisma.BoolWithAggregatesFilter<"CommentTrigger"> | boolean;
     triggerCount?: Prisma.IntWithAggregatesFilter<"CommentTrigger"> | number;
     createdAt?: Prisma.DateTimeWithAggregatesFilter<"CommentTrigger"> | Date | string;
     updatedAt?: Prisma.DateTimeWithAggregatesFilter<"CommentTrigger"> | Date | string;
+    templateMessage?: Prisma.StringNullableWithAggregatesFilter<"CommentTrigger"> | string | null;
 };
 export type CommentTriggerCreateInput = {
     id?: string;
     merchantId: string;
     keyword: string;
     replyComment?: boolean;
-    templateMessage?: string | null;
     isActive?: boolean;
     triggerCount?: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    templateMessage?: string | null;
 };
 export type CommentTriggerUncheckedCreateInput = {
     id?: string;
     merchantId: string;
     keyword: string;
     replyComment?: boolean;
-    templateMessage?: string | null;
     isActive?: boolean;
     triggerCount?: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    templateMessage?: string | null;
 };
 export type CommentTriggerUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     merchantId?: Prisma.StringFieldUpdateOperationsInput | string;
     keyword?: Prisma.StringFieldUpdateOperationsInput | string;
     replyComment?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    templateMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     triggerCount?: Prisma.IntFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    templateMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type CommentTriggerUncheckedUpdateInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     merchantId?: Prisma.StringFieldUpdateOperationsInput | string;
     keyword?: Prisma.StringFieldUpdateOperationsInput | string;
     replyComment?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    templateMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     triggerCount?: Prisma.IntFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    templateMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type CommentTriggerCreateManyInput = {
     id?: string;
     merchantId: string;
     keyword: string;
     replyComment?: boolean;
-    templateMessage?: string | null;
     isActive?: boolean;
     triggerCount?: number;
     createdAt?: Date | string;
     updatedAt?: Date | string;
+    templateMessage?: string | null;
 };
 export type CommentTriggerUpdateManyMutationInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     merchantId?: Prisma.StringFieldUpdateOperationsInput | string;
     keyword?: Prisma.StringFieldUpdateOperationsInput | string;
     replyComment?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    templateMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     triggerCount?: Prisma.IntFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    templateMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type CommentTriggerUncheckedUpdateManyInput = {
     id?: Prisma.StringFieldUpdateOperationsInput | string;
     merchantId?: Prisma.StringFieldUpdateOperationsInput | string;
     keyword?: Prisma.StringFieldUpdateOperationsInput | string;
     replyComment?: Prisma.BoolFieldUpdateOperationsInput | boolean;
-    templateMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
     isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean;
     triggerCount?: Prisma.IntFieldUpdateOperationsInput | number;
     createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
     updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string;
+    templateMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null;
 };
 export type CommentTriggerMerchantIdKeywordCompoundUniqueInput = {
     merchantId: string;
@@ -291,11 +291,11 @@ export type CommentTriggerCountOrderByAggregateInput = {
     merchantId?: Prisma.SortOrder;
     keyword?: Prisma.SortOrder;
     replyComment?: Prisma.SortOrder;
-    templateMessage?: Prisma.SortOrder;
     isActive?: Prisma.SortOrder;
     triggerCount?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    templateMessage?: Prisma.SortOrder;
 };
 export type CommentTriggerAvgOrderByAggregateInput = {
     triggerCount?: Prisma.SortOrder;
@@ -305,22 +305,22 @@ export type CommentTriggerMaxOrderByAggregateInput = {
     merchantId?: Prisma.SortOrder;
     keyword?: Prisma.SortOrder;
     replyComment?: Prisma.SortOrder;
-    templateMessage?: Prisma.SortOrder;
     isActive?: Prisma.SortOrder;
     triggerCount?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    templateMessage?: Prisma.SortOrder;
 };
 export type CommentTriggerMinOrderByAggregateInput = {
     id?: Prisma.SortOrder;
     merchantId?: Prisma.SortOrder;
     keyword?: Prisma.SortOrder;
     replyComment?: Prisma.SortOrder;
-    templateMessage?: Prisma.SortOrder;
     isActive?: Prisma.SortOrder;
     triggerCount?: Prisma.SortOrder;
     createdAt?: Prisma.SortOrder;
     updatedAt?: Prisma.SortOrder;
+    templateMessage?: Prisma.SortOrder;
 };
 export type CommentTriggerSumOrderByAggregateInput = {
     triggerCount?: Prisma.SortOrder;
@@ -330,46 +330,46 @@ export type CommentTriggerSelect<ExtArgs extends runtime.Types.Extensions.Intern
     merchantId?: boolean;
     keyword?: boolean;
     replyComment?: boolean;
-    templateMessage?: boolean;
     isActive?: boolean;
     triggerCount?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    templateMessage?: boolean;
 }, ExtArgs["result"]["commentTrigger"]>;
 export type CommentTriggerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
     merchantId?: boolean;
     keyword?: boolean;
     replyComment?: boolean;
-    templateMessage?: boolean;
     isActive?: boolean;
     triggerCount?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    templateMessage?: boolean;
 }, ExtArgs["result"]["commentTrigger"]>;
 export type CommentTriggerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
     id?: boolean;
     merchantId?: boolean;
     keyword?: boolean;
     replyComment?: boolean;
-    templateMessage?: boolean;
     isActive?: boolean;
     triggerCount?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    templateMessage?: boolean;
 }, ExtArgs["result"]["commentTrigger"]>;
 export type CommentTriggerSelectScalar = {
     id?: boolean;
     merchantId?: boolean;
     keyword?: boolean;
     replyComment?: boolean;
-    templateMessage?: boolean;
     isActive?: boolean;
     triggerCount?: boolean;
     createdAt?: boolean;
     updatedAt?: boolean;
+    templateMessage?: boolean;
 };
-export type CommentTriggerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "merchantId" | "keyword" | "replyComment" | "templateMessage" | "isActive" | "triggerCount" | "createdAt" | "updatedAt", ExtArgs["result"]["commentTrigger"]>;
+export type CommentTriggerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "merchantId" | "keyword" | "replyComment" | "isActive" | "triggerCount" | "createdAt" | "updatedAt" | "templateMessage", ExtArgs["result"]["commentTrigger"]>;
 export type $CommentTriggerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     name: "CommentTrigger";
     objects: {};
@@ -378,11 +378,11 @@ export type $CommentTriggerPayload<ExtArgs extends runtime.Types.Extensions.Inte
         merchantId: string;
         keyword: string;
         replyComment: boolean;
-        templateMessage: string | null;
         isActive: boolean;
         triggerCount: number;
         createdAt: Date;
         updatedAt: Date;
+        templateMessage: string | null;
     }, ExtArgs["result"]["commentTrigger"]>;
     composites: {};
 };
@@ -444,11 +444,11 @@ export interface CommentTriggerFieldRefs {
     readonly merchantId: Prisma.FieldRef<"CommentTrigger", 'String'>;
     readonly keyword: Prisma.FieldRef<"CommentTrigger", 'String'>;
     readonly replyComment: Prisma.FieldRef<"CommentTrigger", 'Boolean'>;
-    readonly templateMessage: Prisma.FieldRef<"CommentTrigger", 'String'>;
     readonly isActive: Prisma.FieldRef<"CommentTrigger", 'Boolean'>;
     readonly triggerCount: Prisma.FieldRef<"CommentTrigger", 'Int'>;
     readonly createdAt: Prisma.FieldRef<"CommentTrigger", 'DateTime'>;
     readonly updatedAt: Prisma.FieldRef<"CommentTrigger", 'DateTime'>;
+    readonly templateMessage: Prisma.FieldRef<"CommentTrigger", 'String'>;
 }
 export type CommentTriggerFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
     select?: Prisma.CommentTriggerSelect<ExtArgs> | null;

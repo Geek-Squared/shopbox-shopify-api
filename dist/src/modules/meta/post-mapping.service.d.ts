@@ -7,6 +7,7 @@ export declare class PostMappingService {
     private readonly shopifyRepo;
     private readonly logger;
     constructor(prisma: PrismaService, shopifyApi: ShopifyApiService, shopifyRepo: ShopifyRepository);
+    private normalizeFacebookUrl;
     extractFacebookPostId(postUrl: string, messengerPageId: string): string;
     createMapping(merchantId: string, data: {
         postUrl: string;
@@ -16,8 +17,8 @@ export declare class PostMappingService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         mediaId: string;
         platform: string;
         postUrl: string | null;
@@ -28,8 +29,8 @@ export declare class PostMappingService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         mediaId: string;
         platform: string;
         postUrl: string | null;
@@ -44,8 +45,8 @@ export declare class PostMappingService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         mediaId: string;
         platform: string;
         postUrl: string | null;
@@ -56,8 +57,8 @@ export declare class PostMappingService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         mediaId: string;
         platform: string;
         postUrl: string | null;
@@ -68,8 +69,8 @@ export declare class PostMappingService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         mediaId: string;
         platform: string;
         postUrl: string | null;

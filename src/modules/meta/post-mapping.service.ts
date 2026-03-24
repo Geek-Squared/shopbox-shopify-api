@@ -11,7 +11,21 @@ export class PostMappingService {
     private readonly prisma: PrismaService,
     private readonly shopifyApi: ShopifyApiService,
     private readonly shopifyRepo: ShopifyRepository,
-  ) {}
+  ) { }
+
+  private normalizeFacebookUrl(postUrl: string): string {
+    const url = new URL(postUrl);
+    url.hash = '';
+
+    if (url.hostname === 'm.facebook.com') {
+      url.hostname = 'www.facebook.com';
+    }
+
+    const normalized = `${url.origin}${url.pathname}${url.search}`;
+    return normalized.endsWith('/') && !url.search
+      ? normalized.slice(0, -1)
+      : normalized;
+  }
 
   /**
    * Extract the Facebook post_id from a Facebook post URL.
@@ -20,24 +34,26 @@ export class PostMappingService {
    */
   extractFacebookPostId(postUrl: string, messengerPageId: string): string {
     try {
-      const url = new URL(postUrl);
-      const storyFbid = url.searchParams.get('story_fbid') || url.searchParams.get('fbid');
-      if (storyFbid) {
-        return `${messengerPageId}_${storyFbid}`;
+      const normalizedUrl = this.normalizeFacebookUrl(postUrl);
+      const url = new URL(normalizedUrl);
+      const storyFbid = url.searchParams.get('story_fbid');
+      const fbidParam = url.searchParams.get('fbid');
+      const numericId = [storyFbid, fbidParam].find((value) => /^\d+$/.test(value ?? ''));
+      if (numericId) {
+        return `${messengerPageId}_${numericId}`;
       }
 
       // Handle format: /posts/122106202934120930
-      const postsMatch = postUrl.match(/\/posts\/(\d+)/);
+      const postsMatch = normalizedUrl.match(/\/posts\/(\d+)/);
       if (postsMatch) {
         return `${messengerPageId}_${postsMatch[1]}`;
       }
 
-      // Handle format: /PageName/posts/pfbid... (just use the last segment)
-      const pfbidMatch = postUrl.match(/pfbid([a-zA-Z0-9]+)/);
+      // Some Facebook permalinks only expose a pfbid token. Preserve the full
+      // URL so webhook permalink matching can still recover the mapping later.
+      const pfbidMatch = normalizedUrl.match(/pfbid([a-zA-Z0-9]+)/);
       if (pfbidMatch) {
-        // For pfbid URLs, we can't reliably extract the numeric ID
-        // The merchant should use the story_fbid format
-        throw new Error('Please use the permalink URL format with story_fbid parameter');
+        return `url:${normalizedUrl}`;
       }
 
       throw new Error('Could not extract post ID from URL');
@@ -68,12 +84,14 @@ export class PostMappingService {
     if (!merchant) throw new NotFoundException('Merchant not found');
 
     let mediaId: string;
+    let normalizedPostUrl = data.postUrl;
 
     if (data.platform === 'facebook') {
       if (!merchant.messengerPageId) {
         throw new ConflictException('Facebook Messenger is not connected. Connect it first.');
       }
-      mediaId = this.extractFacebookPostId(data.postUrl, merchant.messengerPageId);
+      normalizedPostUrl = this.normalizeFacebookUrl(data.postUrl);
+      mediaId = this.extractFacebookPostId(normalizedPostUrl, merchant.messengerPageId);
     } else {
       // Instagram: for now, accept the media_id directly or extract from URL
       // TODO: Add Instagram oEmbed/Graph API lookup when needed
@@ -97,7 +115,7 @@ export class PostMappingService {
       create: {
         merchantId,
         platform: data.platform,
-        postUrl: data.postUrl,
+        postUrl: normalizedPostUrl,
         mediaId,
         shopifyProductId: data.shopifyProductId,
         productTitle,
@@ -105,7 +123,7 @@ export class PostMappingService {
       update: {
         shopifyProductId: data.shopifyProductId,
         productTitle,
-        postUrl: data.postUrl,
+        postUrl: normalizedPostUrl,
         isActive: true,
       },
     });
