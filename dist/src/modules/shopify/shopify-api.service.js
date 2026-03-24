@@ -222,36 +222,36 @@ let ShopifyApiService = ShopifyApiService_1 = class ShopifyApiService {
     }
     async createOrder(shop, data) {
         const body = {
-            order: {
+            draft_order: {
                 line_items: data.lineItems.map((i) => ({
-                    variant_id: i.variantId,
+                    variant_id: i.variantId || i.productId,
                     quantity: i.quantity,
                 })),
                 customer: {
                     first_name: data.customerFirstName,
                     phone: data.customerPhone,
-                    email: data.customerEmail,
+                    email: data.customerEmail || undefined,
                 },
                 shipping_address: {
                     address1: data.shippingAddress,
                     name: data.customerFirstName,
                 },
-                financial_status: 'pending',
-                send_receipt: false,
-                send_fulfillment_receipt: false,
+                use_customer_default_address: false,
                 note: data.note ?? 'Via ShopBoxx chat',
                 tags: 'shopboxx',
             },
         };
-        const resData = await this.shopifyFetch(shop, 'orders.json', {
+        const resData = await this.shopifyFetch(shop, 'draft_orders.json', {
             method: 'POST',
             body: JSON.stringify(body),
         });
+        const order = resData.draft_order;
         return {
-            id: resData.order.id.toString(),
-            orderNumber: resData.order.order_number,
-            totalPrice: resData.order.total_price,
-            currency: resData.order.currency,
+            id: order.id.toString(),
+            orderNumber: order.name,
+            totalPrice: order.total_price,
+            currency: order.currency,
+            invoiceUrl: order.invoice_url,
         };
     }
     async getShopInfo(shop) {

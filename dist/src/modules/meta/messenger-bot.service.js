@@ -456,16 +456,23 @@ let MessengerBotService = MessengerBotService_1 = class MessengerBotService {
                 shippingAddress: context.deliveryAddress,
                 paymentMethod
             });
-            await this.metaSender.sendReceipt(senderId, {
-                buyerName: context.buyerName,
-                orderNumber: order.orderNumber,
-                items: context.cart.map(i => ({ name: i.productName, qty: i.quantity, price: i.unitPrice, imageUrl: i.imageUrl })),
-                subtotal: this.session.cartSubtotal(context.cart ?? []),
-                shipping: 5.0,
-                total: parseFloat(order.totalPrice),
-                paymentMethod
-            }, token, merchant.id);
-            await this.metaSender.sendQuickReplies(senderId, "🎉 Order confirmed! Want to shop more?", [{ title: "🛍️ Shop Again", payload: "SHOP_NOW" }], token, merchant.id, 'messenger');
+            if (order.invoiceUrl) {
+                await this.metaSender.sendButtonTemplate(senderId, `✅ Order Ready!\n──────────────────\nTotal: $${order.totalPrice}\n\nPlease tap below to complete your payment securely via Shopify (Stripe/PayPal):`, [
+                    { type: 'web_url', title: '💳 Secure Payment', url: order.invoiceUrl },
+                    { type: 'postback', title: '🛍️ Shop More', payload: 'SHOP_NOW' }
+                ], token, merchant.id, 'messenger');
+            }
+            else {
+                await this.metaSender.sendReceipt(senderId, {
+                    buyerName: context.buyerName,
+                    orderNumber: order.orderNumber,
+                    items: context.cart.map(i => ({ name: i.productName, qty: i.quantity, price: i.unitPrice, imageUrl: i.imageUrl })),
+                    subtotal: this.session.cartSubtotal(context.cart ?? []),
+                    shipping: 0.0,
+                    total: parseFloat(order.totalPrice),
+                    paymentMethod
+                }, token, merchant.id);
+            }
             await this.session.set(sessionKey, 'ORDER_COMPLETE', {});
         }
         catch (e) {

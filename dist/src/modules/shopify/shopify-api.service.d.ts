@@ -44,6 +44,7 @@ export declare class ShopifyApiService {
         orderNumber: any;
         totalPrice: any;
         currency: any;
+        invoiceUrl: any;
     }>;
     getShopInfo(shop: string): Promise<{
         name: any;
