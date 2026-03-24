@@ -43,46 +43,46 @@ export declare class CommentTriggerService {
         templateMessage?: string;
     }): Promise<{
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
         keyword: string;
         replyComment: boolean;
+        isActive: boolean;
         triggerCount: number;
+        createdAt: Date;
+        updatedAt: Date;
         templateMessage: string | null;
     }>;
     listTriggers(merchantId: string): Promise<{
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
         keyword: string;
         replyComment: boolean;
+        isActive: boolean;
         triggerCount: number;
+        createdAt: Date;
+        updatedAt: Date;
         templateMessage: string | null;
     }[]>;
     updateTrigger(merchantId: string, triggerId: string, data: any): Promise<{
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
         keyword: string;
         replyComment: boolean;
+        isActive: boolean;
         triggerCount: number;
+        createdAt: Date;
+        updatedAt: Date;
         templateMessage: string | null;
     }>;
     deleteTrigger(merchantId: string, triggerId: string): Promise<{
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
         merchantId: string;
-        isActive: boolean;
         keyword: string;
         replyComment: boolean;
+        isActive: boolean;
         triggerCount: number;
+        createdAt: Date;
+        updatedAt: Date;
         templateMessage: string | null;
     }>;
     getTriggerStats(merchantId: string): Promise<{

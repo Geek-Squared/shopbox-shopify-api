@@ -227,28 +227,34 @@ let MessengerBotService = MessengerBotService_1 = class MessengerBotService {
         await this.session.updateContext(sessionKey, 'BROWSING_PRODUCTS', { ...context, products });
     }
     async handleProductSelection(senderId, merchant, token, input, context) {
-        if (!input.startsWith('VIEW_') && !input.startsWith('ADD_')) {
-            await this.session.reset(`msg_${senderId}_${merchant.id}`);
-            return;
-        }
-        const productId = input.replace('VIEW_', '').replace('ADD_', '');
-        const product = await this.shopifyApi.getProduct(merchant.shop, productId);
-        if (input.startsWith('ADD_')) {
-            if (product.variants.length > 1) {
-                return this.showProductDetail(senderId, merchant, token, product, context);
+        try {
+            if (!input.startsWith('VIEW_') && !input.startsWith('ADD_')) {
+                await this.session.reset(`msg_${senderId}_${merchant.id}`);
+                return;
             }
-            else {
-                const cart = this.session.addToCart(context.cart ?? [], {
-                    productId: product.id,
-                    productName: product.title,
-                    unitPrice: product.price,
-                    quantity: 1
-                });
-                await this.session.updateContext(`msg_${senderId}_${merchant.id}`, 'CART', { ...context, cart });
-                return this.showAddedToCart(senderId, merchant, token, cart);
+            const productId = input.replace('VIEW_', '').replace('ADD_', '');
+            const product = await this.shopifyApi.getProduct(merchant.shop, productId);
+            if (input.startsWith('ADD_')) {
+                if (product.variants.length > 1) {
+                    return this.showProductDetail(senderId, merchant, token, product, context);
+                }
+                else {
+                    const cart = this.session.addToCart(context.cart ?? [], {
+                        productId: product.id,
+                        productName: product.title,
+                        unitPrice: product.price,
+                        quantity: 1
+                    });
+                    await this.session.updateContext(`msg_${senderId}_${merchant.id}`, 'CART', { ...context, cart });
+                    return this.showAddedToCart(senderId, merchant, token, cart);
+                }
             }
+            return this.showProductDetail(senderId, merchant, token, product, context);
         }
-        return this.showProductDetail(senderId, merchant, token, product, context);
+        catch (err) {
+            this.logger.error(`Product selection failed: ${err.message}`);
+            return this.metaSender.sendText(senderId, "❌ Sorry, I couldn't add that to your cart. Please try again from the menu.", token, merchant.id, 'messenger');
+        }
     }
     async showProductDetail(senderId, merchant, token, product, context, customMessage, recipientId) {
         const sessionKey = `msg_${senderId}_${merchant.id}`;
@@ -280,6 +286,7 @@ let MessengerBotService = MessengerBotService_1 = class MessengerBotService {
             const variantPrompt = isAmountProduct
                 ? 'Select an amount:'
                 : 'Select a size/variant:';
+            const defaultVariant = product.variants?.[0];
             const cardPayload = {
                 message: {
                     attachment: {
@@ -292,7 +299,7 @@ let MessengerBotService = MessengerBotService_1 = class MessengerBotService {
                                     image_url: isCommentId ? undefined : (product.primaryImage || undefined),
                                     buttons: [
                                         { type: 'web_url', title: '🛍️ Keep Shopping', url: `https://${merchant.shop}/collections/all` },
-                                        { type: 'postback', title: '🛒 Add to Cart', payload: `ADD_${product.id}` },
+                                        { type: 'postback', title: '🛒 Add to Cart', payload: defaultVariant ? `VAR_${defaultVariant.id}` : `ADD_${product.id}` },
                                         { type: 'postback', title: '💳 Checkout', payload: 'CHECKOUT' },
                                     ],
                                 }],
@@ -346,13 +353,17 @@ let MessengerBotService = MessengerBotService_1 = class MessengerBotService {
     }
     async handleVariantSelection(senderId, merchant, token, input, context) {
         if (!input.startsWith('VAR_')) {
+            if (input.startsWith('ADD_') || input.startsWith('VIEW_'))
+                return this.handleProductSelection(senderId, merchant, token, input, context);
+            if (input === 'CHECKOUT')
+                return this.handleCartAction(senderId, merchant, token, input, context);
             await this.session.reset(`msg_${senderId}_${merchant.id}`);
             return;
         }
         const sessionKey = `msg_${senderId}_${merchant.id}`;
         const variantId = input.replace('VAR_', '');
         const product = context.selectedProduct;
-        const variant = product.variants.find(v => v.id === variantId);
+        const variant = product?.variants?.find(v => v.id === variantId);
         if (!variant)
             return;
         const cart = this.session.addToCart(context.cart ?? [], {

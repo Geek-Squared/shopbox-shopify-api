@@ -248,10 +248,11 @@ export class MessengerBotService {
   }
 
   private async handleProductSelection(senderId: string, merchant: any, token: string, input: string, context: BotContext): Promise<void | boolean> {
-    if (!input.startsWith('VIEW_') && !input.startsWith('ADD_')) {
-      await this.session.reset(`msg_${senderId}_${merchant.id}`);
-      return; // Hand over to human
-    }
+    try {
+      if (!input.startsWith('VIEW_') && !input.startsWith('ADD_')) {
+        await this.session.reset(`msg_${senderId}_${merchant.id}`);
+        return; 
+      }
     const productId = input.replace('VIEW_', '').replace('ADD_', '');
     const product = await this.shopifyApi.getProduct(merchant.shop, productId);
 
@@ -270,7 +271,11 @@ export class MessengerBotService {
       }
     }
 
-    return this.showProductDetail(senderId, merchant, token, product, context);
+      return this.showProductDetail(senderId, merchant, token, product, context);
+    } catch (err) {
+      this.logger.error(`Product selection failed: ${err.message}`);
+      return this.metaSender.sendText(senderId, "❌ Sorry, I couldn't add that to your cart. Please try again from the menu.", token, merchant.id, 'messenger');
+    }
   }
 
   async showProductDetail(senderId: string, merchant: any, token: string, product: any, context: BotContext, customMessage?: string, recipientId?: string): Promise<boolean> {
@@ -319,6 +324,7 @@ export class MessengerBotService {
       const variantPrompt = isAmountProduct
         ? 'Select an amount:'
         : 'Select a size/variant:';
+      const defaultVariant = product.variants?.[0];
       const cardPayload = {
         message: {
           attachment: {
@@ -331,7 +337,7 @@ export class MessengerBotService {
                 image_url: isCommentId ? undefined : (product.primaryImage || undefined),
                 buttons: [
                   { type: 'web_url', title: '🛍️ Keep Shopping', url: `https://${merchant.shop}/collections/all` },
-                  { type: 'postback', title: '🛒 Add to Cart', payload: `ADD_${product.id}` },
+                  { type: 'postback', title: '🛒 Add to Cart', payload: defaultVariant ? `VAR_${defaultVariant.id}` : `ADD_${product.id}` },
                   { type: 'postback', title: '💳 Checkout', payload: 'CHECKOUT' },
                 ],
               }],
@@ -399,13 +405,17 @@ export class MessengerBotService {
 
   private async handleVariantSelection(senderId: string, merchant: any, token: string, input: string, context: BotContext): Promise<void | boolean> {
     if (!input.startsWith('VAR_')) {
+      // If they click Add to Cart (Global) or Checkout while in this state, route them correctly
+      if (input.startsWith('ADD_') || input.startsWith('VIEW_')) return this.handleProductSelection(senderId, merchant, token, input, context);
+      if (input === 'CHECKOUT') return this.handleCartAction(senderId, merchant, token, input, context);
+      
       await this.session.reset(`msg_${senderId}_${merchant.id}`);
-      return; // Hand over to human
+      return; 
     }
     const sessionKey = `msg_${senderId}_${merchant.id}`;
     const variantId = input.replace('VAR_', '');
     const product = (context as any).selectedProduct;
-    const variant = product.variants.find(v => v.id === variantId);
+    const variant = product?.variants?.find(v => v.id === variantId);
 
     if (!variant) return;
 
