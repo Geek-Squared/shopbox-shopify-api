@@ -201,9 +201,10 @@ let InstagramBotService = InstagramBotService_1 = class InstagramBotService {
     }
     async showAddedToCart(senderId, merchant, token, cart) {
         const subtotal = this.session.cartSubtotal(cart);
-        return this.metaSender.sendQuickReplies(senderId, `✅ Added to cart!\n🛒 ${cart.length} item(s) — $${subtotal.toFixed(2)}`, [
+        const lastItem = cart[cart.length - 1];
+        return this.metaSender.sendQuickReplies(senderId, `✅ Added to cart: *${lastItem.productName}*\n🛒 Total: ${cart.length} item(s) — $${subtotal.toFixed(2)}`, [
             { title: '✅ Checkout', payload: 'CHECKOUT' },
-            { title: '🛍️ Keep Shopping', payload: 'KEEP_SHOPPING' }
+            { title: '🛍️ Keep Shopping', payload: 'SHOP_NOW' }
         ], token, merchant.id, 'instagram');
     }
     async handleViewCart(senderId, merchant, token, context) {
@@ -299,9 +300,10 @@ let InstagramBotService = InstagramBotService_1 = class InstagramBotService {
             return true;
         }
         else {
-            const sent = await this.metaSender.sendButtons(targetRecipient, message, [
-                { title: '🛒 Add to Cart', payload: `ADD_${product.id}` },
-                { title: '🛍️ Keep Shopping', payload: 'START_OVER' }
+            const sent = await this.metaSender.sendButtonTemplate(targetRecipient, message, [
+                { type: 'web_url', title: '🛍️ Keep Shopping', url: `https://${merchant.shop}/collections/all` },
+                { type: 'postback', title: '🛒 Add to Cart', payload: `ADD_${product.id}` },
+                { type: 'postback', title: '💳 Checkout', payload: 'CHECKOUT' }
             ], token, merchant.id, 'instagram', isCommentId);
             if (!sent) {
                 return false;

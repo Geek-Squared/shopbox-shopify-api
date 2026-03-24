@@ -391,7 +391,8 @@ let MessengerBotService = MessengerBotService_1 = class MessengerBotService {
     }
     async showAddedToCart(senderId, merchant, token, cart) {
         const subtotal = this.session.cartSubtotal(cart);
-        return this.metaSender.sendQuickReplies(senderId, `✅ Added to cart!\n🛒 ${cart.length} item(s) — $${subtotal.toFixed(2)}`, [
+        const lastItem = cart[cart.length - 1];
+        return this.metaSender.sendQuickReplies(senderId, `✅ Added to cart: *${lastItem.productName}*\n🛒 Total: ${cart.length} item(s) — $${subtotal.toFixed(2)}`, [
             { title: '✅ Checkout', payload: 'CHECKOUT' },
             { title: '🛍️ Keep Shopping', payload: 'SHOP_NOW' }
         ], token, merchant.id, 'messenger');

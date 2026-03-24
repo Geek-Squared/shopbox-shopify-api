@@ -5,46 +5,46 @@ export declare class CommentTriggerController {
     constructor(triggerService: CommentTriggerService);
     list(req: any): Promise<{
         id: string;
-        isActive: boolean;
-        updatedAt: Date;
         merchantId: string;
-        createdAt: Date;
         keyword: string;
         replyComment: boolean;
+        isActive: boolean;
         triggerCount: number;
+        createdAt: Date;
+        updatedAt: Date;
         templateMessage: string | null;
     }[]>;
     create(dto: CreateTriggerDto, req: any): Promise<{
         id: string;
-        isActive: boolean;
-        updatedAt: Date;
         merchantId: string;
-        createdAt: Date;
         keyword: string;
         replyComment: boolean;
+        isActive: boolean;
         triggerCount: number;
+        createdAt: Date;
+        updatedAt: Date;
         templateMessage: string | null;
     }>;
     update(id: string, dto: any, req: any): Promise<{
         id: string;
-        isActive: boolean;
-        updatedAt: Date;
         merchantId: string;
-        createdAt: Date;
         keyword: string;
         replyComment: boolean;
+        isActive: boolean;
         triggerCount: number;
+        createdAt: Date;
+        updatedAt: Date;
         templateMessage: string | null;
     }>;
     delete(id: string, req: any): Promise<{
         id: string;
-        isActive: boolean;
-        updatedAt: Date;
         merchantId: string;
-        createdAt: Date;
         keyword: string;
         replyComment: boolean;
+        isActive: boolean;
         triggerCount: number;
+        createdAt: Date;
+        updatedAt: Date;
         templateMessage: string | null;
     }>;
     stats(req: any): Promise<{

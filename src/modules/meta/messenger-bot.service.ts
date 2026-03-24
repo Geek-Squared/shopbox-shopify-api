@@ -447,9 +447,10 @@ export class MessengerBotService {
 
   private async showAddedToCart(senderId: string, merchant: any, token: string, cart: any[]): Promise<boolean> {
     const subtotal = this.session.cartSubtotal(cart);
+    const lastItem = cart[cart.length - 1];
     return this.metaSender.sendQuickReplies(
       senderId,
-      `✅ Added to cart!\n🛒 ${cart.length} item(s) — $${subtotal.toFixed(2)}`,
+      `✅ Added to cart: *${lastItem.productName}*\n🛒 Total: ${cart.length} item(s) — $${subtotal.toFixed(2)}`,
       [
         { title: '✅ Checkout', payload: 'CHECKOUT' },
         { title: '🛍️ Keep Shopping', payload: 'SHOP_NOW' }
