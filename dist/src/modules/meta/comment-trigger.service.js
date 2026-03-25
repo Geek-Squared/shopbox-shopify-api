@@ -167,6 +167,17 @@ let CommentTriggerService = CommentTriggerService_1 = class CommentTriggerServic
             else {
                 this.logger.log(`ℹ️ Post ${mediaId} has no mapping. Skipping IG DM.`);
             }
+            if (matchingTrigger.replyComment) {
+                const replyMessage = delivered
+                    ? `Hi @${commenterUsername}! Check your DMs 😊`
+                    : `Hi @${commenterUsername}! Thanks for your interest! Please message us directly 😊`;
+                const replyUrl = `https://graph.facebook.com/v18.0/${commentId}/replies?access_token=${instagramToken}`;
+                await fetch(replyUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: replyMessage }),
+                });
+            }
             if (!delivered) {
                 return;
             }
@@ -182,16 +193,6 @@ let CommentTriggerService = CommentTriggerService_1 = class CommentTriggerServic
                 where: { id: matchingTrigger.id },
                 data: { triggerCount: { increment: 1 } },
             });
-            if (matchingTrigger.replyComment) {
-                const replyUrl = `https://graph.facebook.com/v18.0/${commentId}/replies?access_token=${instagramToken}`;
-                await fetch(replyUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: `Hi @${commenterUsername}! Check your DMs 😊`,
-                    }),
-                });
-            }
         }
         catch (error) {
             this.logger.error(`Failed to handle IG comment trigger: ${error.message}`);
@@ -374,34 +375,40 @@ let CommentTriggerService = CommentTriggerService_1 = class CommentTriggerServic
             else {
                 this.logger.log(`ℹ️ Post ${postId} has no mapping. Skipping Facebook DM.`);
             }
-            if (!delivered) {
-                if (matchingTrigger.replyComment && selectedProduct) {
+            if (matchingTrigger.replyComment) {
+                let replyMessage;
+                if (delivered) {
+                    replyMessage = `Hi ${commenterName}! Check your DMs 😊`;
+                }
+                else if (selectedProduct) {
                     const checkoutUrl = this.getCheckoutUrl(merchant.shop, selectedProduct);
                     const productUrl = this.getProductUrl(merchant.shop, selectedProduct);
                     const pageLink = merchant.messengerPageId
                         ? `https://m.me/${merchant.messengerPageId}?ref=product_${selectedProduct.id}`
                         : null;
-                    const fallbackParts = [
-                        `Hi ${commenterName}! DM is blocked by Facebook right now.`,
-                    ];
+                    const fallbackParts = [`Hi ${commenterName}! Here's what you're looking for:`];
                     if (checkoutUrl) {
-                        fallbackParts.push(`Checkout now: ${checkoutUrl}`);
+                        fallbackParts.push(`🛒 Shop now: ${checkoutUrl}`);
                     }
                     else if (productUrl) {
-                        fallbackParts.push(`Product: ${productUrl}`);
+                        fallbackParts.push(`🛍️ View product: ${productUrl}`);
                     }
                     if (pageLink) {
-                        fallbackParts.push(`Tap to start Messenger: ${pageLink}`);
+                        fallbackParts.push(`💬 Message us: ${pageLink}`);
                     }
-                    const replyUrl = `https://graph.facebook.com/v18.0/${commentId}/comments?access_token=${messengerToken}`;
-                    await fetch(replyUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            message: fallbackParts.join('\n').substring(0, 600),
-                        }),
-                    });
+                    replyMessage = fallbackParts.join('\n').substring(0, 600);
                 }
+                else {
+                    replyMessage = `Hi ${commenterName}! Thanks for your interest! Please message us directly for more info 😊`;
+                }
+                const replyUrl = `https://graph.facebook.com/v18.0/${commentId}/comments?access_token=${messengerToken}`;
+                await fetch(replyUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: replyMessage }),
+                });
+            }
+            if (!delivered) {
                 return;
             }
             await this.prisma.commentDmLog.create({
@@ -416,16 +423,6 @@ let CommentTriggerService = CommentTriggerService_1 = class CommentTriggerServic
                 where: { id: matchingTrigger.id },
                 data: { triggerCount: { increment: 1 } },
             });
-            if (matchingTrigger.replyComment) {
-                const replyUrl = `https://graph.facebook.com/v18.0/${commentId}/comments?access_token=${messengerToken}`;
-                await fetch(replyUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        message: `Hi ${commenterName}! We just sent you a DM 😊`,
-                    }),
-                });
-            }
         }
         catch (error) {
             this.logger.error(`Failed to handle FB comment trigger: ${error.message}`);

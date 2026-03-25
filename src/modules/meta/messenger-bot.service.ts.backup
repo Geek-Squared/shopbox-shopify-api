@@ -610,6 +610,144 @@ export class MessengerBotService {
     );
   }
 
+  // Remove old template code - will add handleVariantSelection update next
+  private removeOldCode() {
+    if (false) { // This will never execute - just placeholder
+      // Multi-variant: Show product card, then variant quick replies
+      const isAmountProduct = this.isAmountVariantProduct(product);
+      const variantPrompt = isAmountProduct
+        ? 'Select an amount:'
+        : 'Select a size/variant:';
+      const defaultVariant = product.variants?.[0];
+      const cardPayload = {
+        message: {
+          attachment: {
+            type: 'template',
+            payload: {
+              template_type: 'generic',
+              elements: [
+                {
+                  title: product.title.substring(0, 80),
+                  subtitle: subtitle,
+                  image_url: isCommentId
+                    ? undefined
+                    : product.primaryImage || undefined,
+                  buttons: [
+                    {
+                      type: 'web_url',
+                      title: '🛍️ Keep Shopping',
+                      url: `https://${merchant.shop}/collections/all`,
+                    },
+                    {
+                      type: 'postback',
+                      title: '🛒 Add to Cart',
+                      payload: defaultVariant
+                        ? `VAR_${defaultVariant.id}`
+                        : `ADD_${product.id}`,
+                    },
+                    {
+                      type: 'postback',
+                      title: '💳 Checkout',
+                      payload: 'CHECKOUT',
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      };
+
+      const cardSent = await this.metaSender.sendToMeta(
+        token,
+        targetRecipient,
+        cardPayload,
+        merchant.id,
+        'messenger',
+        isCommentId,
+      );
+      if (!cardSent) {
+        return false;
+      }
+
+      // Then send variant picker
+      const replies = product.variants.slice(0, 13).map((v) => ({
+        title: v.title,
+        payload: `VAR_${v.id}`,
+      }));
+      const repliesSent = await this.metaSender.sendQuickReplies(
+        targetRecipient,
+        variantPrompt,
+        replies,
+        token,
+        merchant.id,
+        'messenger',
+        isCommentId,
+      );
+      if (!repliesSent) {
+        return false;
+      }
+      await this.session.updateContext(sessionKey, 'SELECTING_VARIANT', {
+        ...context,
+        selectedProduct: product,
+      });
+      return true;
+    } else {
+      // Single variant: Show product card with buttons
+      const cardPayload = {
+        message: {
+          attachment: {
+            type: 'template',
+            payload: {
+              template_type: 'generic',
+              elements: [
+                {
+                  title: product.title.substring(0, 80),
+                  subtitle: subtitle.substring(0, 80),
+                  image_url: product.primaryImage || undefined,
+                  buttons: [
+                    {
+                      type: 'web_url',
+                      title: '🛍️ Keep Shopping',
+                      url: `https://${merchant.shop}/collections/all`,
+                    },
+                    {
+                      type: 'postback',
+                      title: '🛒 Add to Cart',
+                      payload: `ADD_${product.id}`,
+                    },
+                    {
+                      type: 'postback',
+                      title: '💳 Checkout',
+                      payload: 'CHECKOUT',
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      };
+
+      const cardSent = await this.metaSender.sendToMeta(
+        token,
+        targetRecipient,
+        cardPayload,
+        merchant.id,
+        'messenger',
+        isCommentId,
+      );
+      if (!cardSent) {
+        return false;
+      }
+      await this.session.updateContext(sessionKey, 'VIEWING_PRODUCT', {
+        ...context,
+        selectedProduct: product,
+      });
+      return true;
+    }
+  }
+
   private async handleVariantSelection(
     senderId: string,
     merchant: any,
@@ -640,51 +778,16 @@ export class MessengerBotService {
 
     if (!variant) return;
 
-    // Create checkout URL for the selected variant
-    const buyNowUrl = `https://${merchant.shop}/cart/${variantId}:1`;
-    const productUrl = product.onlineStoreUrl || `https://${merchant.shop}/products/${product.handle}`;
-    
-    // Send product card with selected variant details
-    const sent = await this.metaSender.sendProductCard(
-      senderId,
-      {
-        title: `${product.title} - ${variant.title}`,
-        description: product.description,
-        price: variant.price,
-        imageUrl: product.primaryImage || product.images?.[0],
-        productUrl: productUrl,
-        id: variant.id,
-      },
-      [
-        {
-          type: 'web_url',
-          title: '🛍️ View Product',
-          url: productUrl,
-        },
-        {
-          type: 'web_url',
-          title: '🛒 Buy Now',
-          url: buyNowUrl,
-        },
-        {
-          type: 'web_url',
-          title: '💳 Shop More',
-          url: `https://${merchant.shop}/collections/all`,
-        },
-      ],
-      token,
-      merchant.id,
-      'messenger',
-    );
+    const cart = this.session.addToCart(context.cart ?? [], {
+      productId: product.id,
+      productName: `${product.title} (${variant.title})`,
+      unitPrice: variant.price,
+      quantity: 1,
+      variantId: variant.id,
+    });
 
-    if (sent) {
-      await this.session.updateContext(sessionKey, 'VIEWING_PRODUCT', { 
-        ...context, 
-        selectedProduct: { ...product, selectedVariant: variant } 
-      });
-      return true;
-    }
-    return false;
+    await this.session.updateContext(sessionKey, 'CART', { ...context, cart });
+    return this.showAddedToCart(senderId, merchant, token, cart);
   }
 
   private async handleProductAction(
