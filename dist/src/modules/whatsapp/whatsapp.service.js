@@ -120,7 +120,8 @@ let WhatsappService = WhatsappService_1 = class WhatsappService {
         return this.sendText(sellerPhone, message, meta);
     }
     async notifyBuyerOrderConfirmed(buyerPhone, orderNumber, storeName, total, deliveryCode, storeSlug, meta) {
-        const storefrontUrl = this.config.get('STOREFRONT_URL') ?? 'https://store.shopboxx.africa';
+        const storefrontUrl = this.config.get('STOREFRONT_URL') ??
+            'https://store.shopboxx.africa';
         const trackUrl = `${storefrontUrl}/store/${storeSlug}` +
             `?order=${orderNumber}&ref=notification`;
         const message = `✅ *Order Confirmed!*\n` +

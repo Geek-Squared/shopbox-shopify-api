@@ -1,11 +1,4 @@
-import { AppService } from './app.service';
+import { Response } from 'express';
 export declare class AppController {
-    private readonly appService;
-    constructor(appService: AppService);
-    getStatus(): {
-        service: string;
-        status: string;
-        message: string;
-        timestamp: string;
-    };
+    root(res: Response): void;
 }

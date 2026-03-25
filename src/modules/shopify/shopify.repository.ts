@@ -40,7 +40,6 @@ export class ShopifyRepository {
     });
   }
 
-
   upsertMerchant(data: UpsertMerchantData) {
     return this.prisma.shopifyMerchant.upsert({
       where: { shop: data.shop },

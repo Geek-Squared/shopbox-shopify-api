@@ -5,14 +5,14 @@ export declare class OrdersRepository {
     listBySeller(sellerId: string): import("../../../generated/prisma/internal/prismaNamespace").PrismaPromise<({
         payment: {
             id: string;
-            status: import("../../../generated/prisma/enums").PaymentStatus;
             createdAt: Date;
-            orderId: string;
-            currency: string;
-            provider: string;
-            gatewayReference: string | null;
             updatedAt: Date;
+            currency: string;
+            status: import("../../../generated/prisma/enums").PaymentStatus;
+            orderId: string;
+            provider: string;
             amount: number;
+            gatewayReference: string | null;
         };
         items: {
             id: string;
@@ -24,32 +24,32 @@ export declare class OrdersRepository {
         }[];
     } & {
         id: string;
-        status: import("../../../generated/prisma/enums").OrderStatus;
         createdAt: Date;
+        updatedAt: Date;
         sellerId: string;
         storeId: string;
+        status: import("../../../generated/prisma/enums").OrderStatus;
         customerName: string;
         customerPhone: string;
         customerEmail: string | null;
-        updatedAt: Date;
-        deliveryAddress: string | null;
-        notes: string | null;
         totalAmount: number;
-        deliveryCode: string | null;
-        orderNumber: string | null;
         buyerId: string | null;
+        deliveryCode: string | null;
+        notes: string | null;
+        orderNumber: string | null;
+        deliveryAddress: string | null;
     })[]>;
     findByIdForSeller(id: string, sellerId: string): import("../../../generated/prisma/models").Prisma__OrderClient<{
         payment: {
             id: string;
-            status: import("../../../generated/prisma/enums").PaymentStatus;
             createdAt: Date;
-            orderId: string;
-            currency: string;
-            provider: string;
-            gatewayReference: string | null;
             updatedAt: Date;
+            currency: string;
+            status: import("../../../generated/prisma/enums").PaymentStatus;
+            orderId: string;
+            provider: string;
             amount: number;
+            gatewayReference: string | null;
         };
         items: {
             id: string;
@@ -61,34 +61,34 @@ export declare class OrdersRepository {
         }[];
     } & {
         id: string;
-        status: import("../../../generated/prisma/enums").OrderStatus;
         createdAt: Date;
+        updatedAt: Date;
         sellerId: string;
         storeId: string;
+        status: import("../../../generated/prisma/enums").OrderStatus;
         customerName: string;
         customerPhone: string;
         customerEmail: string | null;
-        updatedAt: Date;
-        deliveryAddress: string | null;
-        notes: string | null;
         totalAmount: number;
-        deliveryCode: string | null;
-        orderNumber: string | null;
         buyerId: string | null;
+        deliveryCode: string | null;
+        notes: string | null;
+        orderNumber: string | null;
+        deliveryAddress: string | null;
     }, null, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;
     findById(id: string): import("../../../generated/prisma/models").Prisma__OrderClient<{
         payment: {
             id: string;
-            status: import("../../../generated/prisma/enums").PaymentStatus;
             createdAt: Date;
-            orderId: string;
-            currency: string;
-            provider: string;
-            gatewayReference: string | null;
             updatedAt: Date;
+            currency: string;
+            status: import("../../../generated/prisma/enums").PaymentStatus;
+            orderId: string;
+            provider: string;
             amount: number;
+            gatewayReference: string | null;
         };
         items: {
             id: string;
@@ -100,20 +100,20 @@ export declare class OrdersRepository {
         }[];
     } & {
         id: string;
-        status: import("../../../generated/prisma/enums").OrderStatus;
         createdAt: Date;
+        updatedAt: Date;
         sellerId: string;
         storeId: string;
+        status: import("../../../generated/prisma/enums").OrderStatus;
         customerName: string;
         customerPhone: string;
         customerEmail: string | null;
-        updatedAt: Date;
-        deliveryAddress: string | null;
-        notes: string | null;
         totalAmount: number;
-        deliveryCode: string | null;
-        orderNumber: string | null;
         buyerId: string | null;
+        deliveryCode: string | null;
+        notes: string | null;
+        orderNumber: string | null;
+        deliveryAddress: string | null;
     }, null, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;
@@ -143,20 +143,20 @@ export declare class OrdersRepository {
         }[];
     } & {
         id: string;
-        status: import("../../../generated/prisma/enums").OrderStatus;
         createdAt: Date;
+        updatedAt: Date;
         sellerId: string;
         storeId: string;
+        status: import("../../../generated/prisma/enums").OrderStatus;
         customerName: string;
         customerPhone: string;
         customerEmail: string | null;
-        updatedAt: Date;
-        deliveryAddress: string | null;
-        notes: string | null;
         totalAmount: number;
-        deliveryCode: string | null;
-        orderNumber: string | null;
         buyerId: string | null;
+        deliveryCode: string | null;
+        notes: string | null;
+        orderNumber: string | null;
+        deliveryAddress: string | null;
     }, never, import("@prisma/client/runtime/client").DefaultArgs, {
         omit: import("../../../generated/prisma/internal/prismaNamespace").GlobalOmitConfig;
     }>;

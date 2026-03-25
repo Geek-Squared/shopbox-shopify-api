@@ -19,4 +19,3 @@ export const envValidationSchema = Joi.object({
   TWILIO_AUTH_TOKEN: Joi.string().optional(),
   RESEND_API_KEY: Joi.string().optional(),
 });
-

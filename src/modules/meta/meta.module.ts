@@ -29,6 +29,11 @@ import { WhatsappModule } from '../whatsapp/whatsapp.module';
     CommentTriggerService,
     PostMappingService,
   ],
-  exports: [MetaOauthService, MetaSenderService, CommentTriggerService, PostMappingService],
+  exports: [
+    MetaOauthService,
+    MetaSenderService,
+    CommentTriggerService,
+    PostMappingService,
+  ],
 })
 export class MetaModule {}

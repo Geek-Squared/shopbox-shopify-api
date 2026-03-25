@@ -16,19 +16,29 @@ class CreateTriggerDto {
 }
 exports.CreateTriggerDto = CreateTriggerDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'The keyword to trigger the DM flow', example: 'PRICE' }),
+    (0, swagger_1.ApiProperty)({
+        description: 'The keyword to trigger the DM flow',
+        example: 'PRICE',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.MaxLength)(20),
     __metadata("design:type", String)
 ], CreateTriggerDto.prototype, "keyword", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Whether to reply to the comment publicly', required: false, default: true }),
+    (0, swagger_1.ApiProperty)({
+        description: 'Whether to reply to the comment publicly',
+        required: false,
+        default: true,
+    }),
     (0, class_validator_1.IsBoolean)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Boolean)
 ], CreateTriggerDto.prototype, "replyComment", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ description: 'Custom message template containing variables like {{product_name}}', required: false }),
+    (0, swagger_1.ApiProperty)({
+        description: 'Custom message template containing variables like {{product_name}}',
+        required: false,
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)

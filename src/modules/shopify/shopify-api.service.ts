@@ -17,7 +17,7 @@ export class ShopifyApiService {
   constructor(
     private readonly config: ConfigService,
     private readonly repository: ShopifyRepository,
-  ) { }
+  ) {}
 
   private async shopifyFetch(
     shop: string,
@@ -27,7 +27,9 @@ export class ShopifyApiService {
   ): Promise<any> {
     const merchant = await this.repository.findByShop(shop);
     if (!merchant || !merchant.accessToken) {
-      throw new UnauthorizedException(`Merchant ${shop} not found or not connected`);
+      throw new UnauthorizedException(
+        `Merchant ${shop} not found or not connected`,
+      );
     }
 
     const url = `https://${shop}/admin/api/2024-01/${endpoint}`;
@@ -72,10 +74,16 @@ export class ShopifyApiService {
     return html ? html.replace(/<[^>]*>/g, '').trim() : '';
   }
 
-  public async graphqlFetch(shop: string, query: string, variables: any = {}): Promise<any> {
+  public async graphqlFetch(
+    shop: string,
+    query: string,
+    variables: any = {},
+  ): Promise<any> {
     const merchant = await this.repository.findByShop(shop);
     if (!merchant || !merchant.accessToken) {
-      throw new UnauthorizedException(`Merchant ${shop} not found or not connected`);
+      throw new UnauthorizedException(
+        `Merchant ${shop} not found or not connected`,
+      );
     }
 
     const url = `https://${shop}/admin/api/2024-01/graphql.json`;
@@ -97,7 +105,9 @@ export class ShopifyApiService {
 
     const result = await response.json();
     if (result.errors) {
-      throw new BadRequestException(`Shopify GraphQL Business Error: ${JSON.stringify(result.errors)}`);
+      throw new BadRequestException(
+        `Shopify GraphQL Business Error: ${JSON.stringify(result.errors)}`,
+      );
     }
 
     return result.data;
@@ -152,7 +162,9 @@ export class ShopifyApiService {
 
   async getProduct(shop: string, productId: string) {
     // Convert REST ID to GID if necessary
-    const gid = productId.startsWith('gid://') ? productId : `gid://shopify/Product/${productId}`;
+    const gid = productId.startsWith('gid://')
+      ? productId
+      : `gid://shopify/Product/${productId}`;
 
     const query = `
       query getProduct($id: ID!) {
@@ -180,7 +192,8 @@ export class ShopifyApiService {
     `;
 
     const data = await this.graphqlFetch(shop, query, { id: gid });
-    if (!data.product) throw new NotFoundException('Product not found in Shopify');
+    if (!data.product)
+      throw new NotFoundException('Product not found in Shopify');
 
     return this.mapGqlProduct(data.product);
   }
@@ -222,7 +235,9 @@ export class ShopifyApiService {
 
   async getProductsByCollection(shop: string, collectionId: string) {
     // Convert to GID
-    const gid = collectionId.startsWith('gid://') ? collectionId : `gid://shopify/Collection/${collectionId}`;
+    const gid = collectionId.startsWith('gid://')
+      ? collectionId
+      : `gid://shopify/Collection/${collectionId}`;
 
     const query = `
       query getCollectionProducts($id: ID!) {
@@ -256,7 +271,9 @@ export class ShopifyApiService {
     const data = await this.graphqlFetch(shop, query, { id: gid });
     if (!data.collection) return [];
 
-    return data.collection.products.nodes.map((p: any) => this.mapGqlProduct(p));
+    return data.collection.products.nodes.map((p: any) =>
+      this.mapGqlProduct(p),
+    );
   }
 
   async createOrder(
@@ -350,8 +367,13 @@ export class ShopifyApiService {
       onlineStoreUrl: p.onlineStoreUrl || null,
       description: this.stripHtml(p.bodyHtml),
       price: parseFloat(p.variants.nodes[0]?.price || '0'),
-      available: p.variants.nodes.some((v: any) => v.inventoryQuantity > 0 || v.availableForSale),
-      totalInventory: p.variants.nodes.reduce((acc: number, v: any) => acc + (v.inventoryQuantity || 0), 0),
+      available: p.variants.nodes.some(
+        (v: any) => v.inventoryQuantity > 0 || v.availableForSale,
+      ),
+      totalInventory: p.variants.nodes.reduce(
+        (acc: number, v: any) => acc + (v.inventoryQuantity || 0),
+        0,
+      ),
       primaryImage: p.images.nodes[0]?.url || null,
       images: p.images.nodes.map((img: any) => img.url),
       variants: p.variants.nodes.map((v: any) => ({

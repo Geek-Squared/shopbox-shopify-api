@@ -79,7 +79,27 @@ let PostMappingService = PostMappingService_1 = class PostMappingService {
             mediaId = this.extractFacebookPostId(normalizedPostUrl, merchant.messengerPageId);
         }
         else {
-            mediaId = data.postUrl;
+            const match = data.postUrl.match(/\/(?:p|reels|reel)\/([a-zA-Z0-9_-]+)/);
+            const shortcode = match ? match[1] : null;
+            if (shortcode && merchant.instagramToken) {
+                try {
+                    const url = `https://graph.facebook.com/v21.0/instagram_oembed?url=https://www.instagram.com/p/${shortcode}/&access_token=${merchant.instagramToken}`;
+                    const res = await fetch(url);
+                    if (res.ok) {
+                        const oembed = await res.json();
+                        mediaId = shortcode;
+                    }
+                    else {
+                        mediaId = shortcode;
+                    }
+                }
+                catch (e) {
+                    mediaId = shortcode;
+                }
+            }
+            else {
+                mediaId = data.postUrl.split('/').filter(Boolean).pop() || data.postUrl;
+            }
         }
         let productTitle = data.productTitle || 'Unknown Product';
         try {

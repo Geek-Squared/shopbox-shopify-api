@@ -107,7 +107,12 @@ export class AuthService {
     }
 
     const store = await this.storeRepository.findBySellerId(seller.id);
-    return this.buildAuthResponse(seller.id, seller.phone, seller.email || null, store?.slug ?? null);
+    return this.buildAuthResponse(
+      seller.id,
+      seller.phone,
+      seller.email || null,
+      store?.slug ?? null,
+    );
   }
 
   logout(payload: LogoutDto) {
@@ -180,7 +185,12 @@ export class AuthService {
     });
 
     const store = await this.storeRepository.findBySellerId(seller.id);
-    return this.buildAuthResponse(seller.id, seller.phone, seller.email || null, store?.slug ?? null);
+    return this.buildAuthResponse(
+      seller.id,
+      seller.phone,
+      seller.email || null,
+      store?.slug ?? null,
+    );
   }
 
   private buildAuthResponse(

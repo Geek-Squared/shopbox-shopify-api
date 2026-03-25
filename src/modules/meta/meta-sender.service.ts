@@ -10,7 +10,7 @@ type MetaTemplateButton =
 @Injectable()
 export class MetaSenderService {
   private readonly logger = new Logger(MetaSenderService.name);
-  private readonly baseUrl = 'https://graph.facebook.com/v25.0/me/messages';
+  private readonly baseUrl = 'https://graph.facebook.com/v21.0/me/messages';
 
   constructor(
     private readonly config: ConfigService,
@@ -32,7 +32,20 @@ export class MetaSenderService {
   }
 
   private extractTextFromMessage(message: any): string | null {
-    const text = message?.message?.text;
+    // 1. Direct text message
+    let text = message?.message?.text;
+
+    // 2. Generic Template or Button Template fallback
+    if (!text && message?.message?.attachment?.payload) {
+      const p = message.message.attachment.payload;
+      if (p.template_type === 'generic' && p.elements?.[0]) {
+        const el = p.elements[0];
+        text = `${el.title}\n${el.subtitle || ''}\n\nReply "shop" to see details!`;
+      } else if (p.template_type === 'button') {
+        text = `${p.text}\n\nReply "shop" to see details!`;
+      }
+    }
+
     if (typeof text !== 'string') {
       return null;
     }
@@ -61,7 +74,7 @@ export class MetaSenderService {
     }
 
     for (const candidateId of idCandidates) {
-      const url = `https://graph.facebook.com/v25.0/${candidateId}/private_replies?access_token=${token}`;
+      const url = `https://graph.facebook.com/v21.0/${candidateId}/private_replies?access_token=${token}`;
       const body = new URLSearchParams({ message: text });
       const response = await fetch(url, {
         method: 'POST',
@@ -76,9 +89,14 @@ export class MetaSenderService {
 
       const error = data?.error ?? {
         code: response.status,
-        message: typeof data?.rawBody === 'string' ? data.rawBody : response.statusText,
+        message:
+          typeof data?.rawBody === 'string'
+            ? data.rawBody
+            : response.statusText,
       };
-      this.logger.error(`Meta private reply error (${channel}): ${JSON.stringify(error)}`);
+      this.logger.error(
+        `Meta private reply error (${channel}): ${JSON.stringify(error)}`,
+      );
     }
     return false;
   }
@@ -119,7 +137,9 @@ export class MetaSenderService {
 
       const url = `${this.baseUrl}?access_token=${token}`;
       const payload = {
-        recipient: isCommentId ? { comment_id: recipientId } : { id: recipientId },
+        recipient: isCommentId
+          ? { comment_id: recipientId }
+          : { id: recipientId },
         ...message,
       };
 
@@ -134,9 +154,14 @@ export class MetaSenderService {
       if (!response.ok) {
         const error = data?.error ?? {
           code: response.status,
-          message: typeof data?.rawBody === 'string' ? data.rawBody : response.statusText,
+          message:
+            typeof data?.rawBody === 'string'
+              ? data.rawBody
+              : response.statusText,
         };
-        this.logger.error(`Meta API Error (${channel}): ${JSON.stringify(error)}`);
+        this.logger.error(
+          `Meta API Error (${channel}): ${JSON.stringify(error)}`,
+        );
 
         // Error 190: Access token has expired
         if (error.code === 190) {
@@ -144,17 +169,21 @@ export class MetaSenderService {
             channel === 'messenger'
               ? { messengerConnected: false, messengerToken: null }
               : { instagramConnected: false, instagramToken: null };
-          
+
           await this.prisma.shopifyMerchant.update({
             where: { id: merchantId },
             data: updateData,
           });
-          this.logger.warn(`Token expired for merchant ${merchantId}. Channel ${channel} disconnected.`);
+          this.logger.warn(
+            `Token expired for merchant ${merchantId}. Channel ${channel} disconnected.`,
+          );
         }
 
         // Error 613: Rate limit
         if (error.code === 613 && retryCount < 1) {
-          this.logger.warn(`Rate limit hit for ${channel}, retrying once in 1s...`);
+          this.logger.warn(
+            `Rate limit hit for ${channel}, retrying once in 1s...`,
+          );
           await new Promise((resolve) => setTimeout(resolve, 1000));
           return this.sendToMeta(
             token,
@@ -169,7 +198,9 @@ export class MetaSenderService {
 
         // Error 100: Cannot message user
         if (error.code === 100) {
-          this.logger.debug(`Cannot message user ${recipientId} on ${channel} (likely outside 24h window).`);
+          this.logger.debug(
+            `Cannot message user ${recipientId} on ${channel} (likely outside 24h window).`,
+          );
           return false;
         }
 
@@ -201,7 +232,14 @@ export class MetaSenderService {
     channel: 'messenger' | 'instagram',
     isCommentId = false,
   ) {
-    return this.sendToMeta(token, recipientId, { message: { text } }, merchantId, channel, isCommentId);
+    return this.sendToMeta(
+      token,
+      recipientId,
+      { message: { text } },
+      merchantId,
+      channel,
+      isCommentId,
+    );
   }
 
   async sendImage(
@@ -220,7 +258,14 @@ export class MetaSenderService {
         },
       },
     };
-    return this.sendToMeta(token, recipientId, message, merchantId, channel, isCommentId);
+    return this.sendToMeta(
+      token,
+      recipientId,
+      message,
+      merchantId,
+      channel,
+      isCommentId,
+    );
   }
 
   async sendQuickReplies(
@@ -242,7 +287,14 @@ export class MetaSenderService {
         })),
       },
     };
-    return this.sendToMeta(token, recipientId, message, merchantId, channel, isCommentId);
+    return this.sendToMeta(
+      token,
+      recipientId,
+      message,
+      merchantId,
+      channel,
+      isCommentId,
+    );
   }
 
   async sendButtons(
@@ -304,7 +356,78 @@ export class MetaSenderService {
         },
       },
     };
-    return this.sendToMeta(token, recipientId, message, merchantId, channel, isCommentId);
+    return this.sendToMeta(
+      token,
+      recipientId,
+      message,
+      merchantId,
+      channel,
+      isCommentId,
+    );
+  }
+
+  async sendProductCard(
+    recipientId: string,
+    product: {
+      title: string;
+      description?: string;
+      price: number;
+      imageUrl?: string;
+      productUrl?: string;
+      id: string;
+    },
+    buttons: MetaTemplateButton[],
+    token: string,
+    merchantId: string,
+    channel: 'messenger' | 'instagram',
+    isCommentId = false,
+  ) {
+    const message = {
+      message: {
+        attachment: {
+          type: 'template',
+          payload: {
+            template_type: 'generic',
+            elements: [
+              {
+                title: product.title.substring(0, 80),
+                subtitle: `$${product.price.toFixed(2)}${product.description ? ` • ${product.description.substring(0, 60)}...` : ''}`,
+                image_url: product.imageUrl || undefined,
+                default_action: product.productUrl
+                  ? {
+                      type: 'web_url',
+                      url: product.productUrl,
+                    }
+                  : undefined,
+                buttons: buttons.slice(0, 3).map((button) => {
+                  if (button.type === 'web_url') {
+                    return {
+                      type: 'web_url',
+                      title: button.title.substring(0, 20),
+                      url: button.url,
+                    };
+                  }
+
+                  return {
+                    type: 'postback',
+                    title: button.title.substring(0, 20),
+                    payload: button.payload,
+                  };
+                }),
+              },
+            ],
+          },
+        },
+      },
+    };
+    return this.sendToMeta(
+      token,
+      recipientId,
+      message,
+      merchantId,
+      channel,
+      isCommentId,
+    );
   }
 
   async sendCarousel(
@@ -346,7 +469,13 @@ export class MetaSenderService {
       },
     };
     // Messenger Only
-    return this.sendToMeta(token, recipientId, message, merchantId, 'messenger');
+    return this.sendToMeta(
+      token,
+      recipientId,
+      message,
+      merchantId,
+      'messenger',
+    );
   }
 
   async sendReceipt(
@@ -392,7 +521,13 @@ export class MetaSenderService {
       },
     };
     // Messenger Only
-    return this.sendToMeta(token, recipientId, message, merchantId, 'messenger');
+    return this.sendToMeta(
+      token,
+      recipientId,
+      message,
+      merchantId,
+      'messenger',
+    );
   }
 
   async sendProductListText(
@@ -403,25 +538,48 @@ export class MetaSenderService {
     channel: 'instagram' | 'messenger',
   ) {
     let text = "Here's what we have:\n\n";
-    const numbers = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+    const numbers = [
+      '1️⃣',
+      '2️⃣',
+      '3️⃣',
+      '4️⃣',
+      '5️⃣',
+      '6️⃣',
+      '7️⃣',
+      '8️⃣',
+      '9️⃣',
+      '🔟',
+    ];
     const replies: { title: string; payload: string }[] = [];
 
     products.slice(0, 10).forEach((p, i) => {
       text += `${numbers[i]} *${p.title}* — $${p.price.toFixed(2)}\n`;
-      text += p.inventoryQuantity > 0 
-        ? `   ✅ In stock\n\n` 
-        : `   ❌ Out of stock\n\n`;
-      
+      text +=
+        p.inventoryQuantity > 0
+          ? `   ✅ In stock\n\n`
+          : `   ❌ Out of stock\n\n`;
+
       replies.push({ title: (i + 1).toString(), payload: `SELECT_${i + 1}` });
     });
 
-    text += "Reply with a number to view details 👇";
-    
+    text += 'Reply with a number to view details 👇';
+
     await this.sendText(recipientId, text, token, merchantId, channel);
-    return this.sendQuickReplies(recipientId, 'Select an item:', replies, token, merchantId, channel);
+    return this.sendQuickReplies(
+      recipientId,
+      'Select an item:',
+      replies,
+      token,
+      merchantId,
+      channel,
+    );
   }
 
-  async sendTypingOn(recipientId: string, token: string, channel: 'messenger' | 'instagram') {
+  async sendTypingOn(
+    recipientId: string,
+    token: string,
+    channel: 'messenger' | 'instagram',
+  ) {
     const url = `${this.baseUrl}?access_token=${token}`;
     const payload = {
       recipient: { id: recipientId },
@@ -435,7 +593,7 @@ export class MetaSenderService {
   }
 
   async setupPersistentMenu(pageToken: string) {
-    const url = `https://graph.facebook.com/v25.0/me/messenger_profile?access_token=${pageToken}`;
+    const url = `https://graph.facebook.com/v21.0/me/messenger_profile?access_token=${pageToken}`;
     const body = {
       persistent_menu: [
         {
@@ -459,7 +617,7 @@ export class MetaSenderService {
   }
 
   async setupGetStarted(pageToken: string) {
-    const url = `https://graph.facebook.com/v25.0/me/messenger_profile?access_token=${pageToken}`;
+    const url = `https://graph.facebook.com/v21.0/me/messenger_profile?access_token=${pageToken}`;
     const body = {
       get_started: { payload: 'GET_STARTED' },
       greeting: [

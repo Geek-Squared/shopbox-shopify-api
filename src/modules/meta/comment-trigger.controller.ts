@@ -38,11 +38,7 @@ export class CommentTriggerController {
 
   @ApiOperation({ summary: 'Update a trigger' })
   @Put(':id')
-  async update(
-    @Param('id') id: string,
-    @Body() dto: any,
-    @Request() req: any,
-  ) {
+  async update(@Param('id') id: string, @Body() dto: any, @Request() req: any) {
     const merchantId = req.merchant.id;
     return this.triggerService.updateTrigger(merchantId, id, dto);
   }

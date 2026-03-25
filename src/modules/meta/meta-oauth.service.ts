@@ -45,7 +45,10 @@ export class MetaOauthService {
     return `https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${shop}`;
   }
 
-  async exchangeCodeForToken(code: string, redirectUriSuffix: string): Promise<string> {
+  async exchangeCodeForToken(
+    code: string,
+    redirectUriSuffix: string,
+  ): Promise<string> {
     const clientId = this.config.get<string>('META_APP_ID');
     const clientSecret = this.config.get<string>('META_APP_SECRET');
     const appUrl = this.config.get<string>('APP_URL');
@@ -56,7 +59,9 @@ export class MetaOauthService {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new BadRequestException(`Meta OAuth error: ${data.error?.message || 'Unknown error'}`);
+      throw new BadRequestException(
+        `Meta OAuth error: ${data.error?.message || 'Unknown error'}`,
+      );
     }
 
     return data.access_token;
@@ -73,7 +78,9 @@ export class MetaOauthService {
     const data = await response.json();
 
     if (!response.ok) {
-      this.logger.error(`Error fetching standard pages: ${JSON.stringify(data, null, 2)}`);
+      this.logger.error(
+        `Error fetching standard pages: ${JSON.stringify(data, null, 2)}`,
+      );
     }
 
     const allPages = data.data || [];
@@ -95,11 +102,14 @@ export class MetaOauthService {
       new Map(allPages.map((p) => [p.id, p])).values(),
     );
 
-    return uniquePages as { id: string; name: string; access_token: string; category: string; instagram_business_account?: { id: string, username: string } }[];
+    return uniquePages as {
+      id: string;
+      name: string;
+      access_token: string;
+      category: string;
+      instagram_business_account?: { id: string; username: string };
+    }[];
   }
-
-
-
 
   async getInstagramAccount(pageId: string, pageToken: string) {
     const url = `https://graph.facebook.com/v18.0/${pageId}?fields=instagram_business_account{id,username}&access_token=${pageToken}`;
@@ -122,13 +132,20 @@ export class MetaOauthService {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        subscribed_fields: ['messages', 'messaging_postbacks', 'messaging_optins', 'feed'],
+        subscribed_fields: [
+          'messages',
+          'messaging_postbacks',
+          'messaging_optins',
+          'feed',
+        ],
       }),
     });
 
     if (!response.ok) {
       const data = await response.json();
-      throw new BadRequestException(`Meta subscription error: ${data.error?.message || 'Unknown error'}`);
+      throw new BadRequestException(
+        `Meta subscription error: ${data.error?.message || 'Unknown error'}`,
+      );
     }
 
     return true;
@@ -144,7 +161,9 @@ export class MetaOauthService {
 
     // Auto-select the first page
     const page = pages[0];
-    this.logger.log(`[Messenger] Auto-selecting page: ${page.name} (${page.id})`);
+    this.logger.log(
+      `[Messenger] Auto-selecting page: ${page.name} (${page.id})`,
+    );
     await this.subscribePageToWebhook(page.id, page.access_token);
     await this.shopifyRepository.updateChannels(shop, {
       messengerConnected: true,
@@ -170,7 +189,7 @@ export class MetaOauthService {
 
     for (const page of pages) {
       const igAccount = page.instagram_business_account;
-      
+
       if (igAccount) {
         instagramAccount = igAccount;
         selectedPage = page;
@@ -179,11 +198,16 @@ export class MetaOauthService {
     }
 
     if (!instagramAccount || !selectedPage) {
-      throw new BadRequestException('No Instagram Business accounts found connected to your Facebook pages. Please ensure your Instagram is a BUSINESS account and linked to a FB Page.');
+      throw new BadRequestException(
+        'No Instagram Business accounts found connected to your Facebook pages. Please ensure your Instagram is a BUSINESS account and linked to a FB Page.',
+      );
     }
 
     // Subscribe to webhooks
-    await this.subscribePageToWebhook(selectedPage.id, selectedPage.access_token);
+    await this.subscribePageToWebhook(
+      selectedPage.id,
+      selectedPage.access_token,
+    );
     await this.shopifyRepository.updateChannels(shop, {
       instagramConnected: true,
       instagramToken: selectedPage.access_token,
@@ -192,7 +216,6 @@ export class MetaOauthService {
     });
     return { connected: true, username: instagramAccount.username };
   }
-
 
   async disconnectMessenger(shop: string) {
     return this.shopifyRepository.updateChannels(shop, {
@@ -221,7 +244,9 @@ export class MetaOauthService {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new BadRequestException(`Meta API error: ${data.error?.message || 'Unknown error'}`);
+      throw new BadRequestException(
+        `Meta API error: ${data.error?.message || 'Unknown error'}`,
+      );
     }
 
     return (data.data || []).map((post: any) => ({
@@ -245,7 +270,9 @@ export class MetaOauthService {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new BadRequestException(`Meta API error: ${data.error?.message || 'Unknown error'}`);
+      throw new BadRequestException(
+        `Meta API error: ${data.error?.message || 'Unknown error'}`,
+      );
     }
 
     return (data.data || []).map((post: any) => ({

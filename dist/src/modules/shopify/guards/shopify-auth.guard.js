@@ -61,7 +61,8 @@ let ShopifyAuthGuard = ShopifyAuthGuard_1 = class ShopifyAuthGuard {
             if (error.name === 'TokenExpiredError') {
                 throw new common_1.UnauthorizedException('Shopify session token has expired');
             }
-            if (error.name === 'JsonWebTokenError' && error.message.includes('audience')) {
+            if (error.name === 'JsonWebTokenError' &&
+                error.message.includes('audience')) {
                 throw new common_1.UnauthorizedException(`Invalid audience: Ensure "aud" in your payload matches your SHOPIFY_API_KEY`);
             }
             throw new common_1.UnauthorizedException(`Invalid Shopify session token: ${error.message}`);

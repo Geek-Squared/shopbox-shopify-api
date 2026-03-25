@@ -105,7 +105,12 @@ let MetaOauthService = MetaOauthService_1 = class MetaOauthService {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                subscribed_fields: ['messages', 'messaging_postbacks', 'messaging_optins', 'feed'],
+                subscribed_fields: [
+                    'messages',
+                    'messaging_postbacks',
+                    'messaging_optins',
+                    'feed',
+                ],
             }),
         });
         if (!response.ok) {

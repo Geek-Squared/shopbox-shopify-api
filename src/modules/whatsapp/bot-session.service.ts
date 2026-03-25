@@ -29,13 +29,13 @@ export interface BotContext {
   collectionId?: string;
 }
 
-
-
 @Injectable()
 export class BotSessionService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async get(phoneNumber: string): Promise<{ state: string; context: BotContext }> {
+  async get(
+    phoneNumber: string,
+  ): Promise<{ state: string; context: BotContext }> {
     const session = await this.prisma.botSession.findUnique({
       where: { phoneNumber },
     });
@@ -58,13 +58,19 @@ export class BotSessionService {
     });
   }
 
-  async updateContext(phoneNumber: string, state: string, update: Partial<BotContext>) {
+  async updateContext(
+    phoneNumber: string,
+    state: string,
+    update: Partial<BotContext>,
+  ) {
     const current = await this.get(phoneNumber);
     return this.set(phoneNumber, state, { ...current.context, ...update });
   }
 
   async reset(phoneNumber: string) {
-    return this.prisma.botSession.delete({ where: { phoneNumber } }).catch(() => {});
+    return this.prisma.botSession
+      .delete({ where: { phoneNumber } })
+      .catch(() => {});
   }
 
   // Helper for cart

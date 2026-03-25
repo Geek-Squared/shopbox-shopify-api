@@ -21,7 +21,7 @@ let MetaSenderService = MetaSenderService_1 = class MetaSenderService {
         this.prisma = prisma;
         this.repository = repository;
         this.logger = new common_1.Logger(MetaSenderService_1.name);
-        this.baseUrl = 'https://graph.facebook.com/v25.0/me/messages';
+        this.baseUrl = 'https://graph.facebook.com/v21.0/me/messages';
     }
     async parseResponseBody(response) {
         const rawBody = await response.text();
@@ -36,7 +36,17 @@ let MetaSenderService = MetaSenderService_1 = class MetaSenderService {
         }
     }
     extractTextFromMessage(message) {
-        const text = message?.message?.text;
+        let text = message?.message?.text;
+        if (!text && message?.message?.attachment?.payload) {
+            const p = message.message.attachment.payload;
+            if (p.template_type === 'generic' && p.elements?.[0]) {
+                const el = p.elements[0];
+                text = `${el.title}\n${el.subtitle || ''}\n\nReply "shop" to see details!`;
+            }
+            else if (p.template_type === 'button') {
+                text = `${p.text}\n\nReply "shop" to see details!`;
+            }
+        }
         if (typeof text !== 'string') {
             return null;
         }
@@ -55,7 +65,7 @@ let MetaSenderService = MetaSenderService_1 = class MetaSenderService {
             }
         }
         for (const candidateId of idCandidates) {
-            const url = `https://graph.facebook.com/v25.0/${candidateId}/private_replies?access_token=${token}`;
+            const url = `https://graph.facebook.com/v21.0/${candidateId}/private_replies?access_token=${token}`;
             const body = new URLSearchParams({ message: text });
             const response = await fetch(url, {
                 method: 'POST',
@@ -68,7 +78,9 @@ let MetaSenderService = MetaSenderService_1 = class MetaSenderService {
             }
             const error = data?.error ?? {
                 code: response.status,
-                message: typeof data?.rawBody === 'string' ? data.rawBody : response.statusText,
+                message: typeof data?.rawBody === 'string'
+                    ? data.rawBody
+                    : response.statusText,
             };
             this.logger.error(`Meta private reply error (${channel}): ${JSON.stringify(error)}`);
         }
@@ -91,7 +103,9 @@ let MetaSenderService = MetaSenderService_1 = class MetaSenderService {
             }
             const url = `${this.baseUrl}?access_token=${token}`;
             const payload = {
-                recipient: isCommentId ? { comment_id: recipientId } : { id: recipientId },
+                recipient: isCommentId
+                    ? { comment_id: recipientId }
+                    : { id: recipientId },
                 ...message,
             };
             const response = await fetch(url, {
@@ -103,7 +117,9 @@ let MetaSenderService = MetaSenderService_1 = class MetaSenderService {
             if (!response.ok) {
                 const error = data?.error ?? {
                     code: response.status,
-                    message: typeof data?.rawBody === 'string' ? data.rawBody : response.statusText,
+                    message: typeof data?.rawBody === 'string'
+                        ? data.rawBody
+                        : response.statusText,
                 };
                 this.logger.error(`Meta API Error (${channel}): ${JSON.stringify(error)}`);
                 if (error.code === 190) {
@@ -196,6 +212,46 @@ let MetaSenderService = MetaSenderService_1 = class MetaSenderService {
         };
         return this.sendToMeta(token, recipientId, message, merchantId, channel, isCommentId);
     }
+    async sendProductCard(recipientId, product, buttons, token, merchantId, channel, isCommentId = false) {
+        const message = {
+            message: {
+                attachment: {
+                    type: 'template',
+                    payload: {
+                        template_type: 'generic',
+                        elements: [
+                            {
+                                title: product.title.substring(0, 80),
+                                subtitle: `$${product.price.toFixed(2)}${product.description ? ` • ${product.description.substring(0, 60)}...` : ''}`,
+                                image_url: product.imageUrl || undefined,
+                                default_action: product.productUrl
+                                    ? {
+                                        type: 'web_url',
+                                        url: product.productUrl,
+                                    }
+                                    : undefined,
+                                buttons: buttons.slice(0, 3).map((button) => {
+                                    if (button.type === 'web_url') {
+                                        return {
+                                            type: 'web_url',
+                                            title: button.title.substring(0, 20),
+                                            url: button.url,
+                                        };
+                                    }
+                                    return {
+                                        type: 'postback',
+                                        title: button.title.substring(0, 20),
+                                        payload: button.payload,
+                                    };
+                                }),
+                            },
+                        ],
+                    },
+                },
+            },
+        };
+        return this.sendToMeta(token, recipientId, message, merchantId, channel, isCommentId);
+    }
     async sendCarousel(recipientId, cards, token, merchantId) {
         const message = {
             message: {
@@ -259,16 +315,28 @@ let MetaSenderService = MetaSenderService_1 = class MetaSenderService {
     }
     async sendProductListText(recipientId, products, token, merchantId, channel) {
         let text = "Here's what we have:\n\n";
-        const numbers = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+        const numbers = [
+            '1️⃣',
+            '2️⃣',
+            '3️⃣',
+            '4️⃣',
+            '5️⃣',
+            '6️⃣',
+            '7️⃣',
+            '8️⃣',
+            '9️⃣',
+            '🔟',
+        ];
         const replies = [];
         products.slice(0, 10).forEach((p, i) => {
             text += `${numbers[i]} *${p.title}* — $${p.price.toFixed(2)}\n`;
-            text += p.inventoryQuantity > 0
-                ? `   ✅ In stock\n\n`
-                : `   ❌ Out of stock\n\n`;
+            text +=
+                p.inventoryQuantity > 0
+                    ? `   ✅ In stock\n\n`
+                    : `   ❌ Out of stock\n\n`;
             replies.push({ title: (i + 1).toString(), payload: `SELECT_${i + 1}` });
         });
-        text += "Reply with a number to view details 👇";
+        text += 'Reply with a number to view details 👇';
         await this.sendText(recipientId, text, token, merchantId, channel);
         return this.sendQuickReplies(recipientId, 'Select an item:', replies, token, merchantId, channel);
     }
@@ -285,7 +353,7 @@ let MetaSenderService = MetaSenderService_1 = class MetaSenderService {
         }).catch((e) => this.logger.error(`Error sending typing_on: ${e.message}`));
     }
     async setupPersistentMenu(pageToken) {
-        const url = `https://graph.facebook.com/v25.0/me/messenger_profile?access_token=${pageToken}`;
+        const url = `https://graph.facebook.com/v21.0/me/messenger_profile?access_token=${pageToken}`;
         const body = {
             persistent_menu: [
                 {
@@ -307,7 +375,7 @@ let MetaSenderService = MetaSenderService_1 = class MetaSenderService {
         });
     }
     async setupGetStarted(pageToken) {
-        const url = `https://graph.facebook.com/v25.0/me/messenger_profile?access_token=${pageToken}`;
+        const url = `https://graph.facebook.com/v21.0/me/messenger_profile?access_token=${pageToken}`;
         const body = {
             get_started: { payload: 'GET_STARTED' },
             greeting: [

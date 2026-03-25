@@ -31,7 +31,6 @@ export class ShopifyController {
     private readonly shopifyApiService: ShopifyApiService,
   ) {}
 
-
   @ApiOperation({ summary: 'Start Shopify OAuth flow' })
   @Get('auth')
   async auth(@Query('shop') shop: string, @Res() res: Response) {
@@ -85,7 +84,9 @@ export class ShopifyController {
     // 7. Redirect to app in Shopify admin
     const apiKey = this.config.get<string>('SHOPIFY_API_KEY');
     const storeShortName = shop.replace('.myshopify.com', '');
-    return res.redirect(`https://admin.shopify.com/store/${storeShortName}/apps/${apiKey}`);
+    return res.redirect(
+      `https://admin.shopify.com/store/${storeShortName}/apps/${apiKey}`,
+    );
   }
 
   @ApiOperation({ summary: 'Shopify uninstalled webhook' })
@@ -117,7 +118,9 @@ export class ShopifyController {
     @Headers('x-shopify-shop-domain') shop: string,
     @Body() body: any,
   ) {
-    this.logger.log(`Received Shopify product update webhook for shop: ${shop}`);
+    this.logger.log(
+      `Received Shopify product update webhook for shop: ${shop}`,
+    );
     this.shopifyApiService.clearCache(shop);
     return { status: 'ok' };
   }
@@ -141,14 +144,18 @@ export class ShopifyController {
   @ApiOperation({ summary: 'GDPR: Customer data request' })
   @Post('webhooks/customers/data_request')
   async onCustomerDataRequest(@Body() body: any) {
-    this.logger.log(`GDPR: Customer data request received for ${body.customer?.email}`);
+    this.logger.log(
+      `GDPR: Customer data request received for ${body.customer?.email}`,
+    );
     return { status: 'ok' };
   }
 
   @ApiOperation({ summary: 'GDPR: Customer redact' })
   @Post('webhooks/customers/redact')
   async onCustomerRedact(@Body() body: any) {
-    this.logger.log(`GDPR: Customer redact request received for ${body.customer?.email}`);
+    this.logger.log(
+      `GDPR: Customer redact request received for ${body.customer?.email}`,
+    );
     return { status: 'ok' };
   }
 
@@ -158,7 +165,6 @@ export class ShopifyController {
     this.logger.log(`GDPR: Shop redact request received for ${shop}`);
     return { status: 'ok' };
   }
-
 
   @ApiOperation({ summary: 'Get current merchant data' })
   @UseGuards(ShopifyAuthGuard)

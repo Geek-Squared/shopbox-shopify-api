@@ -34,7 +34,9 @@ export class MetaOauthController {
     @Res() res: Response,
   ) {
     await this.metaService.connectMessenger(shop, code);
-    return res.redirect(`https://${shop}/admin/apps/${process.env.SHOPIFY_API_KEY}/app/channels`);
+    return res.redirect(
+      `https://${shop}/admin/apps/${process.env.SHOPIFY_API_KEY}/app/channels`,
+    );
   }
 
   @ApiOperation({ summary: 'Initiate Instagram OAuth' })
@@ -52,7 +54,9 @@ export class MetaOauthController {
     @Res() res: Response,
   ) {
     await this.metaService.connectInstagram(shop, code);
-    return res.redirect(`https://${shop}/admin/apps/${process.env.SHOPIFY_API_KEY}/app/channels`);
+    return res.redirect(
+      `https://${shop}/admin/apps/${process.env.SHOPIFY_API_KEY}/app/channels`,
+    );
   }
 
   @ApiOperation({ summary: 'Manually select Messenger page' })

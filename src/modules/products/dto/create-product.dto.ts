@@ -17,7 +17,9 @@ export class CreateProductDto {
   @MinLength(2)
   name: string;
 
-  @ApiPropertyOptional({ example: 'High quality 100% cotton t-shirt, available in all sizes' })
+  @ApiPropertyOptional({
+    example: 'High quality 100% cotton t-shirt, available in all sizes',
+  })
   @IsOptional()
   @IsString()
   description?: string;

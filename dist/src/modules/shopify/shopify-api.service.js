@@ -126,7 +126,9 @@ let ShopifyApiService = ShopifyApiService_1 = class ShopifyApiService {
         return products;
     }
     async getProduct(shop, productId) {
-        const gid = productId.startsWith('gid://') ? productId : `gid://shopify/Product/${productId}`;
+        const gid = productId.startsWith('gid://')
+            ? productId
+            : `gid://shopify/Product/${productId}`;
         const query = `
       query getProduct($id: ID!) {
         product(id: $id) {
@@ -186,7 +188,9 @@ let ShopifyApiService = ShopifyApiService_1 = class ShopifyApiService {
         return collections;
     }
     async getProductsByCollection(shop, collectionId) {
-        const gid = collectionId.startsWith('gid://') ? collectionId : `gid://shopify/Collection/${collectionId}`;
+        const gid = collectionId.startsWith('gid://')
+            ? collectionId
+            : `gid://shopify/Collection/${collectionId}`;
         const query = `
       query getCollectionProducts($id: ID!) {
         collection(id: $id) {

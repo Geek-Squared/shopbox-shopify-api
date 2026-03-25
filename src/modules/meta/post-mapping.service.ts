@@ -1,4 +1,9 @@
-import { Injectable, Logger, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ShopifyApiService } from '../shopify/shopify-api.service';
 import { ShopifyRepository } from '../shopify/shopify.repository';
@@ -11,7 +16,7 @@ export class PostMappingService {
     private readonly prisma: PrismaService,
     private readonly shopifyApi: ShopifyApiService,
     private readonly shopifyRepo: ShopifyRepository,
-  ) { }
+  ) {}
 
   private normalizeFacebookUrl(postUrl: string): string {
     const url = new URL(postUrl);
@@ -38,7 +43,9 @@ export class PostMappingService {
       const url = new URL(normalizedUrl);
       const storyFbid = url.searchParams.get('story_fbid');
       const fbidParam = url.searchParams.get('fbid');
-      const numericId = [storyFbid, fbidParam].find((value) => /^\d+$/.test(value ?? ''));
+      const numericId = [storyFbid, fbidParam].find((value) =>
+        /^\d+$/.test(value ?? ''),
+      );
       if (numericId) {
         return `${messengerPageId}_${numericId}`;
       }
@@ -68,19 +75,24 @@ export class PostMappingService {
           return `${messengerPageId}_${postUrl}`;
         }
       }
-      throw new ConflictException(`Could not extract Facebook post ID: ${e.message}`);
+      throw new ConflictException(
+        `Could not extract Facebook post ID: ${e.message}`,
+      );
     }
   }
 
   /**
    * Create a new post-to-product mapping.
    */
-  async createMapping(merchantId: string, data: {
-    postUrl: string;
-    platform: 'facebook' | 'instagram';
-    shopifyProductId: string;
-    productTitle?: string;
-  }) {
+  async createMapping(
+    merchantId: string,
+    data: {
+      postUrl: string;
+      platform: 'facebook' | 'instagram';
+      shopifyProductId: string;
+      productTitle?: string;
+    },
+  ) {
     const merchant = await this.shopifyRepo.findById(merchantId);
     if (!merchant) throw new NotFoundException('Merchant not found');
 
@@ -89,25 +101,59 @@ export class PostMappingService {
 
     if (data.platform === 'facebook') {
       if (!merchant.messengerPageId) {
-        throw new ConflictException('Facebook Messenger is not connected. Connect it first.');
+        throw new ConflictException(
+          'Facebook Messenger is not connected. Connect it first.',
+        );
       }
       normalizedPostUrl = this.normalizeFacebookUrl(data.postUrl);
-      mediaId = this.extractFacebookPostId(normalizedPostUrl, merchant.messengerPageId);
+      mediaId = this.extractFacebookPostId(
+        normalizedPostUrl,
+        merchant.messengerPageId,
+      );
     } else {
-      // Instagram: for now, accept the media_id directly or extract from URL
-      // TODO: Add Instagram oEmbed/Graph API lookup when needed
-      mediaId = data.postUrl;
+      // Instagram: Extract ID or Shortcode from URL
+      // Format: https://www.instagram.com/p/C4... or https://www.instagram.com/reels/C4...
+      const match = data.postUrl.match(/\/(?:p|reels|reel)\/([a-zA-Z0-9_-]+)/);
+      const shortcode = match ? match[1] : null;
+
+      if (shortcode && merchant.instagramToken) {
+        try {
+          // If we have a shortcode, try to resolve the real numeric Media ID via Graph API
+          // This is critical because webhooks only send the numeric ID.
+          const url = `https://graph.facebook.com/v21.0/instagram_oembed?url=https://www.instagram.com/p/${shortcode}/&access_token=${merchant.instagramToken}`;
+          const res = await fetch(url);
+          if (res.ok) {
+            const oembed = await res.json();
+            // The oembed endpoint doesn't give media_id directly, but we can use
+            // the business discovery or media edge if we need it.
+            // FOR NOW: We'll store the shortcode and make the trigger service search by shortcode too.
+            mediaId = shortcode;
+          } else {
+            mediaId = shortcode;
+          }
+        } catch (e) {
+          mediaId = shortcode;
+        }
+      } else {
+        // Fallback to whatever was provided (might already be an ID)
+        mediaId = data.postUrl.split('/').filter(Boolean).pop() || data.postUrl;
+      }
     }
 
     // Fetch product title from Shopify for caching (with local fallback if fetch fails)
     let productTitle = data.productTitle || 'Unknown Product';
     try {
-      const product = await this.shopifyApi.getProduct(merchant.shop, data.shopifyProductId);
+      const product = await this.shopifyApi.getProduct(
+        merchant.shop,
+        data.shopifyProductId,
+      );
       if (product?.title) {
         productTitle = product.title;
       }
     } catch (e) {
-      this.logger.warn(`Could not fetch product title: ${e.message}. Using fallback: ${productTitle}`);
+      this.logger.warn(
+        `Could not fetch product title: ${e.message}. Using fallback: ${productTitle}`,
+      );
     }
 
     // Upsert to handle re-linking the same post to a different product
@@ -131,7 +177,9 @@ export class PostMappingService {
       },
     });
 
-    this.logger.log(`✅ Mapped post ${mediaId} → product "${productTitle}" (${data.shopifyProductId})`);
+    this.logger.log(
+      `✅ Mapped post ${mediaId} → product "${productTitle}" (${data.shopifyProductId})`,
+    );
     return mapping;
   }
 
@@ -148,11 +196,15 @@ export class PostMappingService {
   /**
    * Update a mapping (e.g. change the linked product or toggle active).
    */
-  async updateMapping(merchantId: string, mappingId: string, data: Partial<{
-    shopifyProductId: string;
-    productTitle: string;
-    isActive: boolean;
-  }>) {
+  async updateMapping(
+    merchantId: string,
+    mappingId: string,
+    data: Partial<{
+      shopifyProductId: string;
+      productTitle: string;
+      isActive: boolean;
+    }>,
+  ) {
     return this.prisma.postProductMapping.update({
       where: { id: mappingId, merchantId },
       data,

@@ -17,15 +17,15 @@ export declare class ProductsController {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     })[]>;
     getLowStock(user: JwtPayload): Promise<({
@@ -38,15 +38,15 @@ export declare class ProductsController {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     })[]>;
     getOutOfStock(user: JwtPayload): Promise<({
@@ -59,15 +59,15 @@ export declare class ProductsController {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     })[]>;
     findOne(user: JwtPayload, id: string): Promise<{
@@ -80,28 +80,28 @@ export declare class ProductsController {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     }>;
     create(user: JwtPayload, payload: CreateProductDto): Promise<{
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     }>;
     update(user: JwtPayload, id: string, payload: UpdateProductDto): Promise<{
@@ -114,15 +114,15 @@ export declare class ProductsController {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     }>;
     activate(user: JwtPayload, id: string): Promise<{
@@ -135,15 +135,15 @@ export declare class ProductsController {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     }>;
     deactivate(user: JwtPayload, id: string): Promise<{
@@ -156,15 +156,15 @@ export declare class ProductsController {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     }>;
     updateStock(user: JwtPayload, id: string, payload: UpdateStockDto): Promise<{
@@ -177,15 +177,15 @@ export declare class ProductsController {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     }>;
     addImage(user: JwtPayload, id: string, payload: CreateProductImageDto): Promise<{
@@ -209,15 +209,15 @@ export declare class ProductsController {
         }[];
     } & {
         id: string;
-        createdAt: Date;
-        sellerId: string;
-        storeId: string;
         name: string;
-        price: number;
+        createdAt: Date;
+        updatedAt: Date;
+        sellerId: string;
         description: string | null;
+        storeId: string;
+        price: number;
         currency: string;
         active: boolean;
-        updatedAt: Date;
         stockQty: number;
     }>;
     remove(user: JwtPayload, id: string): Promise<{

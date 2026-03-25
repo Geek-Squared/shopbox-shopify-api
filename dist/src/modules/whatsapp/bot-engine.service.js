@@ -281,7 +281,8 @@ let BotEngineService = BotEngineService_1 = class BotEngineService {
         }
         await this.session.set(from, 'ORDER_COMPLETE', {});
         if (paymentMethod === 'COD') {
-            const storefrontUrl = this.config.get('STOREFRONT_URL') ?? 'https://store.shopboxx.africa';
+            const storefrontUrl = this.config.get('STOREFRONT_URL') ??
+                'https://store.shopboxx.africa';
             const trackUrl = `${storefrontUrl}/store/${updatedCtx.storeSlug}` +
                 `?order=${order.orderNumber}&ref=notification`;
             return this.wa.sendText(from, `✅ *Order Placed!*\n` +
@@ -305,7 +306,8 @@ let BotEngineService = BotEngineService_1 = class BotEngineService {
                 `──────────────────\n` +
                 `Once paid, send your EcoCash confirmation number 👇`);
         }
-        const storefrontUrl = this.config.get('STOREFRONT_URL') ?? 'https://store.shopboxx.africa';
+        const storefrontUrl = this.config.get('STOREFRONT_URL') ??
+            'https://store.shopboxx.africa';
         const trackUrl = `${storefrontUrl}/store/${updatedCtx.storeSlug}` +
             `?order=${order.orderNumber}&ref=notification`;
         return this.wa.sendText(from, `✅ *Order Placed!*\n` +
@@ -386,7 +388,11 @@ let BotEngineService = BotEngineService_1 = class BotEngineService {
                     .map((i) => `${i.quantity}x ${i.productName}`)
                     .join(', ');
                 await this.wa
-                    .notifySellerNewOrder(seller.phone, orderNumber, context.buyerName ?? formattedPhone, itemsSummary, total, context.paymentMethod ?? 'COD', { sellerId: seller.id, storeId: context.storeId, orderId: order.id })
+                    .notifySellerNewOrder(seller.phone, orderNumber, context.buyerName ?? formattedPhone, itemsSummary, total, context.paymentMethod ?? 'COD', {
+                    sellerId: seller.id,
+                    storeId: context.storeId,
+                    orderId: order.id,
+                })
                     .catch((e) => this.logger.error(`Failed to notify seller: ${e.message}`));
             }
             return order;

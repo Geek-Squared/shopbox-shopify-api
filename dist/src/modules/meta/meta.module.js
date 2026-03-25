@@ -41,7 +41,12 @@ exports.MetaModule = MetaModule = __decorate([
             comment_trigger_service_1.CommentTriggerService,
             post_mapping_service_1.PostMappingService,
         ],
-        exports: [meta_oauth_service_1.MetaOauthService, meta_sender_service_1.MetaSenderService, comment_trigger_service_1.CommentTriggerService, post_mapping_service_1.PostMappingService],
+        exports: [
+            meta_oauth_service_1.MetaOauthService,
+            meta_sender_service_1.MetaSenderService,
+            comment_trigger_service_1.CommentTriggerService,
+            post_mapping_service_1.PostMappingService,
+        ],
     })
 ], MetaModule);
 //# sourceMappingURL=meta.module.js.map

@@ -1,4 +1,9 @@
-import { Injectable, Logger, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ShopifyApiService } from './shopify-api.service';
 import { ConfigService } from '@nestjs/config';
@@ -84,7 +89,9 @@ export class ShopifyBillingService {
     const result = data.appSubscriptionCreate;
 
     if (result.userErrors?.length > 0) {
-      throw new BadRequestException(`Shopify Billing Error: ${JSON.stringify(result.userErrors)}`);
+      throw new BadRequestException(
+        `Shopify Billing Error: ${JSON.stringify(result.userErrors)}`,
+      );
     }
 
     return {
@@ -93,10 +100,14 @@ export class ShopifyBillingService {
     };
   }
 
-  async verifyAndActivateSubscription(shop: string, plan: string, chargeId: string) {
+  async verifyAndActivateSubscription(
+    shop: string,
+    plan: string,
+    chargeId: string,
+  ) {
     // 🛠️ Ensure chargeId is in GID format if it's just a number
-    const gid = chargeId.startsWith('gid://') 
-      ? chargeId 
+    const gid = chargeId.startsWith('gid://')
+      ? chargeId
       : `gid://shopify/AppSubscription/${chargeId}`;
 
     const query = `
@@ -114,7 +125,9 @@ export class ShopifyBillingService {
     const subscription = data.node;
 
     if (!subscription || subscription.status !== 'ACTIVE') {
-      this.logger.warn(`Subscription ${chargeId} for ${shop} is not active: ${subscription?.status}`);
+      this.logger.warn(
+        `Subscription ${chargeId} for ${shop} is not active: ${subscription?.status}`,
+      );
       // In some cases, status might stay PENDING if the redirect didn't finish, but usually it's ACTIVE here.
     }
 
@@ -139,6 +152,9 @@ export class ShopifyBillingService {
     if (!merchant) return false;
 
     // Optional: Add logic to check trial expiration or hit Shopify API to confirm status if skeptical
-    return merchant.planStatus === 'ACTIVE' || (merchant.planName === 'BASIC' && !!merchant.planChargeId);
+    return (
+      merchant.planStatus === 'ACTIVE' ||
+      (merchant.planName === 'BASIC' && !!merchant.planChargeId)
+    );
   }
 }

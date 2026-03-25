@@ -17,13 +17,18 @@ class CreateProductImageDto {
 }
 exports.CreateProductImageDto = CreateProductImageDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ example: 'https://res.cloudinary.com/shopboxx/image/upload/v1/products/shirt.jpg' }),
+    (0, swagger_1.ApiProperty)({
+        example: 'https://res.cloudinary.com/shopboxx/image/upload/v1/products/shirt.jpg',
+    }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsUrl)(),
     __metadata("design:type", String)
 ], CreateProductImageDto.prototype, "imageUrl", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ default: false, description: 'Mark as primary display image' }),
+    (0, swagger_1.ApiPropertyOptional)({
+        default: false,
+        description: 'Mark as primary display image',
+    }),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsBoolean)(),
     __metadata("design:type", Boolean)

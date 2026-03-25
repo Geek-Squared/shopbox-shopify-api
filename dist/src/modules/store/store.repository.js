@@ -17,7 +17,10 @@ let StoreRepository = class StoreRepository {
         this.prisma = prisma;
     }
     findBySlug(slug) {
-        return this.prisma.store.findUnique({ where: { slug }, include: { seller: true } });
+        return this.prisma.store.findUnique({
+            where: { slug },
+            include: { seller: true },
+        });
     }
     findBySellerId(sellerId) {
         return this.prisma.store.findUnique({ where: { sellerId } });

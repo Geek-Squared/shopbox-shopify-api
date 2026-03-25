@@ -35,7 +35,10 @@ export class WhatsappController {
     @Query('hub.challenge') challenge: string,
     @Res() res: Response,
   ) {
-    if (mode === 'subscribe' && token === this.whatsappService.getVerifyToken()) {
+    if (
+      mode === 'subscribe' &&
+      token === this.whatsappService.getVerifyToken()
+    ) {
       this.logger.log('WhatsApp webhook verified ✅');
       return res.status(200).send(challenge);
     }
@@ -95,7 +98,6 @@ export class WhatsappController {
       this.botEngine.handle(from, type, text, interactiveId).catch((err) => {
         this.logger.error(`Bot engine error for ${from}: ${err.message}`);
       });
-
     } catch (err) {
       this.logger.error(`Webhook processing error: ${err}`);
     }

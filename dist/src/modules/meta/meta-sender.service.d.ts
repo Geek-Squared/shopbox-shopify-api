@@ -32,6 +32,14 @@ export declare class MetaSenderService {
         payload: string;
     }[], token: string, merchantId: string, channel: 'messenger' | 'instagram', isCommentId?: boolean): Promise<boolean>;
     sendButtonTemplate(recipientId: string, text: string, buttons: MetaTemplateButton[], token: string, merchantId: string, channel: 'messenger' | 'instagram', isCommentId?: boolean): Promise<boolean>;
+    sendProductCard(recipientId: string, product: {
+        title: string;
+        description?: string;
+        price: number;
+        imageUrl?: string;
+        productUrl?: string;
+        id: string;
+    }, buttons: MetaTemplateButton[], token: string, merchantId: string, channel: 'messenger' | 'instagram', isCommentId?: boolean): Promise<boolean>;
     sendCarousel(recipientId: string, cards: {
         title: string;
         subtitle: string;

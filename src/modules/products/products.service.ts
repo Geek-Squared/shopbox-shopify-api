@@ -66,7 +66,9 @@ export class ProductsService {
     // 1. Verify store exists
     const store = await this.storeRepository.findBySellerId(sellerId);
     if (!store) {
-      throw new NotFoundException('Store not found. Please create a store first.');
+      throw new NotFoundException(
+        'Store not found. Please create a store first.',
+      );
     }
 
     // 2. Enforce plan product limits

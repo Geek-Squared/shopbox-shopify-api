@@ -10,12 +10,18 @@ import {
 } from 'class-validator';
 
 export class CreateProductImageDto {
-  @ApiProperty({ example: 'https://res.cloudinary.com/shopboxx/image/upload/v1/products/shirt.jpg' })
+  @ApiProperty({
+    example:
+      'https://res.cloudinary.com/shopboxx/image/upload/v1/products/shirt.jpg',
+  })
   @IsString()
   @IsUrl()
   imageUrl: string;
 
-  @ApiPropertyOptional({ default: false, description: 'Mark as primary display image' })
+  @ApiPropertyOptional({
+    default: false,
+    description: 'Mark as primary display image',
+  })
   @IsOptional()
   @IsBoolean()
   isPrimary?: boolean;

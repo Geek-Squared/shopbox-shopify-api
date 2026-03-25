@@ -75,7 +75,6 @@ export class OrdersService {
       deliveryCode,
     });
 
-    
     this.sendOrderNotifications(order, store, lineItems, products).catch(
       (err) =>
         this.logger.error(`WhatsApp notification failed: ${err.message}`),
@@ -109,7 +108,12 @@ export class OrdersService {
   private async sendOrderNotifications(
     order: any,
     store: any,
-    lineItems: { productId: string; quantity: number; unitPrice: number; lineTotal: number }[],
+    lineItems: {
+      productId: string;
+      quantity: number;
+      unitPrice: number;
+      lineTotal: number;
+    }[],
     products: any[],
   ): Promise<void> {
     const productMap = new Map(products.map((p) => [p.id, p]));

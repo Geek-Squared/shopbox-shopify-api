@@ -128,7 +128,8 @@ let ShopifyBillingService = ShopifyBillingService_1 = class ShopifyBillingServic
         });
         if (!merchant)
             return false;
-        return merchant.planStatus === 'ACTIVE' || (merchant.planName === 'BASIC' && !!merchant.planChargeId);
+        return (merchant.planStatus === 'ACTIVE' ||
+            (merchant.planName === 'BASIC' && !!merchant.planChargeId));
     }
 };
 exports.ShopifyBillingService = ShopifyBillingService;

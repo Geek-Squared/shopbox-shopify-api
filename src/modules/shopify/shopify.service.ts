@@ -13,14 +13,17 @@ export class ShopifyService {
     private readonly repository: ShopifyRepository,
   ) {
     // Cleanup expired nonces every 5 mins
-    setInterval(() => {
-      const now = Date.now();
-      for (const [nonce, data] of this.stateNonces.entries()) {
-        if (data.expiresAt < now) {
-          this.stateNonces.delete(nonce);
+    setInterval(
+      () => {
+        const now = Date.now();
+        for (const [nonce, data] of this.stateNonces.entries()) {
+          if (data.expiresAt < now) {
+            this.stateNonces.delete(nonce);
+          }
         }
-      }
-    }, 5 * 60 * 1000);
+      },
+      5 * 60 * 1000,
+    );
   }
 
   generateAuthUrl(shop: string): string {
@@ -118,9 +121,12 @@ export class ShopifyService {
   }
 
   async getShopInfo(shop: string, token: string) {
-    const response = await fetch(`https://${shop}/admin/api/2024-01/shop.json`, {
-      headers: { 'X-Shopify-Access-Token': token },
-    });
+    const response = await fetch(
+      `https://${shop}/admin/api/2024-01/shop.json`,
+      {
+        headers: { 'X-Shopify-Access-Token': token },
+      },
+    );
 
     if (!response.ok) {
       throw new UnauthorizedException('Failed to fetch Shopify shop info');
@@ -133,29 +139,47 @@ export class ShopifyService {
   async registerWebhooks(shop: string, token: string) {
     const appUrl = this.config.get<string>('APP_URL');
     const webhooks = [
-      { topic: 'orders/create', address: `${appUrl}/api/shopify/webhooks/orders/create` },
-      { topic: 'orders/updated', address: `${appUrl}/api/shopify/webhooks/orders/updated` },
-      { topic: 'products/update', address: `${appUrl}/api/shopify/webhooks/products/update` },
-      { topic: 'shop/update', address: `${appUrl}/api/shopify/webhooks/shop/update` },
-      { topic: 'app/uninstalled', address: `${appUrl}/api/shopify/webhooks/app/uninstalled` },
+      {
+        topic: 'orders/create',
+        address: `${appUrl}/api/shopify/webhooks/orders/create`,
+      },
+      {
+        topic: 'orders/updated',
+        address: `${appUrl}/api/shopify/webhooks/orders/updated`,
+      },
+      {
+        topic: 'products/update',
+        address: `${appUrl}/api/shopify/webhooks/products/update`,
+      },
+      {
+        topic: 'shop/update',
+        address: `${appUrl}/api/shopify/webhooks/shop/update`,
+      },
+      {
+        topic: 'app/uninstalled',
+        address: `${appUrl}/api/shopify/webhooks/app/uninstalled`,
+      },
     ];
 
     for (const webhook of webhooks) {
       try {
-        const res = await fetch(`https://${shop}/admin/api/2024-01/webhooks.json`, {
-          method: 'POST',
-          headers: {
-            'X-Shopify-Access-Token': token,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            webhook: {
-              topic: webhook.topic,
-              address: webhook.address,
-              format: 'json',
+        const res = await fetch(
+          `https://${shop}/admin/api/2024-01/webhooks.json`,
+          {
+            method: 'POST',
+            headers: {
+              'X-Shopify-Access-Token': token,
+              'Content-Type': 'application/json',
             },
-          }),
-        });
+            body: JSON.stringify({
+              webhook: {
+                topic: webhook.topic,
+                address: webhook.address,
+                format: 'json',
+              },
+            }),
+          },
+        );
         if (!res.ok) {
           const err = await res.json();
           this.logger.warn(

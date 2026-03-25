@@ -45,8 +45,8 @@ export declare class CommentTriggerService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         keyword: string;
         replyComment: boolean;
         triggerCount: number;
@@ -56,8 +56,8 @@ export declare class CommentTriggerService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         keyword: string;
         replyComment: boolean;
         triggerCount: number;
@@ -67,8 +67,8 @@ export declare class CommentTriggerService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         keyword: string;
         replyComment: boolean;
         triggerCount: number;
@@ -78,8 +78,8 @@ export declare class CommentTriggerService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        merchantId: string;
         isActive: boolean;
+        merchantId: string;
         keyword: string;
         replyComment: boolean;
         triggerCount: number;

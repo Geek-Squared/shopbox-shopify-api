@@ -25,7 +25,8 @@ let WhatsappController = WhatsappController_1 = class WhatsappController {
         this.logger = new common_1.Logger(WhatsappController_1.name);
     }
     verifyWebhook(mode, token, challenge, res) {
-        if (mode === 'subscribe' && token === this.whatsappService.getVerifyToken()) {
+        if (mode === 'subscribe' &&
+            token === this.whatsappService.getVerifyToken()) {
             this.logger.log('WhatsApp webhook verified ✅');
             return res.status(200).send(challenge);
         }

@@ -30,7 +30,8 @@ let ShopifyBillingController = ShopifyBillingController_1 = class ShopifyBilling
         return {
             planName: merchant.planName,
             status: merchant.planStatus,
-            isTrial: !!merchant.planTrialExpiresAt && new Date(merchant.planTrialExpiresAt) > new Date(),
+            isTrial: !!merchant.planTrialExpiresAt &&
+                new Date(merchant.planTrialExpiresAt) > new Date(),
         };
     }
     async subscribe(body, req) {
@@ -52,7 +53,9 @@ let ShopifyBillingController = ShopifyBillingController_1 = class ShopifyBilling
             return res.redirect(redirectUrl);
         }
         catch (error) {
-            return res.status(500).send(`Billing Verification Failed: ${error.message}`);
+            return res
+                .status(500)
+                .send(`Billing Verification Failed: ${error.message}`);
         }
     }
 };

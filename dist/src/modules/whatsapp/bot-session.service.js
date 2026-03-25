@@ -40,7 +40,9 @@ let BotSessionService = class BotSessionService {
         return this.set(phoneNumber, state, { ...current.context, ...update });
     }
     async reset(phoneNumber) {
-        return this.prisma.botSession.delete({ where: { phoneNumber } }).catch(() => { });
+        return this.prisma.botSession
+            .delete({ where: { phoneNumber } })
+            .catch(() => { });
     }
     addToCart(cart, item) {
         const existing = cart.find((i) => i.productId === item.productId);

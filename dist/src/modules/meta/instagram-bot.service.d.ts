@@ -31,4 +31,5 @@ export declare class InstagramBotService {
     private handleCheckoutAddress;
     private handlePaymentSelection;
     showProductDetail(senderId: string, merchant: any, token: string, product: any, context: BotContext, customMessage?: string, recipientId?: string): Promise<boolean>;
+    private sendVariantSelection;
 }

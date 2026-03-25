@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { PostMappingService } from './post-mapping.service';
 import { ShopifyAuthGuard } from '../shopify/guards/shopify-auth.guard';
 
@@ -8,12 +18,16 @@ export class PostMappingController {
   constructor(private readonly postMappingService: PostMappingService) {}
 
   @Post()
-  async create(@Req() req: any, @Body() body: {
-    postUrl: string;
-    platform: 'facebook' | 'instagram';
-    shopifyProductId: string;
-    productTitle?: string;
-  }) {
+  async create(
+    @Req() req: any,
+    @Body()
+    body: {
+      postUrl: string;
+      platform: 'facebook' | 'instagram';
+      shopifyProductId: string;
+      productTitle?: string;
+    },
+  ) {
     const merchantId = req.merchant.id;
     return this.postMappingService.createMapping(merchantId, body);
   }

@@ -119,11 +119,26 @@ let ShopifyService = ShopifyService_1 = class ShopifyService {
     async registerWebhooks(shop, token) {
         const appUrl = this.config.get('APP_URL');
         const webhooks = [
-            { topic: 'orders/create', address: `${appUrl}/api/shopify/webhooks/orders/create` },
-            { topic: 'orders/updated', address: `${appUrl}/api/shopify/webhooks/orders/updated` },
-            { topic: 'products/update', address: `${appUrl}/api/shopify/webhooks/products/update` },
-            { topic: 'shop/update', address: `${appUrl}/api/shopify/webhooks/shop/update` },
-            { topic: 'app/uninstalled', address: `${appUrl}/api/shopify/webhooks/app/uninstalled` },
+            {
+                topic: 'orders/create',
+                address: `${appUrl}/api/shopify/webhooks/orders/create`,
+            },
+            {
+                topic: 'orders/updated',
+                address: `${appUrl}/api/shopify/webhooks/orders/updated`,
+            },
+            {
+                topic: 'products/update',
+                address: `${appUrl}/api/shopify/webhooks/products/update`,
+            },
+            {
+                topic: 'shop/update',
+                address: `${appUrl}/api/shopify/webhooks/shop/update`,
+            },
+            {
+                topic: 'app/uninstalled',
+                address: `${appUrl}/api/shopify/webhooks/app/uninstalled`,
+            },
         ];
         for (const webhook of webhooks) {
             try {

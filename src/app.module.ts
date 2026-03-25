@@ -13,7 +13,6 @@ import { ShopifyModule } from './modules/shopify/shopify.module';
 import { MetaModule } from './modules/meta/meta.module';
 import { AppController } from './app.controller';
 
-
 import { AppService } from './app.service';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
@@ -39,7 +38,6 @@ import { PrismaModule } from './prisma/prisma.module';
     ShopifyModule,
     MetaModule,
   ],
-
 
   controllers: [AppController],
   providers: [

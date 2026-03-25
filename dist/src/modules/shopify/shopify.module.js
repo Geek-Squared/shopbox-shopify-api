@@ -20,8 +20,18 @@ exports.ShopifyModule = ShopifyModule;
 exports.ShopifyModule = ShopifyModule = __decorate([
     (0, common_1.Module)({
         controllers: [shopify_controller_1.ShopifyController, shopify_billing_controller_1.ShopifyBillingController],
-        providers: [shopify_service_1.ShopifyService, shopify_billing_service_1.ShopifyBillingService, shopify_repository_1.ShopifyRepository, shopify_api_service_1.ShopifyApiService],
-        exports: [shopify_service_1.ShopifyService, shopify_billing_service_1.ShopifyBillingService, shopify_repository_1.ShopifyRepository, shopify_api_service_1.ShopifyApiService],
+        providers: [
+            shopify_service_1.ShopifyService,
+            shopify_billing_service_1.ShopifyBillingService,
+            shopify_repository_1.ShopifyRepository,
+            shopify_api_service_1.ShopifyApiService,
+        ],
+        exports: [
+            shopify_service_1.ShopifyService,
+            shopify_billing_service_1.ShopifyBillingService,
+            shopify_repository_1.ShopifyRepository,
+            shopify_api_service_1.ShopifyApiService,
+        ],
     })
 ], ShopifyModule);
 //# sourceMappingURL=shopify.module.js.map

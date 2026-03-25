@@ -58,15 +58,18 @@ let MetaWebhookController = MetaWebhookController_1 = class MetaWebhookControlle
             return { status: 'ok' };
         const change = payload.changes?.[0];
         const isInstagramComment = change?.field === 'comments';
-        const isFacebookComment = change?.field === 'feed' && change?.value?.item === 'comment' && change?.value?.verb === 'add';
-        const isInstagramDM = (change?.field === 'messages' && change?.value?.messaging_product === 'instagram') ||
+        const isFacebookComment = change?.field === 'feed' &&
+            change?.value?.item === 'comment' &&
+            change?.value?.verb === 'add';
+        const isInstagramDM = (change?.field === 'messages' &&
+            change?.value?.messaging_product === 'instagram') ||
             (body.object === 'instagram' && !!payload.messaging);
         const isMessenger = body.object === 'page' && !!payload.messaging;
         if (isFacebookComment) {
-            this.handleFacebookComment(payload).catch(e => this.logger.error(e));
+            this.handleFacebookComment(payload).catch((e) => this.logger.error(e));
         }
         else if (isInstagramComment) {
-            this.handleInstagramComment(payload).catch(e => this.logger.error(e));
+            this.handleInstagramComment(payload).catch((e) => this.logger.error(e));
         }
         else if (isInstagramDM) {
             await this.handleInstagram(payload);
@@ -84,10 +87,17 @@ let MetaWebhookController = MetaWebhookController_1 = class MetaWebhookControlle
         const fromUsername = value.from.username;
         const mediaId = value.media.id;
         const igAccountId = entry.id;
-        const merchant = await this.prisma.shopifyMerchant.findFirst({
+        if (fromId === igAccountId) {
+            this.logger.debug(`Ignoring comment from Instagram account itself`);
+            return;
+        }
+        const merchants = await this.prisma.shopifyMerchant.findMany({
             where: { instagramAccountId: igAccountId },
+            orderBy: { updatedAt: 'desc' },
         });
-        if (merchant) {
+        const merchant = merchants.find((m) => !!m.accessToken && m.isActive) || merchants[0];
+        if (merchant && merchant.instagramToken) {
+            this.logger.log(`Routing IG comment "${commentText}" from @${fromUsername} to CommentTriggerService (Shop: ${merchant.shop})`);
             this.commentService.handleInstagramComment({
                 merchantId: merchant.id,
                 commentText,
@@ -97,6 +107,9 @@ let MetaWebhookController = MetaWebhookController_1 = class MetaWebhookControlle
                 commentId,
                 instagramToken: merchant.instagramToken,
             });
+        }
+        else {
+            this.logger.warn(`No connected merchant found for Instagram account ${igAccountId}`);
         }
     }
     async handleFacebookComment(entry) {
@@ -115,7 +128,7 @@ let MetaWebhookController = MetaWebhookController_1 = class MetaWebhookControlle
             where: { messengerPageId: pageId },
             orderBy: { updatedAt: 'desc' },
         });
-        const merchant = merchants.find(m => !!m.accessToken && m.isActive) || merchants[0];
+        const merchant = merchants.find((m) => !!m.accessToken && m.isActive) || merchants[0];
         if (merchant && merchant.messengerToken) {
             this.logger.log(`Routing FB comment "${commentText}" from ${fromName} to CommentTriggerService (Shop: ${merchant.shop})`);
             this.commentService.handleFacebookComment({
@@ -139,11 +152,14 @@ let MetaWebhookController = MetaWebhookController_1 = class MetaWebhookControlle
         let postback;
         if (entry.messaging) {
             const message = entry.messaging[0];
-            if (!message || (!message.message && !message.postback) || message.message?.is_echo)
+            if (!message ||
+                (!message.message && !message.postback) ||
+                message.message?.is_echo)
                 return;
             from = message.sender.id;
             text = message.message?.text;
-            postback = message.postback?.payload || message.message?.quick_reply?.payload;
+            postback =
+                message.postback?.payload || message.message?.quick_reply?.payload;
         }
         else {
             const change = entry.changes?.[0];
@@ -162,7 +178,7 @@ let MetaWebhookController = MetaWebhookController_1 = class MetaWebhookControlle
             where: { instagramAccountId: igAccountId },
             orderBy: { updatedAt: 'desc' },
         });
-        const merchant = merchants.find(m => !!m.accessToken && m.isActive) || merchants[0];
+        const merchant = merchants.find((m) => !!m.accessToken && m.isActive) || merchants[0];
         if (merchant) {
             this.igBot
                 .handle({

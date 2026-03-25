@@ -24,7 +24,9 @@ export class ShopifyAuthGuard implements CanActivate {
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       this.logger.debug('Missing or invalid Authorization header');
-      throw new UnauthorizedException('Missing or invalid authorization header');
+      throw new UnauthorizedException(
+        'Missing or invalid authorization header',
+      );
     }
 
     const token = authHeader.split(' ')[1];
@@ -57,7 +59,9 @@ export class ShopifyAuthGuard implements CanActivate {
         throw new UnauthorizedException(`Merchant not found for shop: ${shop}`);
       }
       if (!merchant.isActive) {
-        throw new UnauthorizedException(`Merchant ${shop} is currently inactive`);
+        throw new UnauthorizedException(
+          `Merchant ${shop} is currently inactive`,
+        );
       }
 
       request.merchant = merchant;
@@ -70,7 +74,10 @@ export class ShopifyAuthGuard implements CanActivate {
       if (error.name === 'TokenExpiredError') {
         throw new UnauthorizedException('Shopify session token has expired');
       }
-      if (error.name === 'JsonWebTokenError' && error.message.includes('audience')) {
+      if (
+        error.name === 'JsonWebTokenError' &&
+        error.message.includes('audience')
+      ) {
         throw new UnauthorizedException(
           `Invalid audience: Ensure "aud" in your payload matches your SHOPIFY_API_KEY`,
         );
@@ -81,5 +88,3 @@ export class ShopifyAuthGuard implements CanActivate {
     }
   }
 }
-
-

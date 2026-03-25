@@ -355,7 +355,10 @@ export class BotEngineService {
     context: BotContext,
   ): Promise<void> {
     if (address.trim().length < 5) {
-      return this.wa.sendText(from, `❌ Please enter a valid delivery address:`);
+      return this.wa.sendText(
+        from,
+        `❌ Please enter a valid delivery address:`,
+      );
     }
     await this.session.updateContext(from, 'CHECKOUT_PAYMENT', {
       deliveryAddress: address.trim(),
@@ -437,7 +440,8 @@ export class BotEngineService {
 
     if (paymentMethod === 'COD') {
       const storefrontUrl =
-        this.config.get<string>('STOREFRONT_URL') ?? 'https://store.shopboxx.africa';
+        this.config.get<string>('STOREFRONT_URL') ??
+        'https://store.shopboxx.africa';
       const trackUrl =
         `${storefrontUrl}/store/${updatedCtx.storeSlug}` +
         `?order=${order.orderNumber}&ref=notification`;
@@ -472,7 +476,8 @@ export class BotEngineService {
     }
 
     const storefrontUrl =
-      this.config.get<string>('STOREFRONT_URL') ?? 'https://store.shopboxx.africa';
+      this.config.get<string>('STOREFRONT_URL') ??
+      'https://store.shopboxx.africa';
     const trackUrl =
       `${storefrontUrl}/store/${updatedCtx.storeSlug}` +
       `?order=${order.orderNumber}&ref=notification`;
@@ -590,7 +595,11 @@ export class BotEngineService {
             itemsSummary,
             total,
             context.paymentMethod ?? 'COD',
-            { sellerId: seller.id, storeId: context.storeId, orderId: order.id },
+            {
+              sellerId: seller.id,
+              storeId: context.storeId,
+              orderId: order.id,
+            },
           )
           .catch((e) =>
             this.logger.error(`Failed to notify seller: ${e.message}`),

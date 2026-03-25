@@ -9,12 +9,16 @@ async function bootstrap() {
   app.enableCors({
     origin: process.env.CORS_ORIGIN
       ? process.env.CORS_ORIGIN.split(',')
-      : ['http://localhost:4200', 'http://localhost:4201', 'http://localhost:3000',
-        'http://localhost:3001',
-        'https://shopboxx.africa',
-        'https://app.shopboxx.africa',
-        'https://start.shopboxx.africa',
-        'https://admin.shopboxx.africa',],
+      : [
+          'http://localhost:4200',
+          'http://localhost:4201',
+          'http://localhost:3000',
+          'http://localhost:3001',
+          'https://shopboxx.africa',
+          'https://app.shopboxx.africa',
+          'https://start.shopboxx.africa',
+          'https://admin.shopboxx.africa',
+        ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
   });
@@ -29,11 +33,9 @@ async function bootstrap() {
   );
 
   if (process.env.ENABLE_SWAGGER !== 'false') {
-    const document = SwaggerModule.createDocument(
-      app,
-      buildOpenApiConfig(),
-      { ignoreGlobalPrefix: false },
-    );
+    const document = SwaggerModule.createDocument(app, buildOpenApiConfig(), {
+      ignoreGlobalPrefix: false,
+    });
     SwaggerModule.setup('docs', app, document);
     Logger.log('Swagger docs available at /docs', 'Bootstrap');
   }

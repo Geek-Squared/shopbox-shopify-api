@@ -22,8 +22,12 @@ exports.WhatsappModule = WhatsappModule = __decorate([
     (0, common_1.Module)({
         imports: [config_1.ConfigModule, store_module_1.StoreModule],
         controllers: [whatsapp_controller_1.WhatsappController],
-        providers: [whatsapp_service_1.WhatsappService, whatsapp_repository_1.WhatsappRepository, bot_engine_service_1.BotEngineService,
-            bot_session_service_1.BotSessionService],
+        providers: [
+            whatsapp_service_1.WhatsappService,
+            whatsapp_repository_1.WhatsappRepository,
+            bot_engine_service_1.BotEngineService,
+            bot_session_service_1.BotSessionService,
+        ],
         exports: [whatsapp_service_1.WhatsappService, whatsapp_repository_1.WhatsappRepository, bot_session_service_1.BotSessionService],
     })
 ], WhatsappModule);

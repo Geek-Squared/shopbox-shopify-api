@@ -1,4 +1,11 @@
-import { Injectable, Logger, ConflictException, NotFoundException, forwardRef, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  ConflictException,
+  NotFoundException,
+  forwardRef,
+  Inject,
+} from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { MetaSenderService } from './meta-sender.service';
 import { ShopifyRepository } from '../shopify/shopify.repository';
@@ -71,15 +78,25 @@ export class CommentTriggerService {
     commentId: string;
     instagramToken: string;
   }) {
-    const { merchantId, commentText, commenterId, commenterUsername, mediaId, commentId, instagramToken } = data;
+    const {
+      merchantId,
+      commentText,
+      commenterId,
+      commenterUsername,
+      mediaId,
+      commentId,
+      instagramToken,
+    } = data;
 
     // Find active triggers for merchant
     const triggers = await this.prisma.commentTrigger.findMany({
       where: { merchantId, isActive: true },
     });
 
-    const matchingTrigger = triggers.find(t => 
-      t.keyword.trim().length > 0 && commentText.toLowerCase().includes(t.keyword.toLowerCase())
+    const matchingTrigger = triggers.find(
+      (t) =>
+        t.keyword.trim().length > 0 &&
+        commentText.toLowerCase().includes(t.keyword.toLowerCase()),
     );
 
     if (!matchingTrigger) return;
@@ -103,13 +120,15 @@ export class CommentTriggerService {
     // Check for Active Plan
     const isDevelopment = process.env.NODE_ENV !== 'production';
     if (!isDevelopment && merchant.planStatus !== 'ACTIVE') {
-       this.logger.warn(`Merchant ${merchant.shop} does not have an active plan. Skipping automation.`);
-       return;
+      this.logger.warn(
+        `Merchant ${merchant.shop} does not have an active plan. Skipping automation.`,
+      );
+      return;
     }
 
     // 🆕 SMART LOOKUP — Find mapping even if ID format varies
     const numericId = mediaId.includes('_') ? mediaId.split('_')[1] : mediaId;
-    const postMapping = await this.prisma.postProductMapping.findFirst({
+    let postMapping = await this.prisma.postProductMapping.findFirst({
       where: {
         merchantId,
         isActive: true,
@@ -122,30 +141,88 @@ export class CommentTriggerService {
       },
     });
 
+    // 🆕 INSTAGRAM ID RESOLUTION FALLBACK
+    // If we have a numeric ID from webhook but the mapping was created with a shortcode/URL
+    if (!postMapping && instagramToken && !mediaId.startsWith('http')) {
+      try {
+        this.logger.debug(
+          `🔍 Attempting Instagram ID resolution for ${mediaId}...`,
+        );
+        const url = `https://graph.facebook.com/v21.0/${mediaId}?fields=permalink,shortcode&access_token=${instagramToken}`;
+        const igRes = await fetch(url);
+        if (igRes.ok) {
+          const igData = await igRes.json();
+          const shortcode =
+            igData.shortcode ||
+            igData.permalink?.split('/p/')[1]?.split('/')[0];
+
+          if (shortcode) {
+            this.logger.debug(
+              `📍 Post ${mediaId} resolved to shortcode: ${shortcode}`,
+            );
+            postMapping = await this.prisma.postProductMapping.findFirst({
+              where: {
+                merchantId,
+                isActive: true,
+                OR: [
+                  { mediaId: shortcode },
+                  { postUrl: { contains: shortcode } },
+                ],
+              },
+            });
+
+            if (postMapping) {
+              this.logger.log(
+                `🧠 Learning! Updating mapping ${postMapping.id} with canonical numeric ID ${mediaId}`,
+              );
+              await this.prisma.postProductMapping.update({
+                where: { id: postMapping.id },
+                data: { mediaId: mediaId },
+              });
+            }
+          }
+        }
+      } catch (err) {
+        this.logger.warn(
+          `Failed IG ID resolution for ${mediaId}: ${err.message}`,
+        );
+      }
+    }
+
     try {
       let delivered = false;
 
       if (postMapping && postMapping.isActive) {
         try {
-          const product = await this.shopifyApi.getProduct(merchant.shop, postMapping.shopifyProductId);
+          const product = await this.shopifyApi.getProduct(
+            merchant.shop,
+            postMapping.shopifyProductId,
+          );
           if (product) {
+            this.logger.debug(`🔄 Attempting to send IG product card for "${product.title}" to ${commenterUsername} (ID: ${commenterId})`);
             delivered = await this.instagramBot.showProductDetail(
-              commenterId, 
+              commenterId,
               merchant,
               instagramToken,
               product,
               { merchantId, shop: merchant.shop },
               undefined, // Use default subtitle (Fixes character limit error)
-              commentId 
+              commentId,
             );
             if (delivered) {
-              this.logger.log(`🎯 Sent direct product card for "${product.title}" to IG user ${commenterUsername}`);
+              this.logger.log(
+                `🎯 Sent direct product card for "${product.title}" to IG user ${commenterUsername}`,
+              );
             } else {
-              this.logger.warn(`Meta did not accept the IG direct product reply for "${product.title}" to ${commenterUsername}`);
+              this.logger.warn(
+                `❌ Meta rejected the IG direct product reply for "${product.title}" to ${commenterUsername}. This may be due to Instagram DM restrictions or user privacy settings.`,
+              );
             }
           }
         } catch (productErr) {
-          this.logger.error(`Failed to send IG product card: ${productErr.message}`);
+          this.logger.error(
+            `Failed to send IG product card: ${productErr.message}`,
+          );
         }
       } else {
         this.logger.log(`ℹ️ Post ${mediaId} has no mapping. Skipping IG DM.`);
@@ -177,12 +254,15 @@ export class CommentTriggerService {
         await fetch(replyUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: `Hi @${commenterUsername}! Check your DMs 😊` }),
+          body: JSON.stringify({
+            message: `Hi @${commenterUsername}! Check your DMs 😊`,
+          }),
         });
       }
-
     } catch (error) {
-      this.logger.error(`Failed to handle IG comment trigger: ${error.message}`);
+      this.logger.error(
+        `Failed to handle IG comment trigger: ${error.message}`,
+      );
     }
   }
 
@@ -196,7 +276,16 @@ export class CommentTriggerService {
     commentId: string;
     messengerToken: string;
   }) {
-    const { merchantId, commentText, commenterId, commenterName, postId, postPermalinkUrl, commentId, messengerToken } = data;
+    const {
+      merchantId,
+      commentText,
+      commenterId,
+      commenterName,
+      postId,
+      postPermalinkUrl,
+      commentId,
+      messengerToken,
+    } = data;
 
     if (commentText === undefined) return;
 
@@ -205,13 +294,20 @@ export class CommentTriggerService {
       where: { merchantId, isActive: true },
     });
 
-    const matchingTrigger = triggers.find(t => 
-      t.keyword.trim().length > 0 && commentText.toLowerCase().includes(t.keyword.toLowerCase())
+    const matchingTrigger = triggers.find(
+      (t) =>
+        t.keyword.trim().length > 0 &&
+        commentText.toLowerCase().includes(t.keyword.toLowerCase()),
     );
 
-    if (!matchingTrigger) return;
+    if (!matchingTrigger) {
+      this.logger.warn(
+        `⚠️ [CommentTrigger] Keyword "${commentText}" did not match any active trigger.`,
+      );
+      return;
+    }
 
-    // Duplication check
+    // Duplication check (Anti-Spam)
     const existingLog = await this.prisma.commentDmLog.findUnique({
       where: {
         merchantId_commenterId_mediaId: {
@@ -222,10 +318,20 @@ export class CommentTriggerService {
       },
     });
 
-    if (existingLog) return;
+    if (existingLog) {
+      this.logger.warn(
+        `🛡️ [CommentTrigger] Anti-Spam: Already sent DM to ${commenterName} for this post today.`,
+      );
+      return;
+    }
 
     const merchant = await this.shopifyRepo.findById(merchantId);
-    if (!merchant) return;
+    if (!merchant) {
+      this.logger.error(
+        `❌ [CommentTrigger] Merchant record lost during processing!`,
+      );
+      return;
+    }
 
     // Plan check
     const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -233,6 +339,10 @@ export class CommentTriggerService {
 
     // 🆕 SMART LOOKUP
     const numericId = postId.includes('_') ? postId.split('_')[1] : postId;
+    this.logger.log(
+      `🔍 [CommentTrigger] Looking for mapping for Post ${postId} (Numeric: ${numericId})`,
+    );
+
     const normalizedPermalinkUrl = this.normalizeFacebookUrl(postPermalinkUrl);
     const normalizedPermalinkBase = normalizedPermalinkUrl?.split('?')[0];
     let postMapping = await this.prisma.postProductMapping.findFirst({
@@ -249,13 +359,18 @@ export class CommentTriggerService {
               ]
             : []),
           ...(normalizedPermalinkUrl
-            ? [
-                { postUrl: { startsWith: normalizedPermalinkBase } },
-              ]
+            ? [{ postUrl: { startsWith: normalizedPermalinkBase } }]
             : []),
         ],
       },
     });
+
+    if (!postMapping) {
+      this.logger.warn(
+        `📍 [CommentTrigger] No product mapping found for this post. App works, but don't know what to sell!`,
+      );
+      return;
+    }
 
     // 🆕 CANONICAL & ATTACHMENT RESOLUTION FALLBACK
     if (!postMapping && merchant.messengerToken) {
@@ -264,7 +379,7 @@ export class CommentTriggerService {
         const fbRes = await fetch(url);
         if (fbRes.ok) {
           const fbData = await fbRes.json();
-          
+
           const canonicalUrl = this.normalizeFacebookUrl(fbData.permalink_url);
           const canonicalBase = canonicalUrl?.split('?')[0];
           if (canonicalUrl) {
@@ -277,7 +392,7 @@ export class CommentTriggerService {
                   { postUrl: canonicalUrl },
                   { postUrl: { startsWith: canonicalBase } },
                 ],
-              }
+              },
             });
           }
 
@@ -286,7 +401,11 @@ export class CommentTriggerService {
               const ids = [];
               if (at.target?.id) ids.push(at.target.id);
               if (at.subattachments?.data) {
-                ids.push(...at.subattachments.data.map((sat: any) => sat.target?.id).filter(Boolean));
+                ids.push(
+                  ...at.subattachments.data
+                    .map((sat: any) => sat.target?.id)
+                    .filter(Boolean),
+                );
               }
               return ids;
             });
@@ -296,18 +415,20 @@ export class CommentTriggerService {
                 where: {
                   merchantId,
                   isActive: true,
-                  OR: photoIds.flatMap(pid => [
+                  OR: photoIds.flatMap((pid) => [
                     { mediaId: pid },
                     { mediaId: { endsWith: `_${pid}` } },
                     { postUrl: { contains: pid } },
                   ]),
-                }
+                },
               });
             }
           }
         }
       } catch (err) {
-        this.logger.warn(`Failed canonical resolution for ${postId}: ${err.message}`);
+        this.logger.warn(
+          `Failed canonical resolution for ${postId}: ${err.message}`,
+        );
       }
     }
 
@@ -317,7 +438,10 @@ export class CommentTriggerService {
 
       if (postMapping && postMapping.isActive) {
         try {
-          const product = await this.shopifyApi.getProduct(merchant.shop, postMapping.shopifyProductId);
+          const product = await this.shopifyApi.getProduct(
+            merchant.shop,
+            postMapping.shopifyProductId,
+          );
           if (product) {
             selectedProduct = product;
             const privateReplyLines = [
@@ -325,7 +449,9 @@ export class CommentTriggerService {
               `Reply "shop" here to continue in Messenger.`,
             ];
 
-            const commentSuffix = commentId.includes('_') ? commentId.split('_').pop() : commentId;
+            const commentSuffix = commentId.includes('_')
+              ? commentId.split('_').pop()
+              : commentId;
             const pagePrefixedCommentId =
               commentSuffix && merchant.messengerPageId
                 ? `${merchant.messengerPageId}_${commentSuffix}`
@@ -340,7 +466,11 @@ export class CommentTriggerService {
               true,
             );
 
-            if (!privateReplySent && pagePrefixedCommentId && pagePrefixedCommentId !== commentId) {
+            if (
+              !privateReplySent &&
+              pagePrefixedCommentId &&
+              pagePrefixedCommentId !== commentId
+            ) {
               this.logger.warn(
                 `Private reply failed with commentId ${commentId}. Retrying with page-prefixed id ${pagePrefixedCommentId}.`,
               );
@@ -356,7 +486,9 @@ export class CommentTriggerService {
 
             let directOpenerSent = false;
             if (!privateReplySent) {
-              this.logger.warn(`Meta did not accept the private reply opener for "${product.title}" to ${commenterName}. Trying direct DM opener.`);
+              this.logger.warn(
+                `Meta did not accept the private reply opener for "${product.title}" to ${commenterName}. Trying direct DM opener.`,
+              );
               directOpenerSent = await this.metaSender.sendText(
                 commenterId,
                 `${product.title} - $${product.price.toFixed(2)}\nReply "shop" to continue.`,
@@ -365,7 +497,9 @@ export class CommentTriggerService {
                 'messenger',
               );
               if (!directOpenerSent) {
-                this.logger.warn(`Meta did not accept direct DM opener for "${product.title}" to ${commenterName}. Skipping product flow and using fallback.`);
+                this.logger.warn(
+                  `Meta did not accept direct DM opener for "${product.title}" to ${commenterName}. Skipping product flow and using fallback.`,
+                );
               }
             }
 
@@ -391,24 +525,37 @@ export class CommentTriggerService {
               );
 
               if (delivered) {
-                this.logger.log(`🎯 Sent Messenger product flow for "${product.title}" to ${commenterName}`);
+                this.logger.log(
+                  `🎯 Sent Messenger product flow for "${product.title}" to ${commenterName}`,
+                );
               } else {
-                this.logger.warn(`Meta did not accept the Messenger product flow for "${product.title}" to ${commenterName}`);
+                this.logger.warn(
+                  `Meta did not accept the Messenger product flow for "${product.title}" to ${commenterName}`,
+                );
               }
             }
           } else {
-            this.logger.warn(`Product ${postMapping.shopifyProductId} not found. Skipping DM.`);
+            this.logger.warn(
+              `Product ${postMapping.shopifyProductId} not found. Skipping DM.`,
+            );
           }
         } catch (productErr) {
-          this.logger.error(`Failed to send Facebook product card: ${productErr.message}`);
+          this.logger.error(
+            `Failed to send Facebook product card: ${productErr.message}`,
+          );
         }
       } else {
-        this.logger.log(`ℹ️ Post ${postId} has no mapping. Skipping Facebook DM.`);
+        this.logger.log(
+          `ℹ️ Post ${postId} has no mapping. Skipping Facebook DM.`,
+        );
       }
 
       if (!delivered) {
         if (matchingTrigger.replyComment && selectedProduct) {
-          const checkoutUrl = this.getCheckoutUrl(merchant.shop, selectedProduct);
+          const checkoutUrl = this.getCheckoutUrl(
+            merchant.shop,
+            selectedProduct,
+          );
           const productUrl = this.getProductUrl(merchant.shop, selectedProduct);
           const pageLink = merchant.messengerPageId
             ? `https://m.me/${merchant.messengerPageId}?ref=product_${selectedProduct.id}`
@@ -430,7 +577,9 @@ export class CommentTriggerService {
           await fetch(replyUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: fallbackParts.join('\n').substring(0, 600) }),
+            body: JSON.stringify({
+              message: fallbackParts.join('\n').substring(0, 600),
+            }),
           });
         }
         return;
@@ -458,17 +607,24 @@ export class CommentTriggerService {
         await fetch(replyUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message: `Hi ${commenterName}! We just sent you a DM 😊` }),
+          body: JSON.stringify({
+            message: `Hi ${commenterName}! We just sent you a DM 😊`,
+          }),
         });
       }
-
     } catch (error) {
-      this.logger.error(`Failed to handle FB comment trigger: ${error.message}`);
+      this.logger.error(
+        `Failed to handle FB comment trigger: ${error.message}`,
+      );
     }
   }
 
-  async createTrigger(merchantId: string, data: { keyword: string; replyComment?: boolean; templateMessage?: string }) {
-    if (data.keyword.length > 20) throw new ConflictException('Keyword too long (max 20 chars)');
+  async createTrigger(
+    merchantId: string,
+    data: { keyword: string; replyComment?: boolean; templateMessage?: string },
+  ) {
+    if (data.keyword.length > 20)
+      throw new ConflictException('Keyword too long (max 20 chars)');
 
     return this.prisma.commentTrigger.upsert({
       where: {
@@ -512,18 +668,22 @@ export class CommentTriggerService {
   }
 
   async getTriggerStats(merchantId: string) {
-    const totalTriggers = await this.prisma.commentTrigger.count({ where: { merchantId } });
-    const totalDms = await this.prisma.commentDmLog.count({ where: { merchantId } });
-    
+    const totalTriggers = await this.prisma.commentTrigger.count({
+      where: { merchantId },
+    });
+    const totalDms = await this.prisma.commentDmLog.count({
+      where: { merchantId },
+    });
+
     const totalOrders = await this.prisma.order.count({
-      where: { sellerId: merchantId, notes: { contains: 'Instagram' } }
+      where: { sellerId: merchantId, notes: { contains: 'Instagram' } },
     });
 
     return {
       totalTriggers,
       totalDmsSent: totalDms,
       totalOrdersFromIg: totalOrders,
-      conversionRate: totalDms > 0 ? (totalOrders / totalDms) * 100 : 0
+      conversionRate: totalDms > 0 ? (totalOrders / totalDms) * 100 : 0,
     };
   }
 
@@ -531,7 +691,10 @@ export class CommentTriggerService {
     if (!template) return '';
     return template
       .replace(/{{product_name}}/g, product.title || '')
-      .replace(/{{price}}/g, `$${product.price ? product.price.toFixed(2) : '0.00'}`)
+      .replace(
+        /{{price}}/g,
+        `$${product.price ? product.price.toFixed(2) : '0.00'}`,
+      )
       .replace(/{{currency}}/g, 'USD')
       .replace(/{{link}}/g, product.onlineStoreUrl || '');
   }

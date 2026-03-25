@@ -44,17 +44,22 @@ export class WhatsappService {
 
   // ─── CORE SEND ─────────────────────────────────────────────────────────────
 
-  public async send(payload: object, meta?: {
-    sellerId?: string;
-    storeId?: string;
-    orderId?: string;
-    toNumber?: string;
-  }): Promise<void> {
+  public async send(
+    payload: object,
+    meta?: {
+      sellerId?: string;
+      storeId?: string;
+      orderId?: string;
+      toNumber?: string;
+    },
+  ): Promise<void> {
     try {
       this.logger.debug(
         `[WhatsApp API] Sending message using version: ${this.apiUrl.split('/')[3]}`,
       );
-      this.logger.debug(`[WA] Sending to ${meta?.toNumber}: ${JSON.stringify(payload)}`);
+      this.logger.debug(
+        `[WA] Sending to ${meta?.toNumber}: ${JSON.stringify(payload)}`,
+      );
       const res = await fetch(this.apiUrl, {
         method: 'POST',
         headers: {
@@ -69,7 +74,9 @@ export class WhatsappService {
         this.logger.error(
           `WhatsApp API error: ${JSON.stringify(errorData)} (Status: ${res.status})`,
         );
-        throw new Error(errorData.error?.message || 'Failed to send WhatsApp message');
+        throw new Error(
+          errorData.error?.message || 'Failed to send WhatsApp message',
+        );
       }
 
       const responseData = await res.json();
@@ -216,7 +223,8 @@ export class WhatsappService {
     meta?: { orderId?: string },
   ) {
     const storefrontUrl =
-      this.config.get<string>('STOREFRONT_URL') ?? 'https://store.shopboxx.africa';
+      this.config.get<string>('STOREFRONT_URL') ??
+      'https://store.shopboxx.africa';
 
     const trackUrl =
       `${storefrontUrl}/store/${storeSlug}` +

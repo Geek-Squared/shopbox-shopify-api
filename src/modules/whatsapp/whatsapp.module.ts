@@ -10,9 +10,12 @@ import { BotSessionService } from './bot-session.service';
 @Module({
   imports: [ConfigModule, StoreModule],
   controllers: [WhatsappController],
-  providers: [WhatsappService, WhatsappRepository, BotEngineService,
-    BotSessionService],
+  providers: [
+    WhatsappService,
+    WhatsappRepository,
+    BotEngineService,
+    BotSessionService,
+  ],
   exports: [WhatsappService, WhatsappRepository, BotSessionService],
 })
-export class WhatsappModule { }
-
+export class WhatsappModule {}

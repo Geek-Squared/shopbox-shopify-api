@@ -8,7 +8,17 @@ import { ShopifyApiService } from './shopify-api.service';
 
 @Module({
   controllers: [ShopifyController, ShopifyBillingController],
-  providers: [ShopifyService, ShopifyBillingService, ShopifyRepository, ShopifyApiService],
-  exports: [ShopifyService, ShopifyBillingService, ShopifyRepository, ShopifyApiService],
+  providers: [
+    ShopifyService,
+    ShopifyBillingService,
+    ShopifyRepository,
+    ShopifyApiService,
+  ],
+  exports: [
+    ShopifyService,
+    ShopifyBillingService,
+    ShopifyRepository,
+    ShopifyApiService,
+  ],
 })
 export class ShopifyModule {}
