@@ -35,9 +35,10 @@ export declare class ShopifyController {
     }>;
     getMerchant(shop: string): Promise<{
         id: string;
+        storeSlug: string | null;
+        updatedAt: Date;
         shop: string;
         scope: string;
-        storeSlug: string | null;
         storeName: string | null;
         whatsappConnected: boolean;
         whatsappNumber: string | null;
@@ -52,7 +53,6 @@ export declare class ShopifyController {
         isActive: boolean;
         installedAt: Date;
         uninstalledAt: Date | null;
-        updatedAt: Date;
         instagramUsername: string | null;
         messengerPageName: string | null;
         planChargeId: string | null;

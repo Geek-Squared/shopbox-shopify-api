@@ -17,7 +17,7 @@ export class ShopifyApiService {
   constructor(
     private readonly config: ConfigService,
     private readonly repository: ShopifyRepository,
-  ) {}
+  ) { }
 
   private async shopifyFetch(
     shop: string,
@@ -153,7 +153,7 @@ export class ShopifyApiService {
   async getProduct(shop: string, productId: string) {
     // Convert REST ID to GID if necessary
     const gid = productId.startsWith('gid://') ? productId : `gid://shopify/Product/${productId}`;
-    
+
     const query = `
       query getProduct($id: ID!) {
         product(id: $id) {
@@ -181,7 +181,7 @@ export class ShopifyApiService {
 
     const data = await this.graphqlFetch(shop, query, { id: gid });
     if (!data.product) throw new NotFoundException('Product not found in Shopify');
-    
+
     return this.mapGqlProduct(data.product);
   }
 
@@ -223,7 +223,7 @@ export class ShopifyApiService {
   async getProductsByCollection(shop: string, collectionId: string) {
     // Convert to GID
     const gid = collectionId.startsWith('gid://') ? collectionId : `gid://shopify/Collection/${collectionId}`;
-    
+
     const query = `
       query getCollectionProducts($id: ID!) {
         collection(id: $id) {
@@ -255,7 +255,7 @@ export class ShopifyApiService {
 
     const data = await this.graphqlFetch(shop, query, { id: gid });
     if (!data.collection) return [];
-    
+
     return data.collection.products.nodes.map((p: any) => this.mapGqlProduct(p));
   }
 
@@ -273,8 +273,8 @@ export class ShopifyApiService {
   ) {
     const body = {
       draft_order: {
-        line_items: data.lineItems.map((i: any) => ({
-          variant_id: i.variantId || i.productId,
+        line_items: data.lineItems.map((i) => ({
+          variant_id: i.variantId,
           quantity: i.quantity,
         })),
         customer: {

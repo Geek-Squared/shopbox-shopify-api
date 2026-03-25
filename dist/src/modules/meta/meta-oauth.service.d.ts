@@ -33,10 +33,11 @@ export declare class MetaOauthService {
     }>;
     disconnectMessenger(shop: string): Promise<{
         id: string;
+        storeSlug: string | null;
+        updatedAt: Date;
         shop: string;
         accessToken: string;
         scope: string;
-        storeSlug: string | null;
         storeName: string | null;
         whatsappConnected: boolean;
         whatsappNumber: string | null;
@@ -51,7 +52,6 @@ export declare class MetaOauthService {
         isActive: boolean;
         installedAt: Date;
         uninstalledAt: Date | null;
-        updatedAt: Date;
         instagramUsername: string | null;
         messengerPageName: string | null;
         planChargeId: string | null;
@@ -61,10 +61,11 @@ export declare class MetaOauthService {
     }>;
     disconnectInstagram(shop: string): Promise<{
         id: string;
+        storeSlug: string | null;
+        updatedAt: Date;
         shop: string;
         accessToken: string;
         scope: string;
-        storeSlug: string | null;
         storeName: string | null;
         whatsappConnected: boolean;
         whatsappNumber: string | null;
@@ -79,7 +80,6 @@ export declare class MetaOauthService {
         isActive: boolean;
         installedAt: Date;
         uninstalledAt: Date | null;
-        updatedAt: Date;
         instagramUsername: string | null;
         messengerPageName: string | null;
         planChargeId: string | null;
@@ -87,4 +87,6 @@ export declare class MetaOauthService {
         planStatus: string | null;
         planTrialExpiresAt: Date | null;
     }>;
+    getFacebookPosts(shop: string): Promise<any>;
+    getInstagramPosts(shop: string): Promise<any>;
 }

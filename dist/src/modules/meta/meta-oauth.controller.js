@@ -50,6 +50,12 @@ let MetaOauthController = class MetaOauthController {
         await this.metaService.disconnectInstagram(shop);
         return { connected: false };
     }
+    async getFacebookPosts(shop) {
+        return this.metaService.getFacebookPosts(shop);
+    }
+    async getInstagramPosts(shop) {
+        return this.metaService.getInstagramPosts(shop);
+    }
 };
 exports.MetaOauthController = MetaOauthController;
 __decorate([
@@ -119,6 +125,24 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], MetaOauthController.prototype, "disconnectInstagram", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'List Facebook posts for picker' }),
+    (0, common_1.UseGuards)(shopify_auth_guard_1.ShopifyAuthGuard),
+    (0, common_1.Get)('facebook-posts'),
+    __param(0, (0, current_shop_decorator_1.CurrentShop)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], MetaOauthController.prototype, "getFacebookPosts", null);
+__decorate([
+    (0, swagger_1.ApiOperation)({ summary: 'List Instagram posts for picker' }),
+    (0, common_1.UseGuards)(shopify_auth_guard_1.ShopifyAuthGuard),
+    (0, common_1.Get)('instagram-posts'),
+    __param(0, (0, current_shop_decorator_1.CurrentShop)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], MetaOauthController.prototype, "getInstagramPosts", null);
 exports.MetaOauthController = MetaOauthController = __decorate([
     (0, swagger_1.ApiTags)('Meta OAuth'),
     (0, common_1.Controller)('meta/auth'),

@@ -12,6 +12,7 @@ export class PostMappingController {
     postUrl: string;
     platform: 'facebook' | 'instagram';
     shopifyProductId: string;
+    productTitle?: string;
   }) {
     const merchantId = req.merchant.id;
     return this.postMappingService.createMapping(merchantId, body);

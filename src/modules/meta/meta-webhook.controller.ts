@@ -139,12 +139,15 @@ export class MetaWebhookController {
       return; // ignore bot's own replies
     }
 
-    const merchant = await this.prisma.shopifyMerchant.findFirst({
+    const merchants = await this.prisma.shopifyMerchant.findMany({
       where: { messengerPageId: pageId },
+      orderBy: { updatedAt: 'desc' },
     });
 
+    const merchant = merchants.find(m => !!m.accessToken && m.isActive) || merchants[0];
+
     if (merchant && merchant.messengerToken) {
-      this.logger.log(`Routing FB comment "${commentText}" from ${fromName} to CommentTriggerService`);
+      this.logger.log(`Routing FB comment "${commentText}" from ${fromName} to CommentTriggerService (Shop: ${merchant.shop})`);
       this.commentService.handleFacebookComment({
         merchantId: merchant.id,
         commentText,
@@ -156,7 +159,7 @@ export class MetaWebhookController {
         messengerToken: merchant.messengerToken,
       });
     } else {
-      this.logger.debug(`No merchant found for pageId ${pageId}`);
+      this.logger.debug(`No connected merchant found for pageId ${pageId}`);
     }
   }
 
@@ -189,9 +192,12 @@ export class MetaWebhookController {
   const igAccountId = entry.id;
   this.logger.log(`Received Instagram message from ${from} for account ${igAccountId}`);
 
-  const merchant = await this.prisma.shopifyMerchant.findFirst({
+  const merchants = await this.prisma.shopifyMerchant.findMany({
     where: { instagramAccountId: igAccountId },
+    orderBy: { updatedAt: 'desc' },
   });
+
+  const merchant = merchants.find(m => !!m.accessToken && m.isActive) || merchants[0];
 
   if (merchant) {
     // Route to InstagramBotService (async)

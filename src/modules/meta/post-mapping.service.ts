@@ -79,6 +79,7 @@ export class PostMappingService {
     postUrl: string;
     platform: 'facebook' | 'instagram';
     shopifyProductId: string;
+    productTitle?: string;
   }) {
     const merchant = await this.shopifyRepo.findById(merchantId);
     if (!merchant) throw new NotFoundException('Merchant not found');
@@ -98,13 +99,15 @@ export class PostMappingService {
       mediaId = data.postUrl;
     }
 
-    // Fetch product title from Shopify for caching
-    let productTitle = 'Unknown Product';
+    // Fetch product title from Shopify for caching (with local fallback if fetch fails)
+    let productTitle = data.productTitle || 'Unknown Product';
     try {
       const product = await this.shopifyApi.getProduct(merchant.shop, data.shopifyProductId);
-      productTitle = product?.title || 'Unknown Product';
+      if (product?.title) {
+        productTitle = product.title;
+      }
     } catch (e) {
-      this.logger.warn(`Could not fetch product title: ${e.message}`);
+      this.logger.warn(`Could not fetch product title: ${e.message}. Using fallback: ${productTitle}`);
     }
 
     // Upsert to handle re-linking the same post to a different product

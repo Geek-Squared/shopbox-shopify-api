@@ -16,4 +16,6 @@ export declare class MetaOauthController {
     disconnectInstagram(shop: string): Promise<{
         connected: boolean;
     }>;
+    getFacebookPosts(shop: string): Promise<any>;
+    getInstagramPosts(shop: string): Promise<any>;
 }

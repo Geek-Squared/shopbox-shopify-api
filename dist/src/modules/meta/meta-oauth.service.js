@@ -174,6 +174,46 @@ let MetaOauthService = MetaOauthService_1 = class MetaOauthService {
             instagramAccountId: null,
         });
     }
+    async getFacebookPosts(shop) {
+        const merchant = await this.shopifyRepository.findByShop(shop);
+        if (!merchant || !merchant.messengerToken || !merchant.messengerPageId) {
+            throw new common_1.BadRequestException('Messenger not connected for this shop');
+        }
+        const url = `https://graph.facebook.com/v20.0/${merchant.messengerPageId}/posts?fields=id,message,permalink_url,full_picture,created_time,status_type&limit=15&access_token=${merchant.messengerToken}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (!response.ok) {
+            throw new common_1.BadRequestException(`Meta API error: ${data.error?.message || 'Unknown error'}`);
+        }
+        return (data.data || []).map((post) => ({
+            id: post.id,
+            text: post.message || '[No text]',
+            url: post.permalink_url,
+            imageUrl: post.full_picture || null,
+            createdAt: post.created_time,
+            type: post.status_type,
+        }));
+    }
+    async getInstagramPosts(shop) {
+        const merchant = await this.shopifyRepository.findByShop(shop);
+        if (!merchant || !merchant.instagramToken || !merchant.instagramAccountId) {
+            throw new common_1.BadRequestException('Instagram not connected for this shop');
+        }
+        const url = `https://graph.facebook.com/v20.0/${merchant.instagramAccountId}/media?fields=id,caption,permalink,media_url,timestamp,media_type&limit=15&access_token=${merchant.instagramToken}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        if (!response.ok) {
+            throw new common_1.BadRequestException(`Meta API error: ${data.error?.message || 'Unknown error'}`);
+        }
+        return (data.data || []).map((post) => ({
+            id: post.id,
+            text: post.caption || '[No caption]',
+            url: post.permalink,
+            imageUrl: post.media_url,
+            createdAt: post.timestamp,
+            type: post.media_type,
+        }));
+    }
 };
 exports.MetaOauthService = MetaOauthService;
 exports.MetaOauthService = MetaOauthService = MetaOauthService_1 = __decorate([

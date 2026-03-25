@@ -81,13 +81,15 @@ let PostMappingService = PostMappingService_1 = class PostMappingService {
         else {
             mediaId = data.postUrl;
         }
-        let productTitle = 'Unknown Product';
+        let productTitle = data.productTitle || 'Unknown Product';
         try {
             const product = await this.shopifyApi.getProduct(merchant.shop, data.shopifyProductId);
-            productTitle = product?.title || 'Unknown Product';
+            if (product?.title) {
+                productTitle = product.title;
+            }
         }
         catch (e) {
-            this.logger.warn(`Could not fetch product title: ${e.message}`);
+            this.logger.warn(`Could not fetch product title: ${e.message}. Using fallback: ${productTitle}`);
         }
         const mapping = await this.prisma.postProductMapping.upsert({
             where: {

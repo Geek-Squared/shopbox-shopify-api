@@ -84,4 +84,18 @@ export class MetaOauthController {
     await this.metaService.disconnectInstagram(shop);
     return { connected: false };
   }
+
+  @ApiOperation({ summary: 'List Facebook posts for picker' })
+  @UseGuards(ShopifyAuthGuard)
+  @Get('facebook-posts')
+  async getFacebookPosts(@CurrentShop() shop: string) {
+    return this.metaService.getFacebookPosts(shop);
+  }
+
+  @ApiOperation({ summary: 'List Instagram posts for picker' })
+  @UseGuards(ShopifyAuthGuard)
+  @Get('instagram-posts')
+  async getInstagramPosts(@CurrentShop() shop: string) {
+    return this.metaService.getInstagramPosts(shop);
+  }
 }

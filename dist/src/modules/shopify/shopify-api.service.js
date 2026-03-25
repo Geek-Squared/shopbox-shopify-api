@@ -224,7 +224,7 @@ let ShopifyApiService = ShopifyApiService_1 = class ShopifyApiService {
         const body = {
             draft_order: {
                 line_items: data.lineItems.map((i) => ({
-                    variant_id: i.variantId || i.productId,
+                    variant_id: i.variantId,
                     quantity: i.quantity,
                 })),
                 customer: {
