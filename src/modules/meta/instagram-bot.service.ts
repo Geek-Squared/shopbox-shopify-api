@@ -72,6 +72,14 @@ export class InstagramBotService {
         input,
         context,
       );
+    if (input.startsWith('ADD_'))
+      return this.handleAddToCart(
+        senderId,
+        merchant,
+        token,
+        input,
+        context,
+      );
     if (input.startsWith('VAR_'))
       return this.handleVariantSelection(
         senderId,
@@ -374,9 +382,9 @@ export class InstagramBotService {
       },
       [
         {
-          type: 'web_url',
-          title: '🛍️ View Product',
-          url: productUrl,
+          type: 'postback',
+          title: '🛒 Add to Cart',
+          payload: `ADD_${variant.id}`,
         },
         {
           type: 'web_url',
@@ -402,6 +410,71 @@ export class InstagramBotService {
       return true;
     }
     return false;
+  }
+
+  private async handleAddToCart(
+    senderId: string,
+    merchant: any,
+    token: string,
+    input: string,
+    context: BotContext,
+  ): Promise<void | boolean> {
+    const sessionKey = `ig_${senderId}_${merchant.id}`;
+    const productId = input.replace('ADD_', '');
+    
+    try {
+      // Get product details
+      const product = await this.shopifyApi.getProduct(merchant.shop, productId);
+      if (!product) {
+        return this.metaSender.sendText(
+          senderId,
+          '❌ Product not found.',
+          token,
+          merchant.id,
+          'instagram',
+        );
+      }
+
+      // For variants, use variant ID directly, for products use default variant
+      let cartItem: any;
+      if (product.variants && product.variants.find(v => v.id === productId)) {
+        // This is a variant ID
+        const variant = product.variants.find(v => v.id === productId);
+        cartItem = {
+          productId: product.id,
+          variantId: variant.id,
+          productName: `${product.title} - ${variant.title}`,
+          unitPrice: variant.price,
+          quantity: 1,
+        };
+      } else {
+        // This is a product ID, use default variant
+        const defaultVariant = product.variants?.[0];
+        cartItem = {
+          productId: product.id,
+          variantId: defaultVariant?.id || product.id,
+          productName: product.title,
+          unitPrice: product.price,
+          quantity: 1,
+        };
+      }
+
+      const cart = this.session.addToCart(context.cart ?? [], cartItem);
+      await this.session.updateContext(sessionKey, 'CART', {
+        ...context,
+        cart,
+      });
+      return this.showAddedToCart(senderId, merchant, token, cart);
+    } catch (error) {
+      this.logger.error(`Add to cart failed: ${error.message}`);
+      return this.metaSender.sendText(
+        senderId,
+        '❌ Failed to add to cart. Please try again.',
+        token,
+        merchant.id,
+        'instagram',
+      );
+    }
   }
 
   private async handleProductAction(
@@ -443,17 +516,7 @@ export class InstagramBotService {
     }
 
     if (input.startsWith('ADD_')) {
-      const cart = this.session.addToCart(context.cart ?? [], {
-        productId: product.id,
-        productName: product.title,
-        unitPrice: product.price,
-        quantity: 1,
-      });
-      await this.session.updateContext(sessionKey, 'CART', {
-        ...context,
-        cart,
-      });
-      return this.showAddedToCart(senderId, merchant, token, cart);
+      return this.handleAddToCart(senderId, merchant, token, input, context);
     }
   }
 
@@ -722,9 +785,9 @@ export class InstagramBotService {
         },
         [
           {
-            type: 'web_url',
-            title: '🛍️ View Product',
-            url: productUrl,
+            type: 'postback',
+            title: '🛒 Add to Cart',
+            payload: `ADD_${product.id}`,
           },
           {
             type: 'web_url',

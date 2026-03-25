@@ -55,6 +55,8 @@ let InstagramBotService = InstagramBotService_1 = class InstagramBotService {
             return this.handleCategorySelection(senderId, merchant, token, input, context);
         if (input.startsWith('SELECT_'))
             return this.handleProductSelection(senderId, merchant, token, input, context);
+        if (input.startsWith('ADD_'))
+            return this.handleAddToCart(senderId, merchant, token, input, context);
         if (input.startsWith('VAR_'))
             return this.handleVariantSelection(senderId, merchant, token, input, context);
         if (lowerInput === 'cart') {
@@ -198,9 +200,9 @@ let InstagramBotService = InstagramBotService_1 = class InstagramBotService {
             id: variant.id,
         }, [
             {
-                type: 'web_url',
-                title: '🛍️ View Product',
-                url: productUrl,
+                type: 'postback',
+                title: '🛒 Add to Cart',
+                payload: `ADD_${variant.id}`,
             },
             {
                 type: 'web_url',
@@ -222,6 +224,47 @@ let InstagramBotService = InstagramBotService_1 = class InstagramBotService {
         }
         return false;
     }
+    async handleAddToCart(senderId, merchant, token, input, context) {
+        const sessionKey = `ig_${senderId}_${merchant.id}`;
+        const productId = input.replace('ADD_', '');
+        try {
+            const product = await this.shopifyApi.getProduct(merchant.shop, productId);
+            if (!product) {
+                return this.metaSender.sendText(senderId, '❌ Product not found.', token, merchant.id, 'instagram');
+            }
+            let cartItem;
+            if (product.variants && product.variants.find(v => v.id === productId)) {
+                const variant = product.variants.find(v => v.id === productId);
+                cartItem = {
+                    productId: product.id,
+                    variantId: variant.id,
+                    productName: `${product.title} - ${variant.title}`,
+                    unitPrice: variant.price,
+                    quantity: 1,
+                };
+            }
+            else {
+                const defaultVariant = product.variants?.[0];
+                cartItem = {
+                    productId: product.id,
+                    variantId: defaultVariant?.id || product.id,
+                    productName: product.title,
+                    unitPrice: product.price,
+                    quantity: 1,
+                };
+            }
+            const cart = this.session.addToCart(context.cart ?? [], cartItem);
+            await this.session.updateContext(sessionKey, 'CART', {
+                ...context,
+                cart,
+            });
+            return this.showAddedToCart(senderId, merchant, token, cart);
+        }
+        catch (error) {
+            this.logger.error(`Add to cart failed: ${error.message}`);
+            return this.metaSender.sendText(senderId, '❌ Failed to add to cart. Please try again.', token, merchant.id, 'instagram');
+        }
+    }
     async handleProductAction(senderId, merchant, token, input, context) {
         const sessionKey = `ig_${senderId}_${merchant.id}`;
         const product = context.selectedProduct;
@@ -235,17 +278,7 @@ let InstagramBotService = InstagramBotService_1 = class InstagramBotService {
             return;
         }
         if (input.startsWith('ADD_')) {
-            const cart = this.session.addToCart(context.cart ?? [], {
-                productId: product.id,
-                productName: product.title,
-                unitPrice: product.price,
-                quantity: 1,
-            });
-            await this.session.updateContext(sessionKey, 'CART', {
-                ...context,
-                cart,
-            });
-            return this.showAddedToCart(senderId, merchant, token, cart);
+            return this.handleAddToCart(senderId, merchant, token, input, context);
         }
     }
     async showAddedToCart(senderId, merchant, token, cart) {
@@ -373,9 +406,9 @@ let InstagramBotService = InstagramBotService_1 = class InstagramBotService {
                 id: product.id,
             }, [
                 {
-                    type: 'web_url',
-                    title: '🛍️ View Product',
-                    url: productUrl,
+                    type: 'postback',
+                    title: '🛒 Add to Cart',
+                    payload: `ADD_${product.id}`,
                 },
                 {
                     type: 'web_url',

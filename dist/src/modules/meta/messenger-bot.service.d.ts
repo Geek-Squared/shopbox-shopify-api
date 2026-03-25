@@ -30,6 +30,7 @@ export declare class MessengerBotService {
     showProductDetail(senderId: string, merchant: any, token: string, product: any, context: BotContext, customMessage?: string, recipientId?: string): Promise<boolean>;
     private sendVariantSelection;
     private handleVariantSelection;
+    private handleAddToCart;
     private handleProductAction;
     private showAddedToCart;
     private handleViewCart;

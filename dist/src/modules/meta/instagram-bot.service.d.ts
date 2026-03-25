@@ -23,6 +23,7 @@ export declare class InstagramBotService {
     private handleCategorySelection;
     private handleProductSelection;
     private handleVariantSelection;
+    private handleAddToCart;
     private handleProductAction;
     private showAddedToCart;
     private handleViewCart;
