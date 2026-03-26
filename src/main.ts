@@ -7,19 +7,38 @@ import { buildOpenApiConfig } from './swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
   app.enableCors({
-    origin: process.env.CORS_ORIGIN
-      ? process.env.CORS_ORIGIN.split(',')
-      : [
-          'http://localhost:4200',
-          'http://localhost:4201',
-          'http://localhost:3000',
-          'http://localhost:3001',
-          'https://shopboxx.africa',
-          'https://app.shopboxx.africa',
-          'https://start.shopboxx.africa',
-          'https://admin.shopboxx.africa',
-        ],
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        'http://localhost:4200',
+        'http://localhost:4201',
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'https://shopboxx.africa',
+        'https://app.shopboxx.africa',
+        'https://start.shopboxx.africa',
+        'https://admin.shopboxx.africa',
+        'https://shopbox-fe.vercel.app',
+        'https://admin.shopify.com',
+        ...(process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : []),
+      ];
+
+      const allowedPatterns = [/\.myshopify\.com$/];
+
+      // Allow requests with no origin (webhooks, server-to-server, Postman)
+      if (!origin) return callback(null, true);
+
+      const isAllowed =
+        allowedOrigins.includes(origin) ||
+        allowedPatterns.some((pattern) => pattern.test(origin));
+
+      if (isAllowed) {
+        callback(null, true);
+      } else {
+        callback(new Error(`CORS blocked: ${origin}`));
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'], // 👈 add this
     credentials: true,
   });
   app.setGlobalPrefix('api');
