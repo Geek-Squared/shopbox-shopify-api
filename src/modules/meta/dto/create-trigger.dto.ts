@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsBoolean, IsOptional, MaxLength } from 'class-validator';
 
+// dto for trigger
 export class CreateTriggerDto {
   @ApiProperty({
     description: 'The keyword to trigger the DM flow',
