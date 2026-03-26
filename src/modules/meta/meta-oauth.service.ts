@@ -175,7 +175,26 @@ export class MetaOauthService {
   }
 
   async connectInstagram(shop: string, code: string) {
-    const userToken = await this.exchangeCodeForToken(code, 'instagram');
+    let userToken: string;
+    try {
+      userToken = await this.exchangeCodeForToken(code, 'instagram');
+    } catch (error) {
+      // If the code was already used (e.g. infrastructure retry hit a second instance),
+      // check if the first request already connected Instagram successfully.
+      if (
+        error instanceof BadRequestException &&
+        error.message.includes('authorization code has been used')
+      ) {
+        const merchant = await this.shopifyRepository.findByShop(shop);
+        if (merchant?.instagramConnected && merchant.instagramUsername) {
+          this.logger.warn(
+            `[Instagram] Duplicate callback for ${shop} — already connected, ignoring stale code`,
+          );
+          return { connected: true, username: merchant.instagramUsername };
+        }
+      }
+      throw error;
+    }
     const pages = await this.getPages(userToken);
 
     let instagramAccount = null;
