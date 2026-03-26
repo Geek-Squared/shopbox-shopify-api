@@ -152,7 +152,24 @@ export class MetaOauthService {
   }
 
   async connectMessenger(shop: string, code: string) {
-    const userToken = await this.exchangeCodeForToken(code, 'messenger');
+    let userToken: string;
+    try {
+      userToken = await this.exchangeCodeForToken(code, 'messenger');
+    } catch (error) {
+      if (
+        error instanceof BadRequestException &&
+        error.message.includes('authorization code has been used')
+      ) {
+        const merchant = await this.shopifyRepository.findByShop(shop);
+        if (merchant?.messengerConnected && merchant.messengerPageName) {
+          this.logger.warn(
+            `[Messenger] Duplicate callback for ${shop} — already connected, ignoring stale code`,
+          );
+          return { connected: true, pageName: merchant.messengerPageName };
+        }
+      }
+      throw error;
+    }
     const pages = await this.getPages(userToken);
 
     if (pages.length === 0) {
