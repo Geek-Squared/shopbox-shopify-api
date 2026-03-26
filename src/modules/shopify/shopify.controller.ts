@@ -18,6 +18,7 @@ import { ShopifyApiService } from './shopify-api.service';
 import { ConfigService } from '@nestjs/config';
 import { ShopifyAuthGuard } from './guards/shopify-auth.guard';
 import { CurrentShop } from './decorators/current-shop.decorator';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @ApiTags('Shopify')
 @Controller('shopify')
@@ -29,6 +30,7 @@ export class ShopifyController {
     private readonly repository: ShopifyRepository,
     private readonly config: ConfigService,
     private readonly shopifyApiService: ShopifyApiService,
+    private readonly prisma: PrismaService,
   ) {}
 
   @ApiOperation({ summary: 'Start Shopify OAuth flow' })
@@ -144,25 +146,116 @@ export class ShopifyController {
   @ApiOperation({ summary: 'GDPR: Customer data request' })
   @Post('webhooks/customers/data_request')
   async onCustomerDataRequest(@Body() body: any) {
+    const phone = body.customer?.phone;
+    const email = body.customer?.email;
     this.logger.log(
-      `GDPR: Customer data request received for ${body.customer?.email}`,
+      `GDPR: Customer data request for ${email} (${phone}) from shop ${body.shop_domain}`,
     );
+
+    // Collect all data we hold on this customer (identified by phone number)
+    if (phone) {
+      const buyer = await this.prisma.buyer.findUnique({
+        where: { phoneNumber: phone },
+        include: { orders: { include: { items: true, payment: true } } },
+      });
+      const botSession = await this.prisma.botSession.findUnique({
+        where: { phoneNumber: phone },
+      });
+      const otpCodes = await this.prisma.otpCode.findMany({
+        where: { phoneNumber: phone },
+      });
+      const messages = await this.prisma.whatsappMessage.findMany({
+        where: { OR: [{ toNumber: phone }, { fromNumber: phone }] },
+      });
+
+      this.logger.log(
+        `GDPR data export for ${phone}: buyer=${!!buyer}, orders=${buyer?.orders?.length ?? 0}, botSession=${!!botSession}, otpCodes=${otpCodes.length}, messages=${messages.length}`,
+      );
+    }
+
     return { status: 'ok' };
   }
 
   @ApiOperation({ summary: 'GDPR: Customer redact' })
   @Post('webhooks/customers/redact')
   async onCustomerRedact(@Body() body: any) {
+    const phone = body.customer?.phone;
+    const email = body.customer?.email;
     this.logger.log(
-      `GDPR: Customer redact request received for ${body.customer?.email}`,
+      `GDPR: Customer redact for ${email} (${phone}) from shop ${body.shop_domain}`,
     );
+
+    if (phone) {
+      // Anonymize Buyer personal fields (keep record for order integrity)
+      await this.prisma.buyer.updateMany({
+        where: { phoneNumber: phone },
+        data: { fullName: '[redacted]', city: null },
+      });
+
+      // Anonymize personal fields on Orders (keep order records for accounting)
+      const buyer = await this.prisma.buyer.findUnique({
+        where: { phoneNumber: phone },
+      });
+      if (buyer) {
+        await this.prisma.order.updateMany({
+          where: { buyerId: buyer.id },
+          data: {
+            customerName: '[redacted]',
+            customerPhone: '[redacted]',
+            customerEmail: null,
+            deliveryAddress: null,
+          },
+        });
+      }
+
+      // Delete bot session and OTP codes (no business value)
+      await this.prisma.botSession.deleteMany({ where: { phoneNumber: phone } });
+      await this.prisma.otpCode.deleteMany({ where: { phoneNumber: phone } });
+
+      // Anonymize message phone numbers
+      await this.prisma.whatsappMessage.updateMany({
+        where: { toNumber: phone },
+        data: { toNumber: '[redacted]' },
+      });
+      await this.prisma.whatsappMessage.updateMany({
+        where: { fromNumber: phone },
+        data: { fromNumber: '[redacted]' },
+      });
+
+      this.logger.log(`GDPR: Customer data redacted for ${phone}`);
+    }
+
     return { status: 'ok' };
   }
 
   @ApiOperation({ summary: 'GDPR: Shop redact' })
   @Post('webhooks/shop/redact')
-  async onShopRedact(@Headers('x-shopify-shop-domain') shop: string) {
-    this.logger.log(`GDPR: Shop redact request received for ${shop}`);
+  async onShopRedact(@Body() body: any) {
+    const shop = body.shop_domain;
+    this.logger.log(`GDPR: Shop redact for ${shop}`);
+
+    const merchant = await this.prisma.shopifyMerchant.findUnique({
+      where: { shop },
+    });
+
+    if (merchant) {
+      // Delete all merchant-specific Meta data
+      await this.prisma.commentDmLog.deleteMany({
+        where: { merchantId: merchant.id },
+      });
+      await this.prisma.commentTrigger.deleteMany({
+        where: { merchantId: merchant.id },
+      });
+      await this.prisma.postProductMapping.deleteMany({
+        where: { merchantId: merchant.id },
+      });
+
+      // Delete the merchant record itself
+      await this.prisma.shopifyMerchant.delete({ where: { shop } });
+
+      this.logger.log(`GDPR: Shop data deleted for ${shop}`);
+    }
+
     return { status: 'ok' };
   }
 
