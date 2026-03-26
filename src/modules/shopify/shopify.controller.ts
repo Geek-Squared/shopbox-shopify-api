@@ -9,6 +9,7 @@ import {
   Headers,
   UseGuards,
   Logger,
+  RawBody,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -91,15 +92,25 @@ export class ShopifyController {
     );
   }
 
+  private verifyShopifyWebhook(rawBody: Buffer, hmac: string): void {
+    if (!hmac) throw new UnauthorizedException('Missing webhook HMAC');
+    const isValid = this.shopifyService.verifyWebhookHmac(
+      rawBody.toString('utf8'),
+      hmac,
+    );
+    if (!isValid) throw new UnauthorizedException('Invalid webhook HMAC');
+  }
+
   @ApiOperation({ summary: 'Shopify uninstalled webhook' })
   @Post('webhooks/app/uninstalled')
   async onUninstalled(
     @Headers('x-shopify-hmac-sha256') hmac: string,
     @Headers('x-shopify-shop-domain') shop: string,
+    @RawBody() rawBody: Buffer,
     @Body() body: any,
   ) {
+    this.verifyShopifyWebhook(rawBody, hmac);
     this.logger.log(`Received uninstall webhook for shop: ${shop}`);
-    // Note: In production, verify HMAC using raw body.
     await this.shopifyService.handleUninstall(shop);
     return { status: 'ok' };
   }
@@ -108,8 +119,11 @@ export class ShopifyController {
   @Post('webhooks/orders/create')
   async onOrderCreated(
     @Headers('x-shopify-hmac-sha256') hmac: string,
+    @Headers('x-shopify-shop-domain') shop: string,
+    @RawBody() rawBody: Buffer,
     @Body() body: any,
   ) {
+    this.verifyShopifyWebhook(rawBody, hmac);
     this.logger.log(`Received Shopify order webhook: ${body.id}`);
     return { status: 'ok' };
   }
@@ -117,12 +131,13 @@ export class ShopifyController {
   @ApiOperation({ summary: 'Shopify product update webhook' })
   @Post('webhooks/products/update')
   async onProductUpdate(
+    @Headers('x-shopify-hmac-sha256') hmac: string,
     @Headers('x-shopify-shop-domain') shop: string,
+    @RawBody() rawBody: Buffer,
     @Body() body: any,
   ) {
-    this.logger.log(
-      `Received Shopify product update webhook for shop: ${shop}`,
-    );
+    this.verifyShopifyWebhook(rawBody, hmac);
+    this.logger.log(`Received Shopify product update webhook for shop: ${shop}`);
     this.shopifyApiService.clearCache(shop);
     return { status: 'ok' };
   }
@@ -130,13 +145,14 @@ export class ShopifyController {
   @ApiOperation({ summary: 'Shopify shop update webhook' })
   @Post('webhooks/shop/update')
   async onShopUpdate(
+    @Headers('x-shopify-hmac-sha256') hmac: string,
     @Headers('x-shopify-shop-domain') shop: string,
+    @RawBody() rawBody: Buffer,
     @Body() body: any,
   ) {
+    this.verifyShopifyWebhook(rawBody, hmac);
     this.logger.log(`Received Shopify shop update webhook for shop: ${shop}`);
-    await this.repository.partialUpdate(shop, {
-      storeName: body.name,
-    });
+    await this.repository.partialUpdate(shop, { storeName: body.name });
     return { status: 'ok' };
   }
 
@@ -145,7 +161,12 @@ export class ShopifyController {
 
   @ApiOperation({ summary: 'GDPR: Customer data request' })
   @Post('webhooks/customers/data_request')
-  async onCustomerDataRequest(@Body() body: any) {
+  async onCustomerDataRequest(
+    @Headers('x-shopify-hmac-sha256') hmac: string,
+    @RawBody() rawBody: Buffer,
+    @Body() body: any,
+  ) {
+    this.verifyShopifyWebhook(rawBody, hmac);
     const phone = body.customer?.phone;
     const email = body.customer?.email;
     this.logger.log(
@@ -178,7 +199,12 @@ export class ShopifyController {
 
   @ApiOperation({ summary: 'GDPR: Customer redact' })
   @Post('webhooks/customers/redact')
-  async onCustomerRedact(@Body() body: any) {
+  async onCustomerRedact(
+    @Headers('x-shopify-hmac-sha256') hmac: string,
+    @RawBody() rawBody: Buffer,
+    @Body() body: any,
+  ) {
+    this.verifyShopifyWebhook(rawBody, hmac);
     const phone = body.customer?.phone;
     const email = body.customer?.email;
     this.logger.log(
@@ -230,7 +256,12 @@ export class ShopifyController {
 
   @ApiOperation({ summary: 'GDPR: Shop redact' })
   @Post('webhooks/shop/redact')
-  async onShopRedact(@Body() body: any) {
+  async onShopRedact(
+    @Headers('x-shopify-hmac-sha256') hmac: string,
+    @RawBody() rawBody: Buffer,
+    @Body() body: any,
+  ) {
+    this.verifyShopifyWebhook(rawBody, hmac);
     const shop = body.shop_domain;
     this.logger.log(`GDPR: Shop redact for ${shop}`);
 
