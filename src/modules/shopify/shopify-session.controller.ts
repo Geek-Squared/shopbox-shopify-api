@@ -26,10 +26,7 @@ export class ShopifySessionController {
   @Post()
   async saveSession(@Body() session: any) {
     this.logger.log(`Saving session for shop: ${session.shop}`);
-    
-    // Convert BigInt strings to BigInt if necessary, 
-    // though the incoming body might already be formatted.
-    // Prisma requires BigInt for BigInt fields.
+
     const data = { ...session };
     if (data.userId && typeof data.userId === 'string') {
       data.userId = BigInt(data.userId);
@@ -41,21 +38,32 @@ export class ShopifySessionController {
       update: data,
     });
 
+    const isOnline = data.isOnline === true || data.isOnline === 'true';
+
     // If this is an OFFLINE session (permanent token), update the ShopifyMerchant table
-    if (!data.isOnline && data.accessToken) {
+    if (!isOnline && data.accessToken) {
       this.logger.log(`Syncing & Activating ShopifyMerchant: ${data.shop}`);
-      await this.repository.upsertMerchant({
-        shop: data.shop,
-        accessToken: data.accessToken,
-        scope: data.scope,
-        isActive: true, // Force reactivation
-      });
+      try {
+        await this.repository.upsertMerchant({
+          shop: data.shop,
+          accessToken: data.accessToken,
+          scope: data.scope,
+          isActive: true, // Force reactivation
+        });
+        this.logger.log(`Merchant ${data.shop} successfully activated`);
+      } catch (err) {
+        this.logger.error(`Failed to activate merchant ${data.shop}:`, err);
+        // We log it but let the result return so the session save is acknowledged
+      }
     } else {
-      this.logger.debug(`Received ${data.isOnline ? 'ONLINE' : 'OFFLINE'} session for ${data.shop}`);
+      this.logger.debug(
+        `Received ${isOnline ? 'ONLINE' : 'OFFLINE'} session for ${data.shop}`,
+      );
     }
 
     return result;
   }
+
 
   @ApiOperation({ summary: 'Load an OAuth session' })
   @Get(':id')

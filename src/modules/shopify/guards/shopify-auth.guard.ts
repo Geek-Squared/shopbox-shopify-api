@@ -8,6 +8,8 @@ import {
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 import { ShopifyRepository } from '../shopify.repository';
+import { PrismaService } from '../../../prisma/prisma.service';
+
 
 @Injectable()
 export class ShopifyAuthGuard implements CanActivate {
@@ -16,7 +18,9 @@ export class ShopifyAuthGuard implements CanActivate {
   constructor(
     private readonly config: ConfigService,
     private readonly repository: ShopifyRepository,
+    private readonly prisma: PrismaService,
   ) {}
+
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
@@ -59,10 +63,30 @@ export class ShopifyAuthGuard implements CanActivate {
         throw new UnauthorizedException(`Merchant not found for shop: ${shop}`);
       }
       if (!merchant.isActive) {
-        throw new UnauthorizedException(
-          `Merchant ${shop} is currently inactive`,
-        );
+        // Before rejecting, check if a valid offline session exists
+        const offlineSession = await this.prisma.session.findUnique({
+          where: { id: `offline_${shop}` },
+        });
+
+        if (offlineSession?.accessToken) {
+          this.logger.log(
+            `Guard reactivating merchant ${shop} from offline session`,
+          );
+          await this.repository.upsertMerchant({
+            shop,
+            accessToken: offlineSession.accessToken,
+            scope: offlineSession.scope || '',
+            isActive: true,
+          });
+          // Update the local merchant object to reflect activation
+          merchant.isActive = true;
+        } else {
+          throw new UnauthorizedException(
+            `Merchant ${shop} is currently inactive`,
+          );
+        }
       }
+
 
       request.merchant = merchant;
       request.shop = shop; // For backward compatibility with your snippet
