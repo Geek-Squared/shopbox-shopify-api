@@ -43,12 +43,15 @@ export class ShopifySessionController {
 
     // If this is an OFFLINE session (permanent token), update the ShopifyMerchant table
     if (!data.isOnline && data.accessToken) {
-      this.logger.log(`Syncing ShopifyMerchant record for shop: ${data.shop}`);
+      this.logger.log(`Syncing & Activating ShopifyMerchant: ${data.shop}`);
       await this.repository.upsertMerchant({
         shop: data.shop,
         accessToken: data.accessToken,
         scope: data.scope,
+        isActive: true, // Force reactivation
       });
+    } else {
+      this.logger.debug(`Received ${data.isOnline ? 'ONLINE' : 'OFFLINE'} session for ${data.shop}`);
     }
 
     return result;
