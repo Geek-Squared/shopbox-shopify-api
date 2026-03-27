@@ -10,13 +10,17 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { PrismaService } from '../../prisma/prisma.service';
+import { ShopifyRepository } from './shopify.repository';
 
 @ApiTags('Shopify Sessions')
 @Controller('shopify/sessions')
 export class ShopifySessionController {
   private readonly logger = new Logger(ShopifySessionController.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly repository: ShopifyRepository,
+  ) {}
 
   @ApiOperation({ summary: 'Save an OAuth session' })
   @Post()
@@ -31,11 +35,23 @@ export class ShopifySessionController {
       data.userId = BigInt(data.userId);
     }
 
-    return this.prisma.session.upsert({
+    const result = await this.prisma.session.upsert({
       where: { id: session.id },
       create: data,
       update: data,
     });
+
+    // If this is an OFFLINE session (permanent token), update the ShopifyMerchant table
+    if (!data.isOnline && data.accessToken) {
+      this.logger.log(`Syncing ShopifyMerchant record for shop: ${data.shop}`);
+      await this.repository.upsertMerchant({
+        shop: data.shop,
+        accessToken: data.accessToken,
+        scope: data.scope,
+      });
+    }
+
+    return result;
   }
 
   @ApiOperation({ summary: 'Load an OAuth session' })
