@@ -98,10 +98,24 @@ export class ShopifyApiService {
       body: JSON.stringify({ query, variables }),
     });
 
+    if (response.status === 401) {
+      this.logger.warn(`Shopify GraphQL 401 for ${shop}. Marking as inactive.`);
+      await this.repository.markUninstalled(shop);
+      throw new UnauthorizedException('Shopify access token is invalid');
+    }
+
     if (!response.ok) {
       const errorText = await response.text();
+      if (errorText.includes('Invalid API key or access token')) {
+        this.logger.warn(
+          `Shopify GraphQL invalid token error for ${shop}. Marking as inactive.`,
+        );
+        await this.repository.markUninstalled(shop);
+        throw new UnauthorizedException('Shopify access token is invalid');
+      }
       throw new BadRequestException(`Shopify GraphQL Error: ${errorText}`);
     }
+
 
     const result = await response.json();
     if (result.errors) {
