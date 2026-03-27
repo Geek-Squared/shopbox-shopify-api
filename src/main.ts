@@ -18,6 +18,7 @@ async function bootstrap() {
         'https://start.shopboxx.africa',
         'https://admin.shopboxx.africa',
         'https://shopbox-fe.vercel.app',
+        'https://adberrytech.com',
         'https://admin.shopify.com',
         ...(process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : []),
       ];
