@@ -64,9 +64,25 @@ export class ShopifySessionController {
       where: { id },
     });
     
-    if (session && session.userId) {
-      // BigInt needs to be converted back to string for JSON serialization
-      return { ...session, userId: session.userId.toString() };
+    if (session) {
+      this.logger.debug(`Loaded session ${id} for ${session.shop}`);
+
+      // PROACTIVE REACTIVATION: 
+      // If we have an offline session with a token, ensure the merchant is marked active
+      if (id.startsWith('offline_') && session.accessToken) {
+        this.logger.log(`Proactively activating merchant during session load: ${session.shop}`);
+        await this.repository.upsertMerchant({
+          shop: session.shop,
+          accessToken: session.accessToken,
+          scope: session.scope || '',
+          isActive: true,
+        });
+      }
+
+      if (session.userId) {
+        // BigInt needs to be converted back to string for JSON serialization
+        return { ...session, userId: session.userId.toString() };
+      }
     }
     return session;
   }
