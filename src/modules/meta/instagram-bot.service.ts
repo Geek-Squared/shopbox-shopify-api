@@ -587,7 +587,7 @@ export class InstagramBotService {
   ): Promise<void | boolean> {
     const sessionKey = `ig_${senderId}_${merchant.id}`;
     if (input === 'CHECKOUT') {
-      await this.session.updateContext(sessionKey, 'CHECKOUT_NAME', context);
+      await this.session.updateContext(sessionKey, 'CHECKOUT_NAME', _context);
       return this.metaSender.sendText(
         senderId,
         "📋 What's your full name?",
