@@ -759,6 +759,33 @@ export class MessengerBotService {
     input: string,
     context: BotContext,
   ): Promise<void | boolean> {
+    const product = (context as any).selectedProduct;
+    const lowerInput = input.toLowerCase();
+
+    // User replying to our "Reply 'shop' to continue" prompt — show the product card
+    if (['shop', 'yes', 'show', 'buy', 'details'].includes(lowerInput)) {
+      if (product) {
+        return this.showProductDetail(senderId, merchant, token, product, context);
+      }
+      return this.handleWelcome(senderId, merchant, token);
+    }
+
+    if (input === 'BACK_PRODUCTS') {
+      await this.metaSender.sendProductListText(
+        senderId,
+        (context as any).products,
+        token,
+        merchant.id,
+        'messenger',
+      );
+      await this.session.updateContext(
+        `msg_${senderId}_${merchant.id}`,
+        'BROWSING_PRODUCTS',
+        context,
+      );
+      return;
+    }
+
     if (input.startsWith('ADD_')) {
       return this.handleAddToCart(senderId, merchant, token, input, context);
     }
@@ -832,7 +859,7 @@ export class MessengerBotService {
   ): Promise<void | boolean> {
     const sessionKey = `msg_${senderId}_${merchant.id}`;
     if (input === 'CHECKOUT') {
-      await this.session.updateContext(sessionKey, 'CHECKOUT_NAME', {});
+      await this.session.updateContext(sessionKey, 'CHECKOUT_NAME', context);
       return this.metaSender.sendText(
         senderId,
         "📋 What's your full name?",

@@ -156,10 +156,14 @@ export class CommentTriggerService {
             // Update mapping with canonical ID for future lookups
             if (postMapping) {
               this.logger.log(`🧠 Updating mapping ${postMapping.id} with canonical ID ${mediaId}`);
-              await this.prisma.postProductMapping.update({
-                where: { id: postMapping.id },
-                data: { mediaId },
-              });
+              try {
+                await this.prisma.postProductMapping.update({
+                  where: { id: postMapping.id },
+                  data: { mediaId },
+                });
+              } catch (updateErr) {
+                this.logger.warn(`Could not update mapping canonical ID (conflict): ${updateErr.message}`);
+              }
             }
           }
         }
@@ -202,6 +206,14 @@ export class CommentTriggerService {
               this.logger.warn(`❌ IG private reply opener failed for @${commenterUsername}`);
             }
 
+            // Pre-load bot session so "shop" keyword triggers the product card even if direct send fails
+            const igSessionKey = `ig_${commenterId}_${merchantId}`;
+            await this.session.updateContext(igSessionKey, 'VIEWING_PRODUCT', {
+              merchantId,
+              shop: merchant.shop,
+              selectedProduct: fetchedProduct,
+            });
+
             // Step 2: Send rich product card to DM
             delivered = await this.instagramBot.showProductDetail(
               commenterId,
@@ -215,7 +227,25 @@ export class CommentTriggerService {
             if (delivered) {
               this.logger.log(`🎯 IG product card sent for "${fetchedProduct.title}" to @${commenterUsername}`);
             } else {
-              this.logger.warn(`❌ IG product card rejected for @${commenterUsername} — likely DM restrictions`);
+              // Fallback: send a text DM so the user can reply "shop" to get the full product card
+              this.logger.warn(`❌ IG product card rejected for @${commenterUsername} — sending text fallback DM`);
+              const productUrl = this.getProductUrl(merchant.shop, fetchedProduct);
+              const checkoutUrl = this.getCheckoutUrl(merchant.shop, fetchedProduct);
+              const fallbackParts = [
+                `${fetchedProduct.title} - $${fetchedProduct.price.toFixed(2)}`,
+              ];
+              if (checkoutUrl) fallbackParts.push(`🛒 ${checkoutUrl}`);
+              else if (productUrl) fallbackParts.push(`🛍️ ${productUrl}`);
+              fallbackParts.push(`\nReply "shop" to see the full product card here.`);
+              await this.metaSender
+                .sendText(
+                  commenterId,
+                  fallbackParts.join('\n').substring(0, 640),
+                  instagramToken,
+                  merchant.id,
+                  'instagram',
+                )
+                .catch((e) => this.logger.warn(`IG fallback DM failed: ${e.message}`));
             }
           }
         } catch (productErr) {
@@ -227,22 +257,12 @@ export class CommentTriggerService {
 
       // ── 8. Always post public reply ─────────────────────────────────────────
       if (matchingTrigger.replyComment) {
-        let replyMessage: string;
-
-        if (delivered) {
-          replyMessage = `Hi @${commenterUsername}! Check your DMs 😊`;
-        } else if (postMapping && fetchedProduct) {
-          // ✅ FIX: reuse cached product, no double API call
-          const productUrl = this.getProductUrl(merchant.shop, fetchedProduct);
-          const checkoutUrl = this.getCheckoutUrl(merchant.shop, fetchedProduct);
-          const fallbackParts = [`Hi @${commenterUsername}! Thanks for your interest!`];
-          if (checkoutUrl) fallbackParts.push(`🛒 Shop: ${checkoutUrl}`);
-          else if (productUrl) fallbackParts.push(`🛍️ View: ${productUrl}`);
-          replyMessage = fallbackParts.join('\n').substring(0, 600);
-        } else {
-          // ✅ FIX: null-safe generic reply when no mapping exists
-          replyMessage = `Hi @${commenterUsername}! Thanks for your interest! DM us to order 😊`;
-        }
+        // Since we always send a DM (product card or text fallback with "shop" prompt),
+        // the public reply just acknowledges and directs the user to check their DMs.
+        const replyMessage =
+          postMapping && fetchedProduct
+            ? `Hi @${commenterUsername}! We've sent you a DM with the details 😊`
+            : `Hi @${commenterUsername}! Thanks for your interest! DM us to order 😊`;
 
         await fetch(
           `https://graph.facebook.com/v21.0/${commentId}/replies?access_token=${instagramToken}`,
@@ -254,17 +274,19 @@ export class CommentTriggerService {
         );
       }
 
-      // ── 9. Save log and increment count only if DM delivered ────────────────
-      if (!delivered) return;
+      // ── 9. Always save log (anti-spam), increment count only on successful DM ──
+      await this.prisma.commentDmLog
+        .create({
+          data: { merchantId, commenterId, mediaId, keyword: matchingTrigger.keyword },
+        })
+        .catch(() => {}); // ignore duplicate on race condition
 
-      await this.prisma.commentDmLog.create({
-        data: { merchantId, commenterId, mediaId, keyword: matchingTrigger.keyword },
-      });
-
-      await this.prisma.commentTrigger.update({
-        where: { id: matchingTrigger.id },
-        data: { triggerCount: { increment: 1 } },
-      });
+      if (delivered) {
+        await this.prisma.commentTrigger.update({
+          where: { id: matchingTrigger.id },
+          data: { triggerCount: { increment: 1 } },
+        });
+      }
 
     } catch (error) {
       this.logger.error(`Failed to handle IG comment trigger: ${error.message}`);
@@ -543,28 +565,12 @@ export class CommentTriggerService {
 
       // ── 8. Always post public reply ─────────────────────────────────────────
       if (matchingTrigger.replyComment) {
-        let replyMessage: string;
-
-        if (delivered) {
-          replyMessage = `Hi ${commenterName}! Check your DMs 😊`;
-        } else if (fetchedProduct) {
-          // ✅ FIX: reuse cached product — no second API call
-          const checkoutUrl = this.getCheckoutUrl(merchant.shop, fetchedProduct);
-          const productUrl = this.getProductUrl(merchant.shop, fetchedProduct);
-          const pageLink = merchant.messengerPageId
-            ? `https://m.me/${merchant.messengerPageId}?ref=product_${fetchedProduct.id}`
-            : null;
-
-          const fallbackParts = [`Hi ${commenterName}! Here's what you're looking for:`];
-          if (checkoutUrl) fallbackParts.push(`🛒 Shop now: ${checkoutUrl}`);
-          else if (productUrl) fallbackParts.push(`🛍️ View product: ${productUrl}`);
-          if (pageLink) fallbackParts.push(`💬 Message us: ${pageLink}`);
-
-          replyMessage = fallbackParts.join('\n').substring(0, 600);
-        } else {
-          // ✅ FIX: null-safe fallback when no mapping and no product
-          replyMessage = `Hi ${commenterName}! Thanks for your interest! Please message us directly for more info 😊`;
-        }
+        // The private reply (step 1 above) already carries product info + "Reply shop" prompt.
+        // The public comment reply just tells the user to check their DMs.
+        const replyMessage =
+          postMapping && fetchedProduct
+            ? `Hi ${commenterName}! We've sent you a DM with the details 😊`
+            : `Hi ${commenterName}! Thanks for your interest! Please message us directly for more info 😊`;
 
         await fetch(
           `https://graph.facebook.com/v21.0/${commentId}/comments?access_token=${messengerToken}`,
@@ -576,22 +582,24 @@ export class CommentTriggerService {
         );
       }
 
-      // ── 9. Save log and increment count only if DM delivered ────────────────
-      if (!delivered) return;
+      // ── 9. Always save log (anti-spam), increment count only on successful DM ──
+      await this.prisma.commentDmLog
+        .create({
+          data: {
+            merchantId,
+            commenterId,
+            mediaId: postId,
+            keyword: matchingTrigger.keyword,
+          },
+        })
+        .catch(() => {}); // ignore duplicate on race condition
 
-      await this.prisma.commentDmLog.create({
-        data: {
-          merchantId,
-          commenterId,
-          mediaId: postId,
-          keyword: matchingTrigger.keyword,
-        },
-      });
-
-      await this.prisma.commentTrigger.update({
-        where: { id: matchingTrigger.id },
-        data: { triggerCount: { increment: 1 } },
-      });
+      if (delivered) {
+        await this.prisma.commentTrigger.update({
+          where: { id: matchingTrigger.id },
+          data: { triggerCount: { increment: 1 } },
+        });
+      }
 
     } catch (error) {
       this.logger.error(`Failed to handle FB comment trigger: ${error.message}`);

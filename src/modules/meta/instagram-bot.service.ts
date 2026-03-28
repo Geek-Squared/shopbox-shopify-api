@@ -490,13 +490,10 @@ export class InstagramBotService {
 
     // If they reply 'shop' or anything similar to our hook, show the rich card!
     if (['shop', 'yes', 'show', 'buy', 'details'].includes(lowerInput)) {
-      return this.showProductDetail(
-        senderId,
-        merchant,
-        token,
-        product,
-        context,
-      );
+      if (product) {
+        return this.showProductDetail(senderId, merchant, token, product, context);
+      }
+      return this.handleWelcome(senderId, merchant, token);
     }
 
     if (input === 'BACK_PRODUCTS') {
@@ -590,7 +587,7 @@ export class InstagramBotService {
   ): Promise<void | boolean> {
     const sessionKey = `ig_${senderId}_${merchant.id}`;
     if (input === 'CHECKOUT') {
-      await this.session.updateContext(sessionKey, 'CHECKOUT_NAME', {});
+      await this.session.updateContext(sessionKey, 'CHECKOUT_NAME', context);
       return this.metaSender.sendText(
         senderId,
         "📋 What's your full name?",

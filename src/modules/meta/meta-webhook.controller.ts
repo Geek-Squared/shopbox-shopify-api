@@ -131,15 +131,17 @@ export class MetaWebhookController {
       this.logger.log(
         `Routing IG comment "${commentText}" from @${fromUsername} to CommentTriggerService (Shop: ${merchant.shop})`,
       );
-      this.commentService.handleInstagramComment({
-        merchantId: merchant.id,
-        commentText,
-        commenterId: fromId,
-        commenterUsername: fromUsername,
-        mediaId,
-        commentId,
-        instagramToken: merchant.instagramToken,
-      });
+      this.commentService
+        .handleInstagramComment({
+          merchantId: merchant.id,
+          commentText,
+          commenterId: fromId,
+          commenterUsername: fromUsername,
+          mediaId,
+          commentId,
+          instagramToken: merchant.instagramToken,
+        })
+        .catch((e) => this.logger.error(`IG comment trigger error: ${e.message}`));
     } else {
       this.logger.warn(
         `No connected merchant found for Instagram account ${igAccountId}`,
@@ -173,16 +175,18 @@ export class MetaWebhookController {
       this.logger.log(
         `Routing FB comment "${commentText}" from ${fromName} to CommentTriggerService (Shop: ${merchant.shop})`,
       );
-      this.commentService.handleFacebookComment({
-        merchantId: merchant.id,
-        commentText,
-        commenterId: fromId,
-        commenterName: fromName,
-        postId,
-        postPermalinkUrl: value.post?.permalink_url,
-        commentId,
-        messengerToken: merchant.messengerToken,
-      });
+      this.commentService
+        .handleFacebookComment({
+          merchantId: merchant.id,
+          commentText,
+          commenterId: fromId,
+          commenterName: fromName,
+          postId,
+          postPermalinkUrl: value.post?.permalink_url,
+          commentId,
+          messengerToken: merchant.messengerToken,
+        })
+        .catch((e) => this.logger.error(`FB comment trigger error: ${e.message}`));
     } else {
       this.logger.debug(`No connected merchant found for pageId ${pageId}`);
     }
