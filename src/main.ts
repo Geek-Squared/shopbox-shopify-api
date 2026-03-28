@@ -39,7 +39,14 @@ async function bootstrap() {
       }
     },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'], // 👈 add this
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'x-shopify-hmac-sha256',
+      'x-shopify-topic',
+      'x-shopify-shop-domain',
+      'x-shopify-webhook-id',
+    ],
     credentials: true,
   });
   app.setGlobalPrefix('api');

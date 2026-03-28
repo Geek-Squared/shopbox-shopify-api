@@ -10,9 +10,13 @@ import {
   UseGuards,
   Logger,
   RawBody,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Req,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { Response } from 'express';
+import { Response, Request } from 'express';
 import { ShopifyService } from './shopify.service';
 import { ShopifyRepository } from './shopify.repository';
 import { ShopifyApiService } from './shopify-api.service';
@@ -156,8 +160,57 @@ export class ShopifyController {
     return { status: 'ok' };
   }
 
+  // --- CENTRALIZED COMPLIANCE WEBHOOK ---
+  // Shopify hits /api/shopify/webhooks to test HMAC and send GDPR requests
+
+  @ApiOperation({ summary: 'Centralized Shopify Compliance Webhook' })
+  @Post('webhooks')
+  @HttpCode(200)
+  async handleComplianceWebhook(
+    @Headers('x-shopify-hmac-sha256') hmac: string,
+    @Headers('x-shopify-topic') topic: string,
+    @Headers('x-shopify-shop-domain') shop: string,
+    @Req() req: Request & { rawBody: Buffer },
+  ) {
+    const rawBody = req.rawBody;
+    const body = req.body;
+
+    this.logger.log(`Received Shopify webhook topic: ${topic} for shop: ${shop}`);
+
+    // Validate HMAC
+    if (!hmac || !rawBody) {
+      this.logger.warn(`Missing HMAC or rawBody for topic: ${topic}`);
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+    const isValid = this.shopifyService.verifyWebhookHmac(
+      rawBody.toString('utf8'),
+      hmac,
+    );
+    if (!isValid) {
+      this.logger.warn(`Invalid HMAC signature for topic: ${topic}`);
+      throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+
+    // Route to the right handler based on topic
+    switch (topic) {
+      case 'customers/data_request':
+        return this.onCustomerDataRequest(hmac, rawBody, body);
+      case 'customers/redact':
+        return this.onCustomerRedact(hmac, rawBody, body);
+      case 'shop/redact':
+        return this.onShopRedact(hmac, rawBody, body);
+      case 'app/uninstalled':
+        return this.onUninstalled(hmac, shop, rawBody, body);
+      default:
+        this.logger.debug(`Unhandled webhook topic: ${topic}`);
+        return { received: true };
+    }
+  }
+
   // --- MANDATORY GDPR WEBHOOKS ---
   // Required for Shopify App Store Approval
+  // Note: These can still be called individually if configured specifically, 
+  // but handleComplianceWebhook is the preferred entry point now.
 
   @ApiOperation({ summary: 'GDPR: Customer data request' })
   @Post('webhooks/customers/data_request')
