@@ -24,7 +24,8 @@ export class MetaOauthService {
       'pages_show_list',
     ].join(',');
 
-    return `https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${shop}`;
+    return `https://www.facebook.com/v21.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${shop}`;
+
   }
 
   getInstagramAuthUrl(shop: string): string {
@@ -42,7 +43,8 @@ export class MetaOauthService {
       'business_management',
     ].join(',');
 
-    return `https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${shop}`;
+    return `https://www.facebook.com/v21.0/dialog/oauth?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}&state=${shop}`;
+
   }
 
   async exchangeCodeForToken(
@@ -54,7 +56,7 @@ export class MetaOauthService {
     const appUrl = this.config.get<string>('APP_URL');
     const redirectUri = `${appUrl}/api/meta/auth/${redirectUriSuffix}/callback`;
 
-    const url = `https://graph.facebook.com/v20.0/oauth/access_token?client_id=${clientId}&client_secret=${clientSecret}&redirect_uri=${redirectUri}&code=${code}`;
+    const url = `https://graph.facebook.com/v21.0/oauth/access_token?client_id=${clientId}&client_secret=${clientSecret}&redirect_uri=${redirectUri}&code=${code}`;
     const response = await fetch(url);
     const data = await response.json();
 
@@ -68,12 +70,12 @@ export class MetaOauthService {
   }
 
   async getPages(userToken: string) {
-    const bizUrl = `https://graph.facebook.com/v20.0/me/businesses?access_token=${userToken}`;
+    const bizUrl = `https://graph.facebook.com/v21.0/me/businesses?access_token=${userToken}`;
     const bizRes = await fetch(bizUrl);
     const bizData = await bizRes.json();
 
     // 3. Try standard me/accounts (Personal pages)
-    const url = `https://graph.facebook.com/v20.0/me/accounts?fields=id,name,access_token,category,instagram_business_account{id,username}&access_token=${userToken}`;
+    const url = `https://graph.facebook.com/v21.0/me/accounts?fields=id,name,access_token,category,instagram_business_account{id,username}&access_token=${userToken}`;
     const response = await fetch(url);
     const data = await response.json();
 
@@ -88,7 +90,7 @@ export class MetaOauthService {
     // 4. Try Business Manager owned pages if standard list is empty
     if (bizData.data?.length > 0) {
       for (const biz of bizData.data) {
-        const pagesUrl = `https://graph.facebook.com/v20.0/${biz.id}/owned_pages?fields=id,name,access_token,category,instagram_business_account{id,username}&access_token=${userToken}`;
+        const pagesUrl = `https://graph.facebook.com/v21.0/${biz.id}/owned_pages?fields=id,name,access_token,category,instagram_business_account{id,username}&access_token=${userToken}`;
         const pagesRes = await fetch(pagesUrl);
         const pagesData = await pagesRes.json();
         if (pagesData.data?.length > 0) {
@@ -112,7 +114,7 @@ export class MetaOauthService {
   }
 
   async getInstagramAccount(pageId: string, pageToken: string) {
-    const url = `https://graph.facebook.com/v18.0/${pageId}?fields=instagram_business_account{id,username}&access_token=${pageToken}`;
+    const url = `https://graph.facebook.com/v21.0/${pageId}?fields=instagram_business_account{id,username}&access_token=${pageToken}`;
     const response = await fetch(url);
     const data = await response.json();
 
@@ -127,7 +129,7 @@ export class MetaOauthService {
   }
 
   async subscribePageToWebhook(pageId: string, pageToken: string) {
-    const url = `https://graph.facebook.com/v18.0/${pageId}/subscribed_apps?access_token=${pageToken}`;
+    const url = `https://graph.facebook.com/v21.0/${pageId}/subscribed_apps?access_token=${pageToken}`;
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -301,7 +303,7 @@ export class MetaOauthService {
       throw new BadRequestException('Instagram not connected for this shop');
     }
 
-    const url = `https://graph.facebook.com/v20.0/${merchant.instagramAccountId}/media?fields=id,caption,permalink,media_url,timestamp,media_type&limit=15&access_token=${merchant.instagramToken}`;
+    const url = `https://graph.facebook.com/v21.0/${merchant.instagramAccountId}/media?fields=id,caption,permalink,media_url,timestamp,media_type&limit=15&access_token=${merchant.instagramToken}`;
     const response = await fetch(url);
     const data = await response.json();
 

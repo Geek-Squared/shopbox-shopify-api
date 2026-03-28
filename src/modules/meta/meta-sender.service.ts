@@ -67,9 +67,10 @@ export class MetaSenderService {
   ): Promise<boolean> {
     const idCandidates = [commentId];
     if (commentId.includes('_')) {
-      const trailingId = commentId.split('_').pop();
-      if (trailingId && trailingId !== commentId) {
-        idCandidates.push(trailingId);
+      const parts = commentId.split('_');
+      // If it's PageID_CommentID, try the CommentID alone
+      if (parts.length > 1) {
+        idCandidates.push(parts[parts.length - 1]);
       }
     }
 
@@ -79,8 +80,10 @@ export class MetaSenderService {
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body,
+        body: body.toString(),
       });
+
+
       const data = await this.parseResponseBody(response);
 
       if (response.ok) {

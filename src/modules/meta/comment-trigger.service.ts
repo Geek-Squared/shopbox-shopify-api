@@ -199,16 +199,38 @@ export class CommentTriggerService {
             postMapping.shopifyProductId,
           );
           if (product) {
-            this.logger.debug(`🔄 Attempting to send IG product card for "${product.title}" to ${commenterUsername} (ID: ${commenterId})`);
+            this.logger.debug(`🔄 Attempting to send IG private reply opener for "${product.title}" to ${commenterUsername} (ID: ${commenterId})`);
+            
+            // 🆕 STEP 1: Send a plain-text private reply (Opener) to open the DM window
+            // This is safer than sending a Template/Card as the first message.
+            const privateReplyText = `Hi @${commenterUsername}! I've sent you details about the ${product.title} to your DMs. Check them out! 😊`;
+            
+            const privateReplySent = await this.metaSender.sendText(
+              commentId,
+              privateReplyText,
+              instagramToken,
+              merchant.id,
+              'instagram',
+              true,
+            );
+
+            if (privateReplySent) {
+               this.logger.log(`✅ Instagram private reply opener sent to @${commenterUsername}`);
+            } else {
+               this.logger.warn(`❌ Instagram private reply opener failed for @${commenterUsername}. Attempting direct DM fallback if possible.`);
+            }
+
+            // 🆕 STEP 2: Send the rich product card
+            // We use commenterId here to ensure it goes to the DM thread
             delivered = await this.instagramBot.showProductDetail(
               commenterId,
               merchant,
               instagramToken,
               product,
               { merchantId, shop: merchant.shop },
-              undefined, // Use default subtitle (Fixes character limit error)
-              commentId,
+              undefined, 
             );
+
             if (delivered) {
               this.logger.log(
                 `🎯 Sent direct product card for "${product.title}" to IG user ${commenterUsername}`,
@@ -230,17 +252,32 @@ export class CommentTriggerService {
 
       // Always post a public reply if enabled, regardless of DM success  
       if (matchingTrigger.replyComment) {
-        const replyMessage = delivered 
-          ? `Hi @${commenterUsername}! Check your DMs 😊`
-          : `Hi @${commenterUsername}! Thanks for your interest! Please message us directly 😊`;
+        let replyMessage: string;
+        
+        if (delivered) {
+          replyMessage = `Hi @${commenterUsername}! Check your DMs 😊`;
+        } else {
+          // DM failed - provide fallback with links
+          const product = await this.shopifyApi.getProduct(merchant.shop, postMapping.shopifyProductId);
+          const productUrl = this.getProductUrl(merchant.shop, product);
+          const checkoutUrl = this.getCheckoutUrl(merchant.shop, product);
           
-        const replyUrl = `https://graph.facebook.com/v18.0/${commentId}/replies?access_token=${instagramToken}`;
+          const fallbackParts = [`Hi @${commenterUsername}! Thanks for your interest!`];
+          if (checkoutUrl) fallbackParts.push(`🛒 Shop: ${checkoutUrl}`);
+          else if (productUrl) fallbackParts.push(`🛍️ View: ${productUrl}`);
+          
+          replyMessage = fallbackParts.join('\n').substring(0, 600);
+        }
+          
+        const replyUrl = `https://graph.facebook.com/v21.0/${commentId}/replies?access_token=${instagramToken}`;
         await fetch(replyUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: replyMessage }),
         });
       }
+
+
 
       if (!delivered) {
         return;
@@ -377,7 +414,8 @@ export class CommentTriggerService {
     // 🆕 CANONICAL & ATTACHMENT RESOLUTION FALLBACK
     if (!postMapping && merchant.messengerToken) {
       try {
-        const url = `https://graph.facebook.com/v18.0/${postId}?fields=permalink_url,attachments&access_token=${messengerToken}`;
+        const url = `https://graph.facebook.com/v21.0/${postId}?fields=permalink_url,attachments&access_token=${messengerToken}`;
+
         const fbRes = await fetch(url);
         if (fbRes.ok) {
           const fbData = await fbRes.json();
@@ -447,9 +485,12 @@ export class CommentTriggerService {
           if (product) {
             selectedProduct = product;
             const privateReplyLines = [
-              `${product.title} - $${product.price.toFixed(2)}`,
-              `Reply "shop" here to continue in Messenger.`,
+              `*Product Card*: ${product.title} - $${product.price.toFixed(2)}`,
+              `Reply "*shop*" here to continue in Messenger.`,
             ];
+
+
+
 
             const commentSuffix = commentId.includes('_')
               ? commentId.split('_').pop()
@@ -585,13 +626,14 @@ export class CommentTriggerService {
           replyMessage = `Hi ${commenterName}! Thanks for your interest! Please message us directly for more info 😊`;
         }
 
-        const replyUrl = `https://graph.facebook.com/v18.0/${commentId}/comments?access_token=${messengerToken}`;
+        const replyUrl = `https://graph.facebook.com/v21.0/${commentId}/comments?access_token=${messengerToken}`;
         await fetch(replyUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: replyMessage }),
         });
       }
+
 
       if (!delivered) {
         return;
