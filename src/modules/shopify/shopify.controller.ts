@@ -20,6 +20,7 @@ import { Response, Request } from 'express';
 import { ShopifyService } from './shopify.service';
 import { ShopifyRepository } from './shopify.repository';
 import { ShopifyApiService } from './shopify-api.service';
+import { ShopifyBillingService } from './shopify-billing.service';
 import { ConfigService } from '@nestjs/config';
 import { ShopifyAuthGuard } from './guards/shopify-auth.guard';
 import { CurrentShop } from './decorators/current-shop.decorator';
@@ -35,16 +36,21 @@ export class ShopifyController {
     private readonly repository: ShopifyRepository,
     private readonly config: ConfigService,
     private readonly shopifyApiService: ShopifyApiService,
+    private readonly billingService: ShopifyBillingService,
     private readonly prisma: PrismaService,
   ) {}
 
   @ApiOperation({ summary: 'Start Shopify OAuth flow' })
   @Get('auth')
-  async auth(@Query('shop') shop: string, @Res() res: Response) {
+  async auth(
+    @Query('shop') shop: string,
+    @Query('plan') plan: string,
+    @Res() res: Response,
+  ) {
     if (!shop) {
       throw new UnauthorizedException('Shop parameter is required');
     }
-    const authUrl = this.shopifyService.generateAuthUrl(shop);
+    const authUrl = this.shopifyService.generateAuthUrl(shop, plan || 'FREE');
     return res.redirect(authUrl);
   }
 
@@ -88,7 +94,42 @@ export class ShopifyController {
     // 6. Register Webhooks
     await this.shopifyService.registerWebhooks(shop, accessToken);
 
-    // 7. Redirect to app in Shopify admin
+    // 7. Check desired plan from state
+    const stateData = this.shopifyService.getAndVerifyState(state, shop);
+    const chosenPlan = stateData?.plan || 'FREE';
+
+    // 8. subscription check - only paid plans trigger billing
+    const merchant = await this.repository.findByShop(shop);
+    const hasActiveSubscription =
+      merchant?.planStatus === 'ACTIVE' || merchant?.planStatus === 'TRIAL';
+
+    if (!hasActiveSubscription && chosenPlan !== 'FREE') {
+      this.logger.log(`Initiating ${chosenPlan} billing flow for shop: ${shop}`);
+      try {
+        const { confirmationUrl } = await this.billingService.createSubscription(
+          shop,
+          chosenPlan as any,
+        );
+        if (confirmationUrl) {
+          return res.redirect(confirmationUrl);
+        }
+      } catch (billingErr) {
+        this.logger.error(`Billing creation failed: ${billingErr.message}`);
+      }
+    } else if (chosenPlan === 'FREE') {
+      // Set merchant to FREE plan explicitly if they chose it and no other active plan exists
+      if (!hasActiveSubscription) {
+        await this.prisma.shopifyMerchant.update({
+          where: { shop },
+          data: {
+            planName: 'FREE',
+            planStatus: 'ACTIVE',
+          },
+        });
+      }
+    }
+
+    // 9. Redirect to app in Shopify admin
     const apiKey = this.config.get<string>('SHOPIFY_API_KEY');
     const storeShortName = shop.replace('.myshopify.com', '');
     return res.redirect(

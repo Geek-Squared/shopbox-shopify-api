@@ -9,19 +9,37 @@ import { ShopifyApiService } from './shopify-api.service';
 import { ConfigService } from '@nestjs/config';
 
 export const BILLING_PLANS = {
-  BASIC: {
-    name: 'Basic',
-    amount: 19.99,
+  FREE: {
+    name: 'Free',
+    amount: 0,
+    currencyCode: 'USD',
+    interval: 'EVERY_30_DAYS',
+    trialDays: 0,
+    dmLimit: 100,
+  },
+  STARTER: {
+    name: 'Starter',
+    amount: 19.0,
     currencyCode: 'USD',
     interval: 'EVERY_30_DAYS',
     trialDays: 7,
+    dmLimit: 1000,
   },
   PRO: {
     name: 'Pro',
-    amount: 49.99,
+    amount: 49.0,
     currencyCode: 'USD',
     interval: 'EVERY_30_DAYS',
     trialDays: 14,
+    dmLimit: 5000,
+  },
+  ENTERPRISE: {
+    name: 'Enterprise',
+    amount: 149.0,
+    currencyCode: 'USD',
+    interval: 'EVERY_30_DAYS',
+    trialDays: 30,
+    dmLimit: 25000,
   },
 };
 
@@ -154,7 +172,26 @@ export class ShopifyBillingService {
     // Optional: Add logic to check trial expiration or hit Shopify API to confirm status if skeptical
     return (
       merchant.planStatus === 'ACTIVE' ||
-      (merchant.planName === 'BASIC' && !!merchant.planChargeId)
+      (merchant.planName === 'STARTER' && !!merchant.planChargeId)
     );
+  }
+
+  async resetMonthlyUsage() {
+    this.logger.log('Resetting monthly DM usage for eligible merchants...');
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    const result = await this.prisma.shopifyMerchant.updateMany({
+      where: {
+        dmPeriodStart: { lt: thirtyDaysAgo },
+      },
+      data: {
+        dmSentThisMonth: 0,
+        dmPeriodStart: new Date(),
+      },
+    });
+
+    this.logger.log(`Successfully reset DM count for ${result.count} merchants.`);
+    return result.count;
   }
 }

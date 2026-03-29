@@ -12,6 +12,7 @@ import { ShopifyApiService } from '../shopify/shopify-api.service';
 import { InstagramBotService } from './instagram-bot.service';
 import { MessengerBotService } from './messenger-bot.service';
 import { BotSessionService } from '../whatsapp/bot-session.service';
+import { BILLING_PLANS } from '../shopify/shopify-billing.service';
 
 @Injectable()
 export class CommentTriggerService {
@@ -106,10 +107,27 @@ export class CommentTriggerService {
     const merchant = await this.shopifyRepo.findById(merchantId);
     if (!merchant) return;
 
-    // ── 4. Plan check (skip in dev) ───────────────────────────────────────────
+    // ── 4. Plan & Limit check (skip in dev) ──────────────────────────────────
     const isDev = process.env.NODE_ENV !== 'production';
     if (!isDev && merchant.planStatus !== 'ACTIVE') {
       this.logger.warn(`Merchant ${merchant.shop} has no active plan.`);
+      return;
+    }
+
+    const planName = (merchant.planName || 'FREE') as keyof typeof BILLING_PLANS;
+    const planConfig = BILLING_PLANS[planName];
+    if (planConfig && merchant.dmSentThisMonth >= planConfig.dmLimit) {
+      this.logger.warn(`Merchant ${merchant.shop} reached monthly DM limit (${merchant.dmSentThisMonth}/${planConfig.dmLimit}).`);
+      
+      // Still post a public reply to acknowledge interest even if limit reached
+      if (matchingTrigger.replyComment) {
+         const replyMessage = `Hi @${commenterUsername}! We reached our daily limit for DMs, but you can see our products here: https://${merchant.shop}`;
+         fetch(`https://graph.facebook.com/v21.0/${commentId}/replies?access_token=${instagramToken}`, {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({ message: replyMessage }),
+         }).catch(() => {});
+      }
       return;
     }
 
@@ -286,6 +304,12 @@ export class CommentTriggerService {
           where: { id: matchingTrigger.id },
           data: { triggerCount: { increment: 1 } },
         });
+
+        // Increment monthly count
+        await this.prisma.shopifyMerchant.update({
+           where: { id: merchant.id },
+           data: { dmSentThisMonth: { increment: 1 } },
+        });
       }
 
     } catch (error) {
@@ -353,9 +377,25 @@ export class CommentTriggerService {
       return;
     }
 
-    // ── 4. Plan check ─────────────────────────────────────────────────────────
+    // ── 4. Plan check (skip in dev) ─────────────────────────────────────────
     const isDev = process.env.NODE_ENV !== 'production';
     if (!isDev && merchant.planStatus !== 'ACTIVE') return;
+
+    const planName = (merchant.planName || 'FREE') as keyof typeof BILLING_PLANS;
+    const planConfig = BILLING_PLANS[planName];
+    if (planConfig && merchant.dmSentThisMonth >= planConfig.dmLimit) {
+       this.logger.warn(`Merchant ${merchant.shop} reached monthly DM limit (${merchant.dmSentThisMonth}/${planConfig.dmLimit}).`);
+       
+       if (matchingTrigger.replyComment) {
+          const replyMessage = `Hi ${commenterName}! We reached our daily limit for DMs, but you can see our products here: https://${merchant.shop}`;
+          fetch(`https://graph.facebook.com/v21.0/${commentId}/comments?access_token=${messengerToken}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: replyMessage }),
+          }).catch(() => {});
+       }
+       return;
+    }
 
     // ── 5. Smart post-product mapping lookup ──────────────────────────────────
     const numericId = postId.includes('_') ? postId.split('_')[1] : postId;
@@ -598,6 +638,12 @@ export class CommentTriggerService {
         await this.prisma.commentTrigger.update({
           where: { id: matchingTrigger.id },
           data: { triggerCount: { increment: 1 } },
+        });
+
+        // Increment monthly count
+        await this.prisma.shopifyMerchant.update({
+           where: { id: merchant.id },
+           data: { dmSentThisMonth: { increment: 1 } },
         });
       }
 

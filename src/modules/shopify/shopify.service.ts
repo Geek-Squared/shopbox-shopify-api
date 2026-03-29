@@ -6,7 +6,7 @@ import { ShopifyRepository } from './shopify.repository';
 @Injectable()
 export class ShopifyService {
   private readonly logger = new Logger(ShopifyService.name);
-  private stateNonces = new Map<string, { shop: string; expiresAt: number }>();
+  private stateNonces = new Map<string, { shop: string; plan: string; expiresAt: number }>();
 
   constructor(
     private readonly config: ConfigService,
@@ -26,7 +26,7 @@ export class ShopifyService {
     );
   }
 
-  generateAuthUrl(shop: string): string {
+  generateAuthUrl(shop: string, plan: string): string {
     const apiKey = this.config.get<string>('SHOPIFY_API_KEY');
     const scopes = this.config.get<string>('SHOPIFY_SCOPES');
     const appUrl = this.config.get<string>('APP_URL');
@@ -35,6 +35,7 @@ export class ShopifyService {
 
     this.stateNonces.set(nonce, {
       shop,
+      plan,
       expiresAt: Date.now() + 10 * 60 * 1000, // 10 mins TTL
     });
 
@@ -45,6 +46,15 @@ export class ShopifyService {
     url.searchParams.append('state', nonce);
 
     return url.toString();
+  }
+
+  getAndVerifyState(nonce: string, shop: string): { plan: string } | null {
+    const data = this.stateNonces.get(nonce);
+    if (!data || data.shop !== shop || data.expiresAt < Date.now()) {
+      return null;
+    }
+    this.stateNonces.delete(nonce);
+    return { plan: data.plan };
   }
 
   verifyHmac(params: Record<string, string>, hmac: string): boolean {

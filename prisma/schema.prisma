@@ -309,6 +309,8 @@ model ShopifyMerchant {
   planName           String?
   planStatus         String?
   planTrialExpiresAt DateTime?
+  dmSentThisMonth    Int       @default(0)
+  dmPeriodStart      DateTime  @default(now())
 
   @@index([shop])
 }
