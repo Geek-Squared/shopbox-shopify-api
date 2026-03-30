@@ -40,6 +40,15 @@ export class ShopifyBillingController {
     };
   }
 
+  @ApiOperation({ summary: 'Get DM usage for the current billing period' })
+  @ApiBearerAuth()
+  @UseGuards(ShopifyAuthGuard)
+  @Get('usage')
+  async usage(@Request() req: any) {
+    const shop = req.merchant.shop;
+    return this.billingService.getUsage(shop);
+  }
+
   @ApiOperation({ summary: 'Create a new subscription' })
   @ApiBearerAuth()
   @UseGuards(ShopifyAuthGuard)

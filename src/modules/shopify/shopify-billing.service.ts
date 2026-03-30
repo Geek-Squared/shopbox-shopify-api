@@ -176,6 +176,35 @@ export class ShopifyBillingService {
     );
   }
 
+  async getUsage(shop: string) {
+    const merchant = await this.prisma.shopifyMerchant.findUnique({
+      where: { shop },
+      select: {
+        planName: true,
+        dmSentThisMonth: true,
+        dmPeriodStart: true,
+      },
+    });
+
+    if (!merchant) {
+      throw new UnauthorizedException('Merchant not found');
+    }
+
+    const planKey = (merchant.planName || 'FREE').toUpperCase();
+    const planConfig = BILLING_PLANS[planKey] ?? BILLING_PLANS.FREE;
+    const dmLimit = planConfig.dmLimit;
+    const dmSentThisMonth = merchant.dmSentThisMonth ?? 0;
+    const percentUsed = dmLimit > 0 ? Math.min(100, Math.round((dmSentThisMonth / dmLimit) * 100)) : 0;
+
+    return {
+      planName: merchant.planName ?? 'FREE',
+      dmSentThisMonth,
+      dmLimit,
+      percentUsed,
+      dmPeriodStart: merchant.dmPeriodStart,
+    };
+  }
+
   async resetMonthlyUsage() {
     this.logger.log('Resetting monthly DM usage for eligible merchants...');
     const thirtyDaysAgo = new Date();

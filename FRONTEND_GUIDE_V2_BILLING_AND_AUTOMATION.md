@@ -20,6 +20,21 @@ Call this on the dashboard home to decide whether to show "Upgrade" banners.
 }
 ```
 
+### B. Get DM Usage (Progress Bar Widget)
+Call this on the dashboard home to render the usage progress bar. **Non-negotiable** per the pricing strategy.
+- **Endpoint**: `GET /api/shopify/billing/usage`
+- **Response**:
+```json
+{
+  "planName": "PRO",
+  "dmSentThisMonth": 450,
+  "dmLimit": 5000,
+  "percentUsed": 9,
+  "dmPeriodStart": "2026-03-01T00:00:00.000Z"
+}
+```
+**Usage**: Render as `"450 / 5,000 DMs used this month"` with a progress bar. If `percentUsed >= 80`, show a yellow warning. If `percentUsed >= 100`, show a red banner and block automation features with an Upgrade CTA.
+
 ### B. Request Subscription (Initiate Payment)
 Call this when a merchant clicks "Start 7-Day Trial" or "Upgrade to Pro".
 - **Endpoint**: `POST /api/shopify/billing/subscribe`
